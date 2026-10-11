@@ -1,0 +1,28 @@
+name: climax-inference
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.8.16
+  - pytorch=1.12.1
+  - torchvision=0.13.1
+  - cudatoolkit=11.3.1
+  - numpy=1.23.5
+  - pyyaml=6.0
+  - scipy=1.10.0
+  - xarray=2023.1.0
+  - netcdf4=1.6.2
+  - bottleneck=1.3.6
+  - dask=2023.1.1
+  - click=8.1.3
+  - tqdm=4.64.1
+  - pip
+  - pip:
+      - einops==0.6.0
+      - huggingface-hub==0.12.0
+      - lightning-utilities==0.3.0
+      - omegaconf==2.3.0
+      - pytorch-lightning==1.8.0
+      - timm==0.6.12
+      - torchdata==0.4.1
+      - torchmetrics==0.11.1

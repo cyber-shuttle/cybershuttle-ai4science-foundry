@@ -1,3 +1,21 @@
 benchmarks/results/.DS_Store
 registry/.DS_Store
 registry/models/.DS_Store
+
+# Slurm streams and local evidence dumps (keep excerpts in the model README)
+logs/*.out
+logs/*.err
+logs/*_nvidia-smi.txt
+logs/*_versions.txt
+logs/*_sacct.txt
+logs/*_walltime.txt
+
+# Do not commit weights, imagery, or conda prefixes
+*.pth
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+.DS_Store
+__pycache__/
+*.pyc

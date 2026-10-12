@@ -1,0 +1,27 @@
+# Conda environment for SatMAE Temporal inference.
+# Pins follow SatMAE main_finetune.py (timm==0.3.2) and a torch 1.12 /
+# CUDA 11.3 stack that still provides torchvision.transforms.Scale, which
+# CustomDatasetFromImagesTemporal uses.
+#
+# Create on a compute node, never on the ICE login node:
+#   conda env create -p "$HOME/scratch/envs/satmae-temporal" \
+#     -f scripts/satmae_temporal_environment.yml
+name: satmae-temporal
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pytorch=1.12.1
+  - torchvision=0.13.1
+  - cudatoolkit=11.3
+  - numpy=1.23.5          # SatMAE util/pos_embed.py uses np.float
+  - pandas=1.5.3
+  - pillow=9.4.0
+  - rasterio              # imported by util/datasets.py even for RGB
+  - pip:
+      - timm==0.3.2
+      - gdown
+      - awscli

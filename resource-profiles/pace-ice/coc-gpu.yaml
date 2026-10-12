@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu
+name: PACE ICE — College of Computing GPU partition
+system: pace-ice
+provider: Georgia Tech PACE
+description: >
+  Instructional GPU partition on PACE ICE used by CoC / ICE courses. Jobs
+  must be submitted with Slurm. Login nodes are limited to about 1 CPU and
+  4 GB RAM and must not be used for conda builds, downloads, or inference.
+
+partition: coc-gpu
+scheduler: slurm
+
+gpu:
+  model: NVIDIA L40S
+  count: 1
+  vram_gb: 48
+  interconnect: PCIe
+
+cpu:
+  cores: 8
+  ram_gb: 64
+
+storage:
+  scratch_gb: 300
+  parallel_fs: ICE scratch (per-user, wiped after the semester)
+
+max_walltime_hours: 8
+notes: >
+  Verified account/QOS for this recipe: account=coc, qos=coc-ice.
+  Home directories are 30 GB; this user was already at 96.9% of home, so
+  the conda env, weights, and fMoW data must live on scratch
+  ($HOME/scratch, typically /storage/ice1/.../$USER). Confirm the GPU
+  type before the first GPU job with:
+    sinfo -p coc-gpu -o "%P %G %N"
+  Request a specific GPU with --gres=gpu:l40s:1 (or a100:1). Do not request
+  AMD MI210 for this PyTorch 1.12 / CUDA 11.3 stack. ICE currently caps a
+  user at 32 running GPU-hours. CPU setup/download jobs use partition
+  coc-cpu.
+
+slurm:
+  account: coc
+  qos: coc-ice
+  gpu_partition: coc-gpu
+  cpu_partition: coc-cpu
+  gres: gpu:l40s:1
+  gres_alternatives:
+    - gpu:a100:1
+  example_directive: |
+    #SBATCH -A coc
+    #SBATCH -p coc-gpu
+    #SBATCH --qos=coc-ice
+    #SBATCH --gres=gpu:l40s:1

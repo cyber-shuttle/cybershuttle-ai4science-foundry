@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: satmae-temporal
+name: SatMAE Temporal ViT-Large
+version: "1.0"
+
+description: >
+  SatMAE Temporal is a Masked Autoencoder Vision Transformer pretrained on
+  multi-date fMoW-RGB sequences. The temporal variant adds temporal positional
+  embeddings and independently masks patches across timestamps. This registry
+  entry covers the released ViT-Large checkpoint fine-tuned on fMoW-Temporal
+  62-class land-use classification. Training and from-scratch fine-tuning are
+  not verified here.
+
+domain:
+  - earth-science
+  - remote-sensing
+  - earth-observation
+
+model_family:
+  - vision-transformer
+  - masked-autoencoder
+  - foundation-model
+  - temporal
+
+tasks:
+  - inference
+  - evaluation
+  - fine-tuning
+  - training
+
+upstream:
+  github: https://github.com/sustainlab-group/SatMAE
+  github_commit: 0b210aceb37a14bbbd897110db5b104b3271d818  # 2025-08-10 README update; code otherwise unchanged
+  paper: https://arxiv.org/abs/2207.08051
+  paper_title: "SatMAE: Pre-training Transformers for Temporal and Multi-Spectral Satellite Imagery"
+  other:
+    - https://doi.org/10.5281/zenodo.7369796
+    - https://papers.nips.cc/paper_files/paper/2022/hash/01c561df365429f33fcd7a7faa44c985-Abstract-Conference.html
+  license: CC-BY-NC-4.0
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+
+checkpoint:
+  file: finetune_fmow_temporal.pth
+  url: https://zenodo.org/record/7369797/files/finetune_fmow_temporal.pth
+  doi: 10.5281/zenodo.7369796
+  sha256: 378c590865bb55af777f066da3d3500b4ed10b5c6b0f619b8548a541d84480a1
+  notes: >
+    Official fine-tune of temporal ViT-Large on fMoW-Temporal (24 epochs).
+    Load with num_classes=1000 (upstream legacy; 62 real fMoW classes).
+
+input:
+  format: three RGB JPEG frames plus an fMoW-Temporal metadata CSV
+  description: >
+    Each example is a location with a primary image path, a timestamp, and a
+    62-way land-use label. The upstream temporal dataset class finds two
+    additional observations of the same location by filename glob and returns
+    a 3-frame stack at 224x224 with year/month/hour encodings.
+
+output:
+  inference:
+    format: 1000-way logits; metrics.json + 62x62 confusion_matrix.csv
+    description: >
+      Top-1 / Top-5 accuracy on the 62 fMoW categories. Official no-TTA
+      repository result for this checkpoint is 79.99% Top-1 on the full
+      fMoW-Temporal validation CSV.
+
+architecture:
+  type: temporal-vit-encoder
+  variant: vit_large_patch16
+  parameters_approx: 307M
+  hidden_size: 1024
+  num_layers: 24
+  num_heads: 16
+  patch_size: 16
+  input_size: 224
+  frames: 3
+  temporal_embed_dim: 384
+  num_classes_head: 1000
+  real_classes: 62
+
+datasets:
+  recommended:
+    - fmow-temporal
+  evaluation:
+    - id: fmow-temporal-val
+      split: val
+      csv: val_62classes.csv
+      imagery: fMoW-RGB val chips from s3://spacenet-dataset/Hosted-Datasets/fmow/fmow-rgb
+      metadata: https://drive.google.com/drive/folders/1-xSXNpq0xJ4z3F7BPzEcZ04eZ7LqPbYD
+      license_note: Functional Map of the World Challenge Public License (noncommercial)
+
+software:
+  python: "3.9"
+  frameworks:
+    - pytorch==1.12.1
+    - torchvision==0.13.1
+    - cudatoolkit==11.3
+    - timm==0.3.2
+  environment_file: scripts/satmae_temporal_environment.yml
+  container: null
+
+resource_profiles:
+  recommended:
+    - resource-profiles/pace-ice/coc-gpu.yaml
+
+minimum_requirements:
+  gpu_memory_gb_estimate: 12
+  host_ram_gb_estimate: 32
+  notes: Full-val job 6197773 used ~2.05 GB GPU and ~21 GiB host MaxRSS.
+
+cybershuttle:
+  enabled: false
+  workflow_templates: []
+
+readiness:
+  registry_status: containerized
+  nexus_validation: untested
+  benchmark_status: complete
+  optimization_status: not-started
+  workflow_status: validated
+  last_updated: "2026-10-11"
+  notes: >
+    Inference-only recipe verified on PACE ICE (smoke 6196203, subset
+    6197584, full 6197773). Full-val Top-1 62.60% vs 79.99% repository
+    target; gap documented as reconstructed tight AOI crops. Nexus is
+    untested. registry_status containerized means a pinned conda prefix,
+    not a container image (same convention as Foundry PR #28).
+
+maintainers:
+  - name: Rohan Singhal
+    github: "@rohan5986"
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  Distinct from multi-spectral SatMAE (ViT-Base / fMoW-Sentinel). This entry
+  is the temporal RGB ViT-Large checkpoint and the 79.99% repository target.
+  Paper Table 2 ablation without TTA reports 79.69% for a closely related
+  configuration; do not treat those two numbers as the same result. See
+  recipes/satmae-temporal-inference-classification.yaml and the model README.

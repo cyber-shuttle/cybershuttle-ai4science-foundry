@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run and evaluate one ClimaX global forecast from a prepared ERA5 shard."""
+"""Run and evaluate ClimaX forecasts from a fine-tuned Lightning checkpoint."""
 
 from __future__ import annotations
 
@@ -17,7 +17,8 @@ import torch
 import yaml
 
 
-EXPECTED_CHECKPOINT_SHA256 = "6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43"
+EXPECTED_PRETRAINED_SHA256 = "6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43"
+PRETRAINED_REVISION = "6f9d4a5c0c2602965b2a381e60636fed7f12b8f4"
 
 
 def sha256_file(path: Path) -> str:
@@ -50,20 +51,24 @@ def weighted_rmse(prediction: np.ndarray, target: np.ndarray, lat: np.ndarray) -
         raise ValueError("Latitude coordinates do not produce valid cosine weights")
     weights = weights / weights.mean()
     error_squared = np.square(prediction.astype(np.float64) - target.astype(np.float64))
-    return float(np.sqrt(np.mean(error_squared * weights[None, :, None])))
+    sample_mse = np.mean(error_squared * weights[None, :, None], axis=(-2, -1))
+    return float(np.sqrt(sample_mse).mean())
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--climax-source", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
-    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--checkpoint", type=Path, required=True, help="Fine-tuned forecasting checkpoint")
+    parser.add_argument("--pretrained-checkpoint", type=Path, required=True)
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--split", choices=("train", "val", "test"), default="test")
     parser.add_argument("--shard", type=Path)
     parser.add_argument("--time-index", type=int, default=0)
     parser.add_argument("--lead-hours", type=int, default=6)
+    parser.add_argument("--num-samples", type=int, default=32)
+    parser.add_argument("--sample-stride", type=int, default=24)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     return parser.parse_args()
 
@@ -82,14 +87,17 @@ def main() -> None:
     if not args.config.is_file():
         raise FileNotFoundError("Config not found: {}".format(args.config))
     if not args.checkpoint.is_file():
-        raise FileNotFoundError("Checkpoint not found: {}".format(args.checkpoint))
-    checkpoint_hash = sha256_file(args.checkpoint)
-    if checkpoint_hash != EXPECTED_CHECKPOINT_SHA256:
+        raise FileNotFoundError("Fine-tuned checkpoint not found: {}".format(args.checkpoint))
+    if not args.pretrained_checkpoint.is_file():
+        raise FileNotFoundError("Pretrained checkpoint not found: {}".format(args.pretrained_checkpoint))
+    pretrained_hash = sha256_file(args.pretrained_checkpoint)
+    if pretrained_hash != EXPECTED_PRETRAINED_SHA256:
         raise ValueError(
-            "Checkpoint SHA-256 mismatch: got {}, expected {}".format(
-                checkpoint_hash, EXPECTED_CHECKPOINT_SHA256
+            "Pretrained checkpoint SHA-256 mismatch: got {}, expected {}".format(
+                pretrained_hash, EXPECTED_PRETRAINED_SHA256
             )
         )
+    fine_tuned_hash = sha256_file(args.checkpoint)
 
     with args.config.open("r", encoding="utf-8") as stream:
         config = yaml.safe_load(stream)
@@ -104,6 +112,10 @@ def main() -> None:
         raise ValueError("Output variables must also be model inputs: {}".format(missing_outputs))
     if args.lead_hours <= 0:
         raise ValueError("--lead-hours must be a positive integer")
+    if args.num_samples <= 0:
+        raise ValueError("--num-samples must be a positive integer")
+    if args.sample_stride <= 0:
+        raise ValueError("--sample-stride must be a positive integer")
     hours_each_step = int(data_config.get("hrs_each_step", 1))
     if args.lead_hours % hours_each_step:
         raise ValueError(
@@ -138,10 +150,11 @@ def main() -> None:
             )
         time_count, _, height, width = first.shape
         expected_shape = (time_count, 1, height, width)
-        if args.time_index + lead_steps >= time_count:
+        last_input_index = args.time_index + (args.num_samples - 1) * args.sample_stride
+        if last_input_index + lead_steps >= time_count:
             raise ValueError(
-                "Input index {} plus lead {} steps exceeds {} timesteps in {}".format(
-                    args.time_index, lead_steps, time_count, shard
+                "Input indices {}..{} plus lead {} steps exceed {} timesteps in {}".format(
+                    args.time_index, last_input_index, lead_steps, time_count, shard
                 )
             )
 
@@ -194,16 +207,23 @@ def main() -> None:
     if not np.isfinite(lat).all() or not np.isfinite(lon).all():
         raise ValueError("Latitude and longitude coordinates contain non-finite values")
 
-    target_index = args.time_index + lead_steps
-    x_raw = np.concatenate(
-        [raw_by_variable[name][args.time_index] for name in variables], axis=0
+    input_indices = args.time_index + np.arange(args.num_samples) * args.sample_stride
+    target_indices = input_indices + lead_steps
+    target = np.stack(
+        [
+            np.concatenate(
+                [raw_by_variable[name][target_index] for name in out_variables], axis=0
+            )
+            for target_index in target_indices
+        ]
     )
-    x_normalized = (x_raw - mean[:, None, None]) / std[:, None, None]
-    target = np.concatenate(
-        [raw_by_variable[name][target_index] for name in out_variables], axis=0
-    )
-    persistence = np.concatenate(
-        [raw_by_variable[name][args.time_index] for name in out_variables], axis=0
+    persistence = np.stack(
+        [
+            np.concatenate(
+                [raw_by_variable[name][input_index] for name in out_variables], axis=0
+            )
+            for input_index in input_indices
+        ]
     )
 
     climatology_path = args.data_dir / args.split / "climatology.npz"
@@ -215,11 +235,8 @@ def main() -> None:
             [np.asarray(archive[name], dtype=np.float32).reshape(1, height, width) for name in out_variables],
             axis=0,
         )
-    if not all(
-        np.isfinite(array).all()
-        for array in (x_normalized, target, persistence, climatology)
-    ):
-        raise ValueError("Input, target, or baseline data contains non-finite values")
+    if not all(np.isfinite(array).all() for array in (target, persistence, climatology)):
+        raise ValueError("Target or baseline data contains non-finite values")
 
     if args.device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
@@ -229,49 +246,73 @@ def main() -> None:
         device = torch.device(args.device)
     torch.manual_seed(42)
     net = ClimaX(**model_config)
-    model = GlobalForecastModule(net=net, pretrained_path=str(args.checkpoint))
+    model = GlobalForecastModule(net=net)
+    checkpoint = torch.load(args.checkpoint, map_location=torch.device("cpu"))
+    if "state_dict" not in checkpoint:
+        raise KeyError("Fine-tuned checkpoint has no 'state_dict'; expected a PyTorch Lightning checkpoint")
+    model.load_state_dict(checkpoint["state_dict"], strict=True)
+    checkpoint_epoch = checkpoint.get("epoch")
+    checkpoint_global_step = checkpoint.get("global_step")
     model.to(device)
     model.eval()
-    x_tensor = torch.from_numpy(x_normalized[None]).to(device=device, dtype=torch.float32)
-    lead_times = torch.tensor([args.lead_hours / 100.0], device=device, dtype=torch.float32)
 
     start_time = time.monotonic()
+    prediction_samples: List[np.ndarray] = []
     with torch.no_grad():
-        _, prediction_normalized = model.net(
-            x_tensor,
-            None,
-            lead_times,
-            variables,
-            out_variables,
-            metric=None,
-            lat=None,
-        )
+        for input_index in input_indices:
+            x_raw = np.concatenate(
+                [raw_by_variable[name][input_index] for name in variables], axis=0
+            )
+            x_normalized = (x_raw - mean[:, None, None]) / std[:, None, None]
+            if not np.isfinite(x_normalized).all():
+                raise ValueError("Normalized input at index {} contains non-finite values".format(input_index))
+            x_tensor = torch.from_numpy(x_normalized[None]).to(device=device, dtype=torch.float32)
+            lead_times = torch.tensor(
+                [args.lead_hours / 100.0], device=device, dtype=torch.float32
+            )
+            _, prediction_normalized = model.net(
+                x_tensor,
+                None,
+                lead_times,
+                variables,
+                out_variables,
+                metric=None,
+                lat=None,
+            )
+            prediction_samples.append(
+                prediction_normalized[0].detach().cpu().numpy()
+                * np.asarray(out_stds, dtype=np.float32)[:, None, None]
+                + np.asarray(out_means, dtype=np.float32)[:, None, None]
+            )
     runtime_seconds = time.monotonic() - start_time
-    prediction = (
-        prediction_normalized[0].detach().cpu().numpy()
-        * np.asarray(out_stds, dtype=np.float32)[:, None, None]
-        + np.asarray(out_means, dtype=np.float32)[:, None, None]
-    )
-    expected_output_shape = (len(out_variables), height, width)
+    prediction = np.stack(prediction_samples)
+    expected_output_shape = (args.num_samples, len(out_variables), height, width)
     if prediction.shape != expected_output_shape or target.shape != expected_output_shape:
         raise ValueError(
             "Prediction/target shapes {} / {} do not match expected {}".format(
                 prediction.shape, target.shape, expected_output_shape
             )
         )
-    if not np.isfinite(prediction).all() or not np.isfinite(target).all():
-        raise ValueError("Prediction or target contains non-finite values")
+    if not all(np.isfinite(array).all() for array in (prediction, target, persistence)):
+        raise ValueError("Prediction, target, or persistence baseline contains non-finite values")
 
     scores: Dict[str, Dict[str, float]] = {}
     for index, variable in enumerate(out_variables):
+        climax_rmse = weighted_rmse(prediction[:, index], target[:, index], lat)
+        persistence_rmse = weighted_rmse(persistence[:, index], target[:, index], lat)
+        climatology_rmse = weighted_rmse(climatology[index][None], target[:, index], lat)
         scores[variable] = {
-            "climax_weighted_rmse": weighted_rmse(prediction[index], target[index], lat),
-            "persistence_weighted_rmse": weighted_rmse(persistence[index], target[index], lat),
-            "climatology_weighted_rmse": weighted_rmse(climatology[index], target[index], lat),
-            "prediction_min": float(prediction[index].min()),
-            "prediction_max": float(prediction[index].max()),
-            "target_min": float(target[index].min()),
-            "target_max": float(target[index].max()),
+            "climax_weighted_rmse": climax_rmse,
+            "persistence_weighted_rmse": persistence_rmse,
+            "climatology_weighted_rmse": climatology_rmse,
+            "climax_vs_persistence_relative_improvement": (
+                float(1.0 - climax_rmse / persistence_rmse)
+                if persistence_rmse > 0 else None
+            ),
+            "prediction_min": float(prediction[:, index].min()),
+            "prediction_max": float(prediction[:, index].max()),
+            "target_min": float(target[:, index].min()),
+            "target_max": float(target[:, index].max()),
         }
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -281,13 +322,16 @@ def main() -> None:
         prediction=prediction.astype(np.float32),
         target=target.astype(np.float32),
         persistence=persistence.astype(np.float32),
-        climatology=climatology.astype(np.float32),
+        climatology=np.broadcast_to(
+            climatology[None], (args.num_samples,) + climatology.shape
+        ).astype(np.float32),
         variables=np.asarray(out_variables),
         lat=lat,
         lon=lon,
         lead_hours=np.asarray(args.lead_hours, dtype=np.int32),
         input_index=np.asarray(args.time_index, dtype=np.int64),
-        target_index=np.asarray(target_index, dtype=np.int64),
+        input_indices=input_indices.astype(np.int64),
+        target_indices=target_indices.astype(np.int64),
     )
 
     gpu_name = torch.cuda.get_device_name(device) if device.type == "cuda" else None
@@ -304,7 +348,10 @@ def main() -> None:
             "split": args.split,
             "shard": str(shard.resolve()),
             "input_index": args.time_index,
-            "target_index": target_index,
+            "sample_count": args.num_samples,
+            "sample_stride_hours": args.sample_stride * hours_each_step,
+            "first_target_index": int(target_indices[0]),
+            "last_target_index": int(target_indices[-1]),
             "variables": out_variables,
             "latitude_weighted_rmse": scores,
         },
@@ -313,11 +360,24 @@ def main() -> None:
             "device": str(device),
             "gpu_name": gpu_name,
             "checkpoint": str(args.checkpoint.resolve()),
-            "checkpoint_sha256": checkpoint_hash,
+            "fine_tuned_checkpoint_sha256": fine_tuned_hash,
+            "pretrained_checkpoint": str(args.pretrained_checkpoint.resolve()),
+            "pretrained_checkpoint_sha256": pretrained_hash,
+            "pretrained_checkpoint_revision": PRETRAINED_REVISION,
             "climax_source": str(source),
             "climax_source_commit": os.environ.get("CLIMAX_COMMIT", "not-recorded"),
+            "workflow_commit": os.environ.get("WORKFLOW_COMMIT", "not-recorded"),
+            "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
+            "slurm_node": os.environ.get("SLURMD_NODENAME", os.uname().nodename),
+            "checkpoint_epoch": checkpoint_epoch,
+            "checkpoint_global_step": checkpoint_global_step,
             "config": str(args.config.resolve()),
+            "config_sha256": sha256_file(args.config),
+            "python_version": sys.version.split()[0],
+            "pytorch_version": torch.__version__,
+            "cuda_runtime": torch.version.cuda,
             "output_file": str(result_path.resolve()),
+            "output_sha256": sha256_file(result_path),
         },
     }
     metrics_path = args.output_dir / "metrics.json"

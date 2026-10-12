@@ -12,15 +12,16 @@ set -euo pipefail
 
 WORKFLOW_DIR="${WORKFLOW_DIR:-$HOME/scratch/climax-inference/workflows/climax-global-forecast}"
 PROJECT_DIR="${PROJECT_DIR:-$HOME/scratch/climax-reproduction}"
-ENV_PREFIX="${ENV_PREFIX:-$HOME/scratch/.conda/envs/climax-inference}"
+ENV_NAME="${ENV_NAME:-climax-inference}"
 CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"
 PRETRAINED_CHECKPOINT="${PRETRAINED_CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625deg.ckpt}"
-FINETUNED_CHECKPOINT="${FINETUNED_CHECKPOINT:?Set FINETUNED_CHECKPOINT to the selected fine-tuned Lightning checkpoint}"
+FINETUNED_CHECKPOINT="${1:?Usage: sbatch slurm/infer.sbatch /path/to/validation-selected.ckpt}"
 ERA5_NPZ="${ERA5_NPZ:-$PROJECT_DIR/data/5.625deg_npz}"
 OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_DIR/runs/inference-${SLURM_JOB_ID:-manual}}"
 
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$OUTPUT_DIR"
+module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
 export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
@@ -31,7 +32,7 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"
 export TORCH_HOME="$HOME/scratch/.cache/torch"
 export GIT_CONFIG_GLOBAL="$HOME/scratch/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
-conda activate "$ENV_PREFIX"
+conda activate "$ENV_NAME"
 CLIMAX_PYTHON="$(command -v python)"
 export CLIMAX_COMMIT
 CLIMAX_COMMIT="$(git -C "$CLIMAX_SOURCE" rev-parse HEAD)"

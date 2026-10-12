@@ -12,7 +12,7 @@ set -euo pipefail
 
 WORKFLOW_DIR="${WORKFLOW_DIR:-$HOME/scratch/climax-inference/workflows/climax-global-forecast}"
 PROJECT_DIR="${PROJECT_DIR:-$HOME/scratch/climax-reproduction}"
-ENV_PREFIX="${ENV_PREFIX:-$HOME/scratch/.conda/envs/climax-inference}"
+ENV_NAME="${ENV_NAME:-climax-inference}"
 CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"
 PRETRAINED_CHECKPOINT="${PRETRAINED_CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625deg.ckpt}"
 ERA5_NPZ="${ERA5_NPZ:-$PROJECT_DIR/data/5.625deg_npz}"
@@ -21,6 +21,7 @@ TRAIN_DIR="${TRAIN_DIR:-$PROJECT_DIR/runs/global-forecast}"
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$TRAIN_DIR"
 
+module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
 export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
@@ -31,7 +32,7 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"
 export TORCH_HOME="$HOME/scratch/.cache/torch"
 export GIT_CONFIG_GLOBAL="$HOME/scratch/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
-conda activate "$ENV_PREFIX"
+conda activate "$ENV_NAME"
 
 for required_path in "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" "$PRETRAINED_CHECKPOINT" "$ERA5_NPZ"; do
   if [ ! -e "$required_path" ]; then
@@ -48,7 +49,8 @@ CLIMAX_COMMIT="$(git -C "$CLIMAX_SOURCE" rev-parse HEAD)"
 export WORKFLOW_COMMIT
 WORKFLOW_COMMIT="$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
 RESUME_ARGS=()
-if [ -n "${RESUME_CHECKPOINT:-}" ]; then
+if [ "$#" -gt 0 ]; then
+  RESUME_CHECKPOINT="$1"
   if [ ! -f "$RESUME_CHECKPOINT" ]; then
     echo "Resume checkpoint is missing: $RESUME_CHECKPOINT" >&2
     exit 1

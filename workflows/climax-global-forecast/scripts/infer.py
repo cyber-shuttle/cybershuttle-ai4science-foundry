@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -27,6 +28,16 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def git_commit(path: Path) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(path), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout.strip()
 
 
 def load_array(npz: Any, name: str, expected_shape: Tuple[int, int, int, int]) -> np.ndarray:
@@ -76,6 +87,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     source = args.climax_source.resolve()
+    workflow_repo = Path(__file__).resolve().parents[3]
     source_src = source / "src"
     if not source_src.is_dir():
         raise FileNotFoundError("ClimaX source must contain src/: {}".format(source))
@@ -365,8 +377,8 @@ def main() -> None:
             "pretrained_checkpoint_sha256": pretrained_hash,
             "pretrained_checkpoint_revision": PRETRAINED_REVISION,
             "climax_source": str(source),
-            "climax_source_commit": os.environ.get("CLIMAX_COMMIT", "not-recorded"),
-            "workflow_commit": os.environ.get("WORKFLOW_COMMIT", "not-recorded"),
+            "climax_source_commit": git_commit(source),
+            "workflow_commit": git_commit(workflow_repo),
             "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
             "slurm_node": os.environ.get("SLURMD_NODENAME", os.uname().nodename),
             "checkpoint_epoch": checkpoint_epoch,

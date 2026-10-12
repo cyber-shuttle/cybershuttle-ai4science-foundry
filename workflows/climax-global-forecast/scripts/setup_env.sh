@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKFLOW_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SCRATCH_ROOT="${SCRATCH_ROOT:-$HOME/scratch}"
 ENV_NAME="${ENV_NAME:-climax-inference}"
+ENV_PREFIX="$SCRATCH_ROOT/.conda/envs/$ENV_NAME"
 
 if ! command -v module >/dev/null 2>&1; then
   echo "Environment modules are unavailable. Run this on a PACE ICE login/compute shell." >&2
@@ -30,20 +31,36 @@ export TORCH_HOME="$SCRATCH_ROOT/.cache/torch"
 export GIT_CONFIG_GLOBAL="$SCRATCH_ROOT/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
 mkdir -p "$SCRATCH_ROOT/.conda/envs"
+mkdir -p "$WORKFLOW_DIR/execution"
 
-if [ -f "$SCRATCH_ROOT/.conda/envs/$ENV_NAME/conda-meta/history" ]; then
-  echo "Using existing environment $ENV_NAME"
+if command -v mamba >/dev/null 2>&1; then
+  SOLVER="$(command -v mamba)"
 else
-  echo "Creating ClimaX environment $ENV_NAME under $SCRATCH_ROOT/.conda/envs"
-  conda env create --name "$ENV_NAME" --file "$WORKFLOW_DIR/environment.yml"
+  echo "mamba is unavailable; using conda (this may take longer)." >&2
+  SOLVER="$(command -v conda)"
 fi
 
-conda activate "$ENV_NAME"
+if [ -f "$ENV_PREFIX/conda-meta/history" ]; then
+  echo "Updating existing environment at $ENV_PREFIX"
+  "$SOLVER" env update --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"
+else
+  echo "Creating ClimaX environment at $ENV_PREFIX"
+  "$SOLVER" env create --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"
+fi
+
+if command -v mamba >/dev/null 2>&1; then
+  mamba install --prefix "$ENV_PREFIX" --channel conda-forge "mkl=2024.0"
+else
+  conda install --prefix "$ENV_PREFIX" --channel conda-forge "mkl=2024.0"
+fi
+"$ENV_PREFIX/bin/python" -m pip install "pip==24.0"
+
+conda activate "$ENV_PREFIX"
 echo "Environment: $CONDA_PREFIX"
 python --version
 python -c 'import importlib.metadata as metadata; import jsonargparse, rich, tensorboard, timm, torch, torchdata, torchvision, pytorch_lightning; from pytorch_lightning.callbacks import RichProgressBar; from pytorch_lightning.loggers import TensorBoardLogger; print("PyTorch:", torch.__version__); print("torchvision:", metadata.version("torchvision")); print("PyTorch Lightning:", metadata.version("pytorch-lightning")); print("timm:", metadata.version("timm")); print("torchdata:", metadata.version("torchdata")); print("jsonargparse:", metadata.version("jsonargparse")); print("rich:", metadata.version("rich")); print("TensorBoard:", metadata.version("tensorboard")); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
 conda list --explicit > "$WORKFLOW_DIR/execution/conda-explicit.txt"
-pip freeze > "$WORKFLOW_DIR/execution/pip-freeze.txt"
+"$ENV_PREFIX/bin/python" -m pip freeze > "$WORKFLOW_DIR/execution/pip-freeze.txt"
 if ! python -c 'import torch; x = torch.ones(1, device="cuda"); torch.cuda.synchronize(); print("CUDA device:", torch.cuda.get_device_name(0)); print("CUDA capability:", torch.cuda.get_device_capability(0))'; then
   echo "CUDA smoke check failed; do not submit ClimaX GPU jobs from this environment." >&2
   exit 1

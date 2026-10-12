@@ -47,11 +47,9 @@ Use PACE scratch for caches and large files. The commands use `$HOME/scratch`; c
 Run on ICE. Clone the published `climax-inference` assignment branch:
 
 ```bash
-mkdir -p "$HOME/scratch"
 git clone --branch climax-inference \
   https://github.com/purvikathalkar/climax-inference.git \
   "$HOME/scratch/climax-inference"
-module purge
 module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
@@ -65,7 +63,7 @@ git -C "$HOME/scratch/climax-reproduction/ClimaX" rev-parse HEAD
 
 If `git clone --branch climax-inference` says the branch does not exist, the branch has not yet been pushed to GitHub. Use the repository's published assignment branch once available; do not silently clone `main` and claim it is the reproduction revision.
 
-## 4. Load Conda correctly and create the environment
+## 4. Initialize Conda and create the environment
 
 On PACE, Conda is supplied through the Miniforge environment module. A new login shell does not necessarily have a `conda` command on `PATH`; this is why running `conda env create` immediately can return `-bash: conda: command not found`.
 
@@ -94,9 +92,42 @@ bash scripts/setup_env.sh
 conda activate climax-inference
 ```
 
-The helper creates the named environment and puts Conda, pip, temporary, Hugging Face, and PyTorch caches on scratch. It checks the Lightning CLI/logger imports, reports package/CUDA versions, records explicit Conda and pip package lists in `execution/`, and runs a real CUDA tensor operation. Current pins include Python 3.8.16, PyTorch 1.12.1, torchvision 0.13.1, CUDA runtime 11.3.1, Lightning 1.8.0, `jsonargparse` 4.19.0, Rich 13.3.1, TensorBoard 2.11.2, timm 0.6.12, and torchdata 0.4.1.
+The setup helper prefers Mamba for faster dependency solving, falling back to Conda with an explicit slower-solver notice if Mamba is not available from the loaded Miniforge module. It creates/updates the environment at `$HOME/scratch/.conda/envs/climax-inference` and redirects Conda, pip, temporary, Hugging Face, and PyTorch caches to scratch. It pins pip 24.0 and MKL 2024.0, checks the Lightning CLI/logger imports, records explicit Conda and pip package lists in `execution/`, and runs a real CUDA tensor operation.
 
 There is no separate ClimaX CUDA-extension build step in this workflow. The pinned model runs with the prebuilt PyTorch/CUDA packages; do not apply unrelated GCC symlink, TensorRT, CUTLASS, or custom-extension instructions from other model guides.
+
+### Environment pins and updating an existing environment
+
+Important pins are Python 3.8.16, PyTorch 1.12.1, torchvision 0.13.1, CUDA runtime 11.3.1, pip 24.0, MKL 2024.0, PyTorch Lightning and lightning-lite 1.8.0, `jsonargparse` 4.19.0, Rich 13.3.1, TensorBoard 2.11.2, timm 0.6.12, and torchdata 0.4.1. The complete package specification is in [`environment.yml`](environment.yml).
+
+For reference, the setup helper's Mamba operations are equivalent to:
+
+```bash
+mamba env create \
+  -p "$HOME/scratch/.conda/envs/climax-inference" \
+  -f "$HOME/scratch/climax-inference/workflows/climax-global-forecast/environment.yml"
+
+"$HOME/scratch/.conda/envs/climax-inference/bin/python" \
+  -m pip install "pip==24.0"
+
+mamba env update \
+  -p "$HOME/scratch/.conda/envs/climax-inference" \
+  -f "$HOME/scratch/climax-inference/workflows/climax-global-forecast/environment.yml"
+
+mamba install \
+  -p "$HOME/scratch/.conda/envs/climax-inference" \
+  -c conda-forge "mkl=2024.0"
+```
+
+Run `mamba env create` only the first time. When dependencies in `environment.yml` change or a previous solve left the environment incomplete, run `mamba env update` and then reapply the explicit pip/MKL pins shown above. The setup helper performs the required operations automatically. If using the `mamba install` command manually, use the exact version `mkl=2024.0`; do not add a `.*` suffix, which triggers Conda's deprecated wildcard-version warning.
+
+Verify the versions and CUDA runtime/device from the allocated GPU shell:
+
+```bash
+conda activate climax-inference
+python --version
+python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
+```
 
 Expected check:
 
@@ -341,9 +372,46 @@ As a broad plausibility screen only (not a hard metric threshold), outputs shoul
 
 The inference script emits summary ranges/metrics, not a plotted map. For visual inspection, load the NPZ on a local machine with NumPy/Matplotlib and plot a prediction, its matching target, and their difference for the same sample/variable; include the figure only if generated from this actual run.
 
-## 10. Record execution evidence
+## 10. Execution evidence and run record
 
-Fill in [`execution/README.md`](execution/README.md) with the dated run record and include non-large, non-sensitive evidence: job stdout/stderr, Conda package exports, source commit, checkpoint hash, preprocessing details, metrics JSON, and a small output inventory. Do not commit the ERA5 dataset or either checkpoint.
+Use the following record to capture each run. Preserve job stdout/stderr, Conda package exports, source commit, checkpoint hashes, preprocessing details, metrics JSON, and a small output inventory. Do not commit ERA5 data or model checkpoints.
+
+### PACE setup/allocation evidence supplied so far
+
+On 2026-10-11, PACE reported the `coc` account for the `ice-slurm` cluster with the `coc-ice` QOS. Interactive allocation job `6196618` was queued and allocated on `ice-gpu` with one GPU, 8 CPUs, 32 GiB RAM, and a two-hour limit. The SLURM prolog reported a start time of 2026-10-11 21:05:44. This documents access to the requested GPU partition and allocation; the actual GPU model, completed training/inference jobs, outputs, runtime, and forecast scores should be added from their respective logs when available. The user reports that setup progressed through workflow step 6; stdout for step 3 and the beginning of step 4 was not included in the submitted evidence.
+
+### Run record template
+
+Copy this section for each completed, partial, or failed training/inference run:
+
+#### Run `<date>` / `<purpose>`
+
+- Result: `success / failed / partial`
+- PACE account, partition, QOS:
+- SLURM fine-tuning job ID / state:
+- SLURM inference job ID / state:
+- Compute node and GPU model / memory:
+- Requested GPUs, CPUs, host memory, wall time:
+- Observed elapsed time / peak RSS / peak GPU memory:
+- ClimaX Git commit:
+- Workflow Git commit:
+- Pretraining checkpoint source revision and SHA-256:
+- Fine-tuned checkpoint path, validation-selection rationale, SHA-256:
+- ERA5 source/access date, years/splits, preprocessing command:
+- Python, PyTorch, CUDA, Lightning, timm, pip, MKL versions:
+- Training epochs completed / best validation `w_rmse`:
+- Trainer held-out test metrics:
+- Inference smoke test status and output shape:
+- Per-variable RMSE (ClimaX / persistence / climatology):
+  - `geopotential_500`:
+  - `temperature_850`:
+  - `2m_temperature`:
+  - `10m_u_component_of_wind`:
+  - `10m_v_component_of_wind`:
+- Output file inventory:
+- Failures, troubleshooting, deviations, and follow-up:
+
+Explain any metric worse than its baseline; retain unsuccessful/partial job logs rather than omitting them.
 
 Useful job evidence commands:
 
@@ -374,7 +442,11 @@ Conda activation is shell-local; a fresh login or SLURM batch shell must load Mi
 
 ### Conda solve/install failure or `No space left on device`
 
-Check that Miniforge is loaded and scratch is writable. Inspect the full solver output; do not mix unpinned PyTorch/torchvision versions. Preserve the error and generated package exports. If creation stopped partway, inspect `conda env list`; after saving relevant logs, remove only the incomplete `climax-inference` environment with `conda env remove --name climax-inference`, then rerun the setup helper. If needed, use PACE-supported Mamba/Conda instructions and record a separate, fully pinned environment rather than silently altering the checked-in one.
+Check that Miniforge is loaded and scratch is writable. Inspect the full solver output; do not mix unpinned PyTorch/torchvision versions. Preserve the error and generated package exports. If creation stopped partway, inspect `conda env list`; after saving relevant logs, remove only the incomplete environment with `mamba env remove -p "$HOME/scratch/.conda/envs/climax-inference"` (or `conda env remove -p ...`), then rerun the setup helper. If needed, use PACE-supported Mamba/Conda instructions and record a separate, fully pinned environment rather than silently altering the checked-in one.
+
+### Deprecated wildcard-version warning
+
+If Conda/Mamba reports that using `.*` with a relational version operator is superfluous/deprecated, inspect the version expressions in the environment file or command. Use a concrete pin such as `mkl=2024.0` rather than `mkl=2024.0.*`. Keep a copy of the solver output when documenting dependency troubleshooting.
 
 ### `torch.cuda.is_available()` is false / CUDA kernel or architecture error
 
@@ -409,7 +481,7 @@ printf '%s\n' "$HOME/scratch/climax-reproduction/runs/global-forecast"
 # rm -rf -- "$HOME/scratch/climax-reproduction/runs/inference-<job-id>"
 # rm -rf -- "$HOME/scratch/climax-reproduction/runs/global-forecast"
 # rm -f -- "$HOME/scratch/climax-reproduction/checkpoints/5.625deg.ckpt"
-# conda env remove --name climax-inference
+# mamba env remove -p "$HOME/scratch/.conda/envs/climax-inference"
 ```
 
 Do not delete `$HOME/scratch`, the workflow checkout, or source ERA5 data recursively. Observe PACE project/scratch cleanup rules.

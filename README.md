@@ -61,7 +61,9 @@ bash scripts/setup_env.sh
 conda activate climax-inference
 ```
 
-The environment pins Python 3.8.16, PyTorch 1.12.1, torchvision 0.13.1, CUDA runtime 11.3.1, Lightning 1.8.0, and the other dependencies in [`environment.yml`](workflows/climax-global-forecast/environment.yml). Setup verifies training imports and performs a real CUDA tensor operation. Continue only if that check succeeds. The older stack may not support newer GPU architectures; see the detailed guide's [environment and GPU checks](workflows/climax-global-forecast/README.md#4-load-conda-correctly-and-create-the-environment).
+The environment pins Python 3.8.16, PyTorch 1.12.1, torchvision 0.13.1, CUDA runtime 11.3.1, Lightning 1.8.0, and the other dependencies in [`environment.yml`](workflows/climax-global-forecast/environment.yml). Setup verifies training imports and performs a real CUDA tensor operation. Continue only if that check succeeds. The older stack may not support newer GPU architectures; see the detailed guide's [environment and GPU checks](workflows/climax-global-forecast/README.md#4-initialize-conda-and-create-the-environment).
+
+The helper uses Mamba when it is available (otherwise Conda is used and may take longer). The environment pins `pip=24.0` and `mkl=2024.0`; the helper also reapplies these pins after environment creation/update because `lightning-lite==1.8.0` is incompatible with newer pip releases in this stack.
 
 ### 4. Retrieve source code and pretrained weights
 
@@ -170,7 +172,7 @@ There is **no official absolute RMSE cutoff for this exact run** in the pinned u
 
 ### 9. Preserve evidence and clean up
 
-Complete [`execution/README.md`](workflows/climax-global-forecast/execution/README.md) with the date, job IDs/states, source commit, checkpoint hashes, environment export, data/preprocessing details, actual GPU/resources/runtime, observed metrics, and failures/deviations. Include useful logs and a small reviewed result artifact if repository/data policy permits. Do not commit ERA5 or checkpoint files.
+Complete the [execution record](workflows/climax-global-forecast/README.md#10-execution-evidence-and-run-record) in the workflow guide with the date, job IDs/states, source commit, checkpoint hashes, environment export, data/preprocessing details, actual GPU/resources/runtime, observed metrics, and failures/deviations. Include useful logs and a small reviewed result artifact if repository/data policy permits. Do not commit ERA5 or checkpoint files.
 
 Only after the evidence is saved and reviewed, optionally remove specifically named run outputs/checkpoints or the Conda prefix. See the detailed [cleanup instructions](workflows/climax-global-forecast/README.md#12-cleanup); do not recursively delete `$HOME/scratch`.
 

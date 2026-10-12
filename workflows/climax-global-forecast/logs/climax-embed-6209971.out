@@ -1,0 +1,169 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-12-2026 04:34:23
+Job ID:    6209971
+User ID:   pkathalkar3
+Account:   coc
+Job name:  climax-embed
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+job_id=6209971
+node=atl1-1-02-009-32-0.pace.gatech.edu
+start=2026-10-12T04:34:29-04:00
+climax_commit=6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c
+workflow_commit=063697e0d18e615c3d662fc7c0076b6c3edf801c
+checkpoint=/home/hice1/pkathalkar3/scratch/climax-reproduction/checkpoints/5.625deg.ckpt
+data=/home/hice1/pkathalkar3/scratch/climax-reproduction/data/geopotential_npz_2016_test
+Mon Oct 12 04:34:29 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-16GB           On  |   00000000:AF:00.0 Off |                    0 |
+| N/A   45C    P0             27W /  250W |       0MiB /  16384MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+{
+  "smoke_test": {
+    "spatial_embedding_shape": [
+      32,
+      512,
+      1024
+    ],
+    "pooled_embedding_shape": [
+      32,
+      1024
+    ],
+    "all_embedding_values_finite": true,
+    "nonconstant_embedding": true,
+    "repeat_inference_deterministic": true,
+    "status": "passed"
+  },
+  "representation": {
+    "variable": "geopotential_500",
+    "split": "test",
+    "shard": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/data/geopotential_npz_2016_test/test/2016_0.npz",
+    "sample_indices": [
+      0,
+      24,
+      48,
+      72,
+      96,
+      120,
+      144,
+      168,
+      192,
+      216,
+      240,
+      264,
+      288,
+      312,
+      336,
+      360,
+      384,
+      408,
+      432,
+      456,
+      480,
+      504,
+      528,
+      552,
+      576,
+      600,
+      624,
+      648,
+      672,
+      696,
+      720,
+      744
+    ],
+    "input_shape": [
+      32,
+      32,
+      64
+    ],
+    "grid_shape": [
+      32,
+      64
+    ],
+    "latitude_min": -87.1875,
+    "latitude_max": 87.1875,
+    "longitude_min": 0.0,
+    "longitude_max": 354.375,
+    "patch_size": 2,
+    "pooled_embedding_dimension": 1024,
+    "spatial_token_count": 512,
+    "mean_token_std": 0.25244829058647156,
+    "pooled_vector_l2_norm_mean": 7.482089042663574
+  },
+  "run": {
+    "runtime_seconds_encoder": 1.6722011599922553,
+    "device": "cuda",
+    "gpu_name": "Tesla V100-PCIE-16GB",
+    "checkpoint": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/checkpoints/5.625deg.ckpt",
+    "checkpoint_sha256": "6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43",
+    "checkpoint_revision": "6f9d4a5c0c2602965b2a381e60636fed7f12b8f4",
+    "input_shard": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/data/geopotential_npz_2016_test/test/2016_0.npz",
+    "input_shard_sha256": "6ab0ed6c75b6a6b7bd83fe4423ee2d5f1ac55d36d6a124e39cd571a0f8d99567",
+    "climax_source": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/ClimaX",
+    "climax_source_commit": "6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c",
+    "workflow_commit": "063697e0d18e615c3d662fc7c0076b6c3edf801c",
+    "slurm_job_id": "6209971",
+    "slurm_node": "atl1-1-02-009-32-0",
+    "config": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/ClimaX/configs/pretrain_climax.yaml",
+    "config_sha256": "38ad0714eff479c4cfb80bb32997041f4af5d7308273e7748beb741b208d2e27",
+    "normalization_mean_sha256": "e972e9cc0493091f4fed21839a20dec277deca290a9edb1a5b3a6e01d5821cca",
+    "normalization_std_sha256": "761d0cffd08152128528f2272d79c30e2b910454f93d2dbf5128481ed023da1f",
+    "data_normalization_mean": 54158.78515625,
+    "data_normalization_std": 3360.7998046875,
+    "python_version": "3.8.16",
+    "pytorch_version": "1.12.1",
+    "cuda_runtime": "11.3",
+    "output_file": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/runs/embeddings-6209971/climax-embeddings.npz",
+    "output_sha256": "7965fd2362e4471d1a5bc92f32da040ced27ee5e5f24ae910fe22c5adfcf2158"
+  }
+}
+end=2026-10-12T04:34:44-04:00
+Mon Oct 12 04:34:44 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-16GB           On  |   00000000:AF:00.0 Off |                    0 |
+| N/A   47C    P0             43W /  250W |       0MiB /  16384MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+---------------------------------------
+Begin Slurm Epilog: Oct-12-2026 04:34:45
+Job ID:        6209971
+User ID:       pkathalkar3
+Account:       coc
+Job name:      climax-embed
+Resources:     cpu=4,gres/gpu:v100=1,mem=32G,node=1
+Rsrc Used:     cput=00:01:28,vmem=0,walltime=00:00:22,mem=2920136K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-009-32-0
+---------------------------------------

@@ -169,7 +169,35 @@ def main() -> None:
     checkpoint = torch.load(args.checkpoint, map_location=torch.device("cpu"))
     if "state_dict" not in checkpoint:
         raise KeyError("Pretrained checkpoint has no 'state_dict' key")
-    module.load_state_dict(checkpoint["state_dict"], strict=True)
+    # Compatibility with checkpoints saved before channel_* was renamed var_*.
+    state_dict = checkpoint["state_dict"]
+    key_mapping = {
+        "net.channel_embed": "net.var_embed",
+        "net.channel_query": "net.var_query",
+        "net.channel_agg.": "net.var_agg.",
+    }
+
+    for old_key in list(state_dict.keys()):
+        new_key = old_key
+        for old_name, new_name in key_mapping.items():
+            if old_name.endswith("."):
+                if old_key.startswith(old_name):
+                    new_key = new_name + old_key[len(old_name):]
+                    break
+            elif old_key == old_name:
+                new_key = new_name
+                break
+
+        if new_key != old_key:
+            if new_key in state_dict:
+                raise RuntimeError(
+                    "Checkpoint contains both {!r} and {!r}".format(
+                        old_key, new_key
+                    )
+                )
+            state_dict[new_key] = state_dict.pop(old_key)
+
+    module.load_state_dict(state_dict, strict=True)
     module.to(device)
     module.eval()
 
@@ -179,8 +207,8 @@ def main() -> None:
     start_time = time.monotonic()
     with torch.no_grad():
         token_embeddings = module.net.forward_encoder(input_tensor, lead_times, [args.variable])
-        repeated_first = module.net.forward_encoder(
-            input_tensor[:1], lead_times[:1], [args.variable]
+        repeated_embeddings = module.net.forward_encoder(
+            input_tensor, lead_times, [args.variable]
         )
     runtime_seconds = time.monotonic() - start_time
     tokens = token_embeddings.detach().cpu().numpy().astype(np.float32)
@@ -201,13 +229,23 @@ def main() -> None:
     if float(tokens.std()) <= 0:
         raise ValueError("Encoder returned a constant representation")
     deterministic = torch.allclose(
-        token_embeddings[:1],
-        repeated_first,
+        token_embeddings,
+        repeated_embeddings,
         rtol=1e-5,
         atol=1e-6,
     )
     if not deterministic:
-        raise ValueError("Repeated evaluation of the same input produced different embeddings")
+        difference = (token_embeddings[:1] - repeated_first).abs()
+        max_abs_diff = difference.max().item()
+        mean_abs_diff = difference.mean().item()
+        reference_max = token_embeddings[:1].abs().max().item()
+        raise ValueError(
+            "Repeated evaluation differs beyond tolerance: "
+            "max_abs_diff={}, mean_abs_diff={}, reference_max={}, "
+            "rtol=1e-5, atol=1e-6".format(
+                max_abs_diff, mean_abs_diff, reference_max
+            )
+        )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     output_path = args.output_dir / "climax-embeddings.npz"

@@ -15,7 +15,7 @@ PROJECT_DIR="${PROJECT_DIR:-$HOME/scratch/climax-reproduction}"
 ENV_NAME="${ENV_NAME:-climax-inference}"
 CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"
 CHECKPOINT="${CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625deg.ckpt}"
-ERA5_NPZ="${ERA5_NPZ:-$PROJECT_DIR/data/geopotential_npz}"
+ERA5_NPZ="${HOME}/scratch/climax-reproduction/data/geopotential_npz_2016_test"
 OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_DIR/runs/embeddings-${SLURM_JOB_ID:-manual}}"
 
 cd "$WORKFLOW_DIR"

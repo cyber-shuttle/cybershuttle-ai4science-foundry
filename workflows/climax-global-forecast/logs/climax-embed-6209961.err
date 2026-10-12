@@ -1,0 +1,9 @@
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+Traceback (most recent call last):
+  File "scripts/embed.py", line 326, in <module>
+    main()
+  File "scripts/embed.py", line 242, in main
+    raise ValueError(
+ValueError: Repeated evaluation differs beyond tolerance: max_abs_diff=8.58306884765625e-06, mean_abs_diff=1.8806430546192132e-07, reference_max=5.092019081115723, rtol=1e-5, atol=1e-6

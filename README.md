@@ -1,4 +1,4 @@
-# Frozen ClimaX inference on PACE ICE
+# ClimaX inference on PACE ICE
 
 This repository's primary workflow runs inference directly with Microsoft's public ClimaX pretrained weights. It extracts spatial and pooled representations from ERA5 geopotential at 500 hPa; it does **not** fine-tune ClimaX and does **not** claim to forecast weather. This narrower inference task avoids training and needs only one pressure-level input group plus static constants, rather than the full ERA5 input set.
 
@@ -75,6 +75,113 @@ echo '6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43  '"$HOME/
 ```
 
 Continue only if the checksum reports `OK`.
+
+### 4. Download and preprocess the reduced ERA5 input
+
+Download the constants and geopotential folders directly from the TUM WeatherBench archive on ICE. The geopotential pressure-level group is required because the pinned ClimaX preprocessor expects the parent group and extracts the pressure levels it needs. Although WeatherBench also provides a separate geopotential_500 ZIP, that archive does not use the expected input layout.
+
+The following commands download the two folders as ZIP archives, extract their contents, and stage the files under $HOME/scratch/climax-reproduction/data/5.625deg/.
+
+##### 1. Create the download and data directories
+
+```bash
+DOWNLOAD_DIR="$HOME/scratch/climax-reproduction/downloads"
+DATA_DIR="$HOME/scratch/climax-reproduction/data/5.625deg"
+mkdir -p "$DOWNLOAD_DIR" "$DATA_DIR/geopotential"
+cd "$DOWNLOAD_DIR"
+```
+
+##### 2. Download the constants archive
+
+```bash
+curl -fL --retry 3 \
+  -o constants.zip \
+  'https://dataserv.ub.tum.de/s/m1524895/download?path=%2F5.625deg%2Fconstants'
+```
+
+##### 3. Download the geopotential archive
+
+```bash
+curl -fL --retry 3 \
+  -o geopotential.zip \
+  'https://dataserv.ub.tum.de/s/m1524895/download?path=%2F5.625deg%2Fgeopotential'
+```
+
+These commands save the archives to scratch storage instead of your home directory. The geopotential download may be large, so check its size before starting if storage is limited:
+
+```bash
+du -h constants.zip geopotential.zip
+df -h "$HOME/scratch"
+```
+
+##### 4. Verify the archives before extracting
+
+```bash
+file constants.zip geopotential.zip
+unzip -t constants.zip
+unzip -t geopotential.zip
+```
+
+Both files should be valid ZIP archives, and both integrity tests should finish successfully.
+
+##### 5. Extract the archives
+
+```bash
+mkdir -p "$DOWNLOAD_DIR/constants" "$DOWNLOAD_DIR/geopotential"
+unzip -n constants.zip -d "$DOWNLOAD_DIR/constants"
+unzip -n geopotential.zip -d "$DOWNLOAD_DIR/geopotential"
+```
+
+##### 6. Stage the NetCDF files
+
+Locate the extracted constants file:
+
+```bash
+find "$DOWNLOAD_DIR/constants" -type f -name 'constants.nc'
+```
+
+Copy it to the expected location:
+
+```bash
+CONSTANTS_FILE="$(find "$DOWNLOAD_DIR/constants" -type f -name 'constants.nc' -print -quit)"
+if [ -z "$CONSTANTS_FILE" ]; then
+    echo "ERROR: constants.nc was not found in the extracted archive."
+    exit 1
+fi
+cp -n "$CONSTANTS_FILE" "$DATA_DIR/constants.nc"
+```
+
+Copy the extracted geopotential NetCDF files into the expected geopotential directory while preserving their filenames:
+
+```bash
+find "$DOWNLOAD_DIR/geopotential" -type f -name '*.nc' \
+  -exec cp -n -t "$DATA_DIR/geopotential" {} +
+```
+
+##### 7. Verify the final directory structure
+
+```bash
+find "$DATA_DIR" -maxdepth 2 -type f
+du -sh "$DATA_DIR"
+```
+
+The expected structure is:
+
+```text
+$HOME/scratch/climax-reproduction/data/5.625deg/
+├── constants.nc
+└── geopotential/
+    ├── <original NetCDF filename>.nc
+    └── ...
+```
+
+The exact filenames depend on the archive. Preserve them rather than renaming the files manually.
+
+##### 8. Preprocess the reduced input
+
+Before running the pinned ClimaX preprocessing script, verify that the downloaded files contain the required years and pressure levels, and confirm that the script supports processing this reduced variable set. The intended pilot period is 2013–2017, but the preprocessing configuration must match the available data and the selected inference task.
+
+Note: Downloading only constants and geopotential is appropriate only if the selected inference workflow can operate with that reduced input. Confirm the model’s required input variables before running preprocessing.
 
 ### 4. Download and preprocess the reduced ERA5 input
 

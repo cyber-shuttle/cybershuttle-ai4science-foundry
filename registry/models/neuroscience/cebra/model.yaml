@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+id: cebra
+name: CEBRA
+domain:
+  - biology
+  - neuroscience
+model_family:
+  - contrastive-learning
+  - embedding
+  - neural-behavior
+tasks:
+  - inference
+  - evaluation
+upstream:
+  github: https://github.com/AdaptiveMotorControlLab/CEBRA
+  paper: https://www.nature.com/articles/s41586-023-06031-6
+  other:
+    - https://cebra.ai/docs/demo_notebooks/
+    - https://pypi.org/project/cebra/0.6.1/
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation

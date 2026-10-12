@@ -1,0 +1,4 @@
+python 3.11.17
+torch 2.14.0+cu130 cuda_build 13.0
+cebra 0.6.1
+numpy 2.4.6 sklearn 1.9.1

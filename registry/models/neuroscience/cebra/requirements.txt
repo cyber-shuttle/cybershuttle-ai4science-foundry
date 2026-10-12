@@ -1,0 +1,2 @@
+cebra[datasets,integrations]==0.6.1
+matplotlib>=3.8

@@ -1,347 +1,193 @@
-# Cybershuttle AI Model Foundry
+# ClimaX reproducible inference on PACE ICE
 
-**A community registry for curating, benchmarking, and running AI4Science models on Nexus and other advanced cyberinfrastructure. The goal is to turn AI4Science models into portable, optimized, reproducible, and executable scientific workflows.**
+This repository branch documents and implements a Georgia Tech AI Makerspace / PACE ICE workflow for fine-tuning ClimaX's public pretrained model on ERA5, running global forecast inference, and validating the predictions. **Start with this guide.** For full dataset instructions, troubleshooting, and evidence details, see the [complete workflow guide](workflows/climax-global-forecast/README.md).
 
-[Goals](#goals) · [Model lifecycle](#how-a-model-moves-through-the-foundry) · [Get involved](#get-involved) · [Repository structure](#repository-structure) · [Key concepts](#key-concepts) · [Example model entry](#example-model-entry) · [Issue template](#issue-template-add-ai4science-model) · [Optimization tracks](#optimization-tracks) · [Roadmap](#roadmap) · [Contributing](#contributing)
+## Reproduction target
 
----
+- **Task:** global ERA5 forecast at 5.625° resolution, predicting 72 hours ahead.
+- **Model source:** [Microsoft ClimaX commit `6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c`](https://github.com/microsoft/ClimaX/tree/6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c).
+- **Initialization checkpoint:** [`tungnd/climax/5.625deg.ckpt`](https://huggingface.co/tungnd/climax/resolve/6f9d4a5c0c2602965b2a381e60636fed7f12b8f4/5.625deg.ckpt), Hugging Face revision `6f9d4a5c0c2602965b2a381e60636fed7f12b8f4`, SHA-256 `6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43`.
+- **Data:** WeatherBench ERA5, retrieved externally and converted using the pinned ClimaX preprocessing script.
+- **Important:** `5.625deg.ckpt` is a pretraining checkpoint, not a fine-tuned forecaster. The reproducible sequence fine-tunes it with ClimaX's global-forecast trainer before inference.
 
-AI models are becoming reusable scientific instruments. Foundation models for proteins, molecules, genomics, weather, materials, and more are increasingly central to discovery. But using them at scale is still hard. Researchers run into the same questions over and over:
+No PACE run has been executed from this checkout yet. GPU model, execution time, memory use, and measured forecast errors must come from the student's real run and are not fabricated in this repository.
 
-- Which models are relevant to my problem?
-- What hardware do they need?
-- Is there a validated container or environment?
-- How do I reproduce someone else's workflow?
-- Can I run this on Nexus?
+## Start-to-finish sequence
 
-The Cybershuttle AI Model Foundry goal is to answer those questions in a structured, community-maintained, execution-ready way. It adds the missing cyberinfrastructure layer on top of public model hubs like Hugging Face, NVIDIA NGC, and BioNeMo:
+### 1. Connect and clone the assignment branch
 
-> Public catalogs answer, *"What models exist?"*
-> The Foundry answers, *"Which models can I use for my science, how do I run them efficiently, and how do I reproduce the workflow?"*
-
-Nexus is the flagship deployment and validation environment. The broader framework is resource-agnostic with a goal to support GPU, TPU, CPU, HPC, cloud, and campus computing through portable metadata, execution recipes, resource profiles, and Cybershuttle workflows.
-
----
-
-## Goals
-
-1. **Registry**: catalog AI4Science models across biology, chemistry, genomics, climate, materials, physics, medicine, and more
-2. **Requirements**: record GPU memory, CPU/RAM, storage, runtimes, software dependencies, and distributed training needs
-3. **Recipes**: community-developed execution recipes for training, fine-tuning, inference, benchmarking, and deployment
-4. **Workflows**: machine-readable metadata that generates executable Cybershuttle and Slurm workflows
-5. **Optimization**: vendor-neutral profiles for NVIDIA GPU, Google TPU, PyTorch, JAX/XLA, and portable pathways
-6. **Reproducibility**: versioned, benchmarked, validated models that are easier to share and reuse
-
----
-
-## How a model moves through the Foundry
-
-```
-candidate → registered → containerized → nexus-tested → benchmarked → optimized → cybershuttle-ready
-```
-
-| Status | Meaning |
-|---|---|
-| `candidate` | Model has been suggested or requested |
-| `registered` | Metadata is complete and schema-valid |
-| `containerized` | Runnable container or software environment exists |
-| `nexus-tested` | Model has successfully run on Nexus |
-| `benchmarked` | Runtime, memory, and science metrics are recorded |
-| `optimized` | Hardware-specific optimization profile exists |
-| `cybershuttle-ready` | Workflow can be generated and launched |
-| `production` | Maintained, documented, benchmarked, and user-ready |
-
----
-
-## Get involved
-
-### Step 1: Tell us which models you want to run
-
-Open an issue using the **Add AI4Science Model** template. You don't need to know every detail, a partial request is still useful.
-
-Include as much as you can:
-
-- model name and scientific domain
-- link to the paper, GitHub repo, Hugging Face page, or NGC entry
-- intended use: training, fine-tuning, inference, evaluation, or deployment
-- expected input datasets
-- current hardware and any known bottlenecks
-- whether you want to collaborate on an optimized workflow
-
-Example model domains we're prioritizing:
-
-- protein and molecular foundation models
-- genomics and pangenome models
-- weather, climate, and energy models
-- neural operators and surrogate models
-- vision transformers for scientific imaging
-- speech and multimodal foundation models
-- interpretability and attribution workflows
-
-### Step 2: Collaborate on optimized Nexus workflows
-
-Once models are identified, we work with contributors, domain scientists, Nexus staff, and optimization partners to develop validated containers, sample datasets, training and inference recipes, Slurm and Cybershuttle workflows, GPU and TPU optimization profiles, benchmark records, and documentation.
-
----
-
-## Repository structure
-
-```
-cybershuttle-ai-model-foundry/
-├── schemas/                  # Generated JSON Schema (do not edit by hand)
-├── registry/
-│   ├── models/               # Per-model metadata (by domain)
-│   ├── datasets/
-│   └── collections/
-├── recipes/                  # Training, fine-tuning, inference, evaluation, deployment
-├── resource-profiles/        # Nexus, Google, NVIDIA, ACCESS, cloud, generic
-├── optimization-profiles/    # NVIDIA, Google, portable, experimental
-├── containers/               # Base, domain, and build containers
-├── workflows/                # Cybershuttle, Slurm, notebooks, services
-├── benchmarks/               # Definitions, results, reports
-├── tools/                    # CLI, schema generation, workflow utilities
-├── docs/
-└── .github/
-    ├── workflows/
-    └── ISSUE_TEMPLATE/
-```
-
----
-
-## Key concepts
-
-### Schema design
-
-All Foundry objects (models, datasets, recipes, resource profiles, optimization profiles, benchmarks, workflows) are defined as **Pydantic models** in `tools/schemas/`. These are the authoritative source of truth. JSON Schema 2020-12 files in `schemas/` are generated from them — do not edit those files by hand.
+Log in to PACE ICE and replace the placeholders with your assigned values:
 
 ```bash
-# Regenerate schemas/ after changing a Pydantic model
-python tools/generate_schemas.py
+export PACE_ACCOUNT="<your-PACE-account>"
+mkdir -p "$HOME/scratch"
+export WORKFLOW_REPO="$HOME/scratch/climax-inference"
+git clone --branch climax-inference \
+  https://github.com/purvikathalkar/climax-inference.git "$WORKFLOW_REPO"
+export WORKFLOW_DIR="$WORKFLOW_REPO/workflows/climax-global-forecast"
+cd "$WORKFLOW_DIR"
+export PROJECT_DIR="$HOME/scratch/climax-reproduction"
+export ENV_PREFIX="$HOME/scratch/.conda/envs/climax-inference"
 ```
 
-YAML files in the registry include a `$schema` header so editors provide inline validation and autocomplete automatically:
+The branch must first be pushed to GitHub for a new student to clone it this way.
 
-```yaml
-# yaml-language-server: $schema=../../../schemas/model.schema.json
-id: molformer
-name: MoLFormer
-...
-```
+### 2. Get a GPU shell and initialize Conda
 
-This works out of the box in VS Code with the [YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml).
-
-### Model registry
-
-Each model is described in a `model.yaml` file covering domain, model family, upstream source, lifecycle stage, datasets, containers, execution recipes, resource requirements, optimization profiles, readiness status, and maintainers.
-
-```
-registry/models/chemistry/molformer/model.yaml
-```
-
-### Execution recipes
-
-Recipes describe how to run a model for a specific task.
-
-```
-registry/models/chemistry/molformer/recipes/finetune-lora.yaml
-```
-
-### Resource profiles
-
-Resource profiles describe where a model can run — Nexus partitions, Google TPU environments, NVIDIA reference systems, ACCESS resources, campus clusters, and cloud.
-
-```
-resource-profiles/nexus/nexus-b200.yaml
-resource-profiles/google/tpu-v5e.yaml
-```
-
-### Optimization profiles
-
-Optimization profiles describe how to improve execution on a given hardware or software stack.
-
-```
-optimization-profiles/nvidia/b200-fsdp-bf16.yaml
-optimization-profiles/google/jax-xla-sharding.yaml
-optimization-profiles/portable/pytorch-fsdp.yaml
-```
-
-### Cybershuttle workflows
-
-Model metadata, execution recipes, resource profiles, and optimization profiles combine into a generated, executable workflow:
-
-```
-model.yaml + recipe.yaml + resource_profile.yaml + optimization_profile.yaml
-  → generated Cybershuttle workflow
-  → Nexus / TPU / HPC / cloud execution
-```
-
----
-
-## Example model entry
-
-```yaml
-# yaml-language-server: $schema=../../../schemas/model.schema.json
-id: molformer
-name: MoLFormer
-domain:
-  - chemistry
-  - molecular-discovery
-model_family:
-  - transformer
-  - foundation-model
-  - molecular-language-model
-tasks:
-  - inference
-  - fine-tuning
-  - property-prediction
-upstream:
-  huggingface: ibm/MoLFormer-XL-both-10pct
-  github: https://github.com/IBM/molformer
-  paper: https://arxiv.org/abs/2106.09553
-lifecycle:
-  supported_stages:
-    - inference
-    - fine-tuning
-    - evaluation
-datasets:
-  recommended:
-    - zinc
-    - chembl
-resource_profiles:
-  recommended:
-    - resource-profiles/nexus/nexus-b200.yaml
-    - resource-profiles/nexus/nexus-rtx6000.yaml
-optimization_profiles:
-  recommended:
-    - optimization-profiles/nvidia/b200-fsdp-bf16.yaml
-    - optimization-profiles/portable/mixed-precision.yaml
-cybershuttle:
-  enabled: true
-  workflow_templates:
-    - workflows/cybershuttle/templates/finetune-workflow.yaml.j2
-readiness:
-  registry_status: candidate
-  nexus_validation: untested
-  benchmark_status: not-started
-  optimization_status: not-started
-  workflow_status: candidate
-```
-
----
-
-## CLI (planned)
+On PACE, `conda` is provided by the Miniforge module; it may not be in a fresh shell's `PATH`. **Load the module and source its shell initialization before using Conda:**
 
 ```bash
-foundry validate
+srun --account="$PACE_ACCOUNT" --partition=ice-gpu --gres=gpu:1 \
+  --cpus-per-task=8 --mem=32G --time=02:00:00 --pty bash
 
-foundry list models --domain chemistry
-
-foundry generate \
-  --model molformer \
-  --recipe finetune-lora \
-  --resource nexus-b200 \
-  --optimization nvidia-b200-fsdp-bf16 \
-  --target cybershuttle
-# → workflows/cybershuttle/generated/molformer-finetune-lora-nexus-b200.yaml
+module load miniforge
+source "$(conda info --base)/etc/profile.d/conda.sh"
+command -v conda
+conda --version
 ```
 
----
+If the module is unavailable, use `module avail miniforge` / `module spider miniforge` and follow current PACE module instructions; do not assume Conda is preinstalled or guess an installation path. For exact setup and storage/cache handling, see [environment setup](workflows/climax-global-forecast/README.md#4-load-conda-correctly-and-create-the-environment).
 
-## Issue template: Add AI4Science Model
+### 3. Create the pinned environment
 
-```markdown
-## Model name
+From the workflow directory, still in the GPU allocation:
 
-## Scientific domain
-
-## Model link or reference
-- Paper:
-- GitHub:
-- Hugging Face:
-- NVIDIA NGC / NIM / BioNeMo / NeMo:
-- Other:
-
-## Intended use
-- [ ] Training
-- [ ] Fine-tuning
-- [ ] Inference
-- [ ] Evaluation
-- [ ] Deployment
-- [ ] Benchmarking
-
-## Why is this model useful for your science?
-
-## Datasets or inputs needed
-
-## Current hardware or software environment, if known
-
-## Known bottlenecks
-- [ ] GPU memory
-- [ ] CPU/RAM
-- [ ] Storage / I/O
-- [ ] Distributed training
-- [ ] Inference latency
-- [ ] Containerization
-- [ ] Workflow integration
-- [ ] Other:
-
-## Desired Nexus execution mode
-- [ ] Batch job
-- [ ] Interactive notebook
-- [ ] Inference service
-- [ ] Distributed training workflow
-- [ ] Cybershuttle application
-
-## Are you interested in collaborating on an optimized workflow?
-- [ ] Yes
-- [ ] No
-- [ ] Maybe
+```bash
+cd "$WORKFLOW_DIR"
+bash scripts/setup_env.sh
 ```
 
----
+The environment pins Python 3.8.16, PyTorch 1.12.1, torchvision 0.13.1, CUDA runtime 11.3.1, PyTorch Lightning 1.8.0, `jsonargparse` 4.19.0, Rich 13.3.1, TensorBoard 2.11.2, timm 0.6.12, and preprocessing dependencies in [`environment.yml`](workflows/climax-global-forecast/environment.yml). The helper redirects Conda/pip/temp/model caches to scratch, import-checks the training runtime, and writes environment exports under `execution/`. CUDA should be available inside the allocated GPU job. This upstream-era stack is not guaranteed to support Hopper/H100-or-newer; see the hardware caveat in the detailed guide before proceeding on newer GPUs.
 
-## Optimization tracks
+### 4. Retrieve model source and initialization weights
 
-The Foundry supports multiple hardware tracks without being vendor-specific.
+In the workflow's parent scratch project directory:
 
-**NVIDIA GPU** — B200 and RTX profiles, NGC containers, NeMo and BioNeMo workflows, TensorRT-LLM inference, NIM deployment, NCCL tuning, FSDP and tensor/pipeline parallelism, mixed precision and FP8, multi-node scaling benchmarks
+```bash
+cd "$PROJECT_DIR"
+git clone https://github.com/microsoft/ClimaX.git
+git -C ClimaX checkout 6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c
+export CLIMAX_SOURCE="$PROJECT_DIR/ClimaX"
 
-**Google TPU** — JAX/XLA execution, TPU sharding strategies, PJRT runtime, MaxText-style training recipes, TPU inference pathways, GPU-to-TPU portability studies
+mkdir -p "$PROJECT_DIR/checkpoints"
+export PRETRAINED_CHECKPOINT="$PROJECT_DIR/checkpoints/5.625deg.ckpt"
+curl --fail --location --retry 3 --retry-all-errors \
+  'https://huggingface.co/tungnd/climax/resolve/6f9d4a5c0c2602965b2a381e60636fed7f12b8f4/5.625deg.ckpt' \
+  --output "$PRETRAINED_CHECKPOINT"
+echo '6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43  '"$PRETRAINED_CHECKPOINT" \
+  | sha256sum --check -
+```
 
-**Portable** — PyTorch DDP/FSDP, DeepSpeed ZeRO, ONNX Runtime, vLLM, mixed precision, quantization, checkpointing, containerized execution
+Expected checkpoint size: 432,419,871 bytes. `sha256sum` must report `OK`; otherwise stop and download again. The checkpoint and model source are external to this repository.
 
-Vendor contributions are welcome provided they use the common schemas and remain interoperable with the rest of the framework.
+### 5. Retrieve and preprocess ERA5
 
----
+Download the WeatherBench 5.625° ERA5 archive from the [TUM archive linked in ClimaX documentation](https://dataserv.ub.tum.de/index.php/s/m1524895) and stage/extract it to:
 
-## Roadmap
+```bash
+export ERA5_RAW="$PROJECT_DIR/data/5.625deg"
+export ERA5_NPZ="$PROJECT_DIR/data/5.625deg_npz"
+```
 
-**Phase 1 — Community intake**
-Collect model requests, create initial entries, identify high-priority Nexus use cases, define minimal schemas.
+The raw tree needs `constants.nc` and NetCDF directories for `2m_temperature`, both 10-metre wind components, and pressure-level geopotential, wind, temperature, relative humidity, and specific humidity. In a Conda-initialized CPU compute allocation with adequate storage/RAM:
 
-**Phase 2 — Nexus validation**
-Containerize selected models, run initial workflows, capture hardware requirements, publish sample Slurm and Cybershuttle workflows.
+```bash
+module load miniforge
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ENV_PREFIX"
+python "$CLIMAX_SOURCE/src/data_preprocessing/nc2np_equally_era5.py" \
+  --root_dir "$ERA5_RAW" --save_dir "$ERA5_NPZ" \
+  --start_train_year 1979 --start_val_year 2016 \
+  --start_test_year 2017 --end_year 2019 --num_shards 8 \
+  --variables 2m_temperature \
+  --variables 10m_u_component_of_wind \
+  --variables 10m_v_component_of_wind \
+  --variables geopotential \
+  --variables u_component_of_wind \
+  --variables v_component_of_wind \
+  --variables temperature \
+  --variables relative_humidity \
+  --variables specific_humidity
+```
 
-**Phase 3 — Optimization**
-Develop NVIDIA GPU and Google TPU optimization profiles, add portable PyTorch and JAX pathways, publish benchmark records.
+The year ranges are train 1979–2015, validation 2016, and test 2017–2018 (`end_year` is exclusive). The detailed guide lists the expected prepared files and how to confirm them before allocating a GPU job. Raw ERA5 is not stored in this repository.
 
-**Phase 4 — Cybershuttle integration**
-Generate workflows programmatically from model metadata, provide sample applications and notebooks, support model selection and resource matching through Cybershuttle.
+### 6. Fine-tune for forecasting
 
-**Phase 5 — Community expansion**
-Add more domains, models, datasets, and resource profiles. Support broader national cyberinfrastructure. Establish maintainers and working groups.
+From a login shell where the workflow and scratch paths are set, create the log folder and submit the upstream forecast trainer:
 
----
+```bash
+mkdir -p "$WORKFLOW_DIR/logs"
+export CLIMAX_SOURCE="$PROJECT_DIR/ClimaX"
+export PRETRAINED_CHECKPOINT="$PROJECT_DIR/checkpoints/5.625deg.ckpt"
+export ERA5_NPZ="$PROJECT_DIR/data/5.625deg_npz"
+export WORKFLOW_DIR PROJECT_DIR ENV_PREFIX CLIMAX_SOURCE PRETRAINED_CHECKPOINT ERA5_NPZ
+export TRAIN_DIR="$PROJECT_DIR/runs/global-forecast"
+cd "$WORKFLOW_DIR"
+sbatch --export=ALL --account="$PACE_ACCOUNT" slurm/finetune.sbatch
+squeue --me
+```
 
-## Contributing
+The job requests one `ice-gpu` GPU, 8 CPUs, 64 GiB RAM, and 24 hours; change only to resources permitted by your PACE allocation and record any changes. It runs up to 50 epochs with the upstream global-forecast config, initializes from the verified pretraining checkpoint, and writes validation-selected checkpoints and trainer logs under `$TRAIN_DIR`. These resource/time requests have not been measured in this checkout. Save the SLURM job ID and `.out`/`.err` logs.
 
-Contributions welcome via GitHub issues and pull requests.
+When training completes, identify the **validation-selected fine-tuned checkpoint** from the checkpoint restore message and checkpoint directory. Do not pass the original pretraining checkpoint as the inference model.
 
-- **Model request** — open an issue with the Add AI4Science Model template
-- **Execution recipe** — submit a PR linking a recipe to a model entry with expected inputs, outputs, resources, and dependencies
-- **Resource profile** — submit a profile for a Nexus partition, TPU resource, ACCESS system, cloud instance, or campus cluster
-- **Optimization profile** — submit vendor-specific or portable optimization profiles (quantization, FSDP, TensorRT-LLM, NIM, ONNX, etc.)
-- **Schema changes** — edit the Pydantic models in `tools/schemas/`, then run `python tools/generate_schemas.py` to regenerate `schemas/`. Never edit `schemas/*.json` directly
-- **Benchmark results** — submit results using the benchmark schema: runtime, peak memory, throughput, scaling efficiency, cost, energy, science-specific metrics
+### 7. Run held-out inference
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md) for full details.
+Set the fine-tuned checkpoint path to the exact checkpoint selected by validation:
+
+```bash
+export FINETUNED_CHECKPOINT="/absolute/path/to/the/validation-selected/epoch_checkpoint.ckpt"
+export OUTPUT_DIR="$PROJECT_DIR/runs/inference-test-2017"
+cd "$WORKFLOW_DIR"
+sbatch --export=ALL --account="$PACE_ACCOUNT" slurm/infer.sbatch
+squeue --me
+```
+
+The job evaluates 32 daily-spaced samples from a test shard at a 72-hour lead. The same workflow guide includes an interactive command if you have an allocated GPU shell and want to run without `sbatch`.
+
+### 8. Inspect files and validate metrics
+
+After the inference job completes:
+
+```bash
+JOB_ID="<inference-job-id>"
+sacct -j "$JOB_ID" --format=JobID,JobName,State,Elapsed,AllocTRES,MaxRSS,ExitCode
+cat "$OUTPUT_DIR/metrics.json"
+ls -lh "$OUTPUT_DIR"
+```
+
+Expected files:
+
+- `climax-forecast.npz`: predictions, ERA5 targets, persistence/climatology baselines, coordinates, and sample metadata.
+- `metrics.json`: shape/finite smoke check, per-variable latitude-weighted RMSE, relative improvement against persistence, ranges, checkpoint hashes, and run metadata.
+- `logs/climax-inference-<JOB_ID>.out` / `.err`: PACE execution logs.
+
+The smoke check must pass with prediction shape `[32, 5, 32, 64]` and finite predictions/targets. In the metric table, positive `climax_vs_persistence_relative_improvement` means lower RMSE than persistence; negative means persistence did better. Compare every output variable with both baselines and report all results. Check the full workflow guide for broad physical-range checks and the proper interpretation of the test climatology.
+
+There is **no official absolute RMSE cutoff for this exact run** in the pinned upstream instructions; data version, trained checkpoint, selected evaluation windows, and training scope all affect the score. Do not invent a pass threshold. Use the upstream held-out test metrics and relative baseline comparison as evidence, and claim an advantage only where the measured values support it.
+
+### 9. Preserve evidence and clean up
+
+Complete [`execution/README.md`](workflows/climax-global-forecast/execution/README.md) with the date, job IDs/states, source commit, checkpoint hashes, environment export, data/preprocessing details, actual GPU/resources/runtime, observed metrics, and failures/deviations. Include useful logs and a small reviewed result artifact if repository/data policy permits. Do not commit ERA5 or checkpoint files.
+
+Only after the evidence is saved and reviewed, optionally remove specifically named run outputs/checkpoints or the Conda prefix. See the detailed [cleanup instructions](workflows/climax-global-forecast/README.md#12-cleanup); do not recursively delete `$HOME/scratch`.
+
+## Hardware and outputs at a glance
+
+| Stage | Starting request | Main output |
+|---|---|---|
+| Environment setup | In allocated GPU shell | Conda/Python version records |
+| ERA5 preprocessing | CPU allocation, suggested 16 CPUs / 128 GiB RAM; verify partition/quota | Shards, normalization, climatologies, coordinates |
+| Forecast fine-tuning | 1 GPU, 8 CPUs, 64 GiB RAM, 24h | Lightning checkpoints and training/validation/test logs |
+| Inference | 1 GPU, 4 CPUs, 32 GiB RAM, 1h | `.npz` predictions and `metrics.json` |
+
+Requests are starting points, not verified measurements. Always use the resource limits and partitions assigned by PACE.
+
+## Supporting documentation
+
+- [Complete ClimaX workflow and troubleshooting guide](workflows/climax-global-forecast/README.md)
+- [PACE ICE docs: login, modules, storage, SLURM](https://docs.pace.gatech.edu/ice/)
+- [ClimaX usage guide](https://github.com/microsoft/ClimaX/blob/6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c/docs/usage.md)
+- [ClimaX global forecast config](https://github.com/microsoft/ClimaX/blob/6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c/configs/global_forecast_climax.yaml)
+- [WeatherBench ERA5 archive](https://dataserv.ub.tum.de/index.php/s/m1524895)

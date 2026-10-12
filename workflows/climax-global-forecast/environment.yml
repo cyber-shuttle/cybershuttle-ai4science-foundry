@@ -20,9 +20,18 @@ dependencies:
   - pip:
       - einops==0.6.0
       - huggingface-hub==0.12.0
+      - jsonargparse==4.19.0
+      - docstring-parser==0.15
+      - lightning-lite==1.8.0
       - lightning-utilities==0.3.0
       - omegaconf==2.3.0
+      - protobuf==3.20.3
       - pytorch-lightning==1.8.0
+      - rich==13.3.1
+      - tensorboard==2.11.2
+      - tensorboard-data-server==0.6.1
+      - tensorboard-plugin-wit==1.8.1
       - timm==0.6.12
       - torchdata==0.4.1
       - torchmetrics==0.11.1
+      - typeshed-client==2.2.0

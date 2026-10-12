@@ -9,7 +9,6 @@ import json
 import os
 import subprocess
 import sys
-import time
 from pathlib import Path
 from typing import Any, Dict
 
@@ -204,13 +203,11 @@ def main() -> None:
     input_tensor = torch.from_numpy(normalized[:, None]).to(device=device, dtype=torch.float32)
     # Encoder features do not forecast; zero selects the neutral lead-time embedding.
     lead_times = torch.zeros(args.num_samples, device=device, dtype=torch.float32)
-    start_time = time.monotonic()
     with torch.no_grad():
         token_embeddings = module.net.forward_encoder(input_tensor, lead_times, [args.variable])
         repeated_embeddings = module.net.forward_encoder(
             input_tensor, lead_times, [args.variable]
         )
-    runtime_seconds = time.monotonic() - start_time
     tokens = token_embeddings.detach().cpu().numpy().astype(np.float32)
     pooled = tokens.mean(axis=1)
     expected_token_count = (height // int(model_config["patch_size"])) * (
@@ -288,7 +285,6 @@ def main() -> None:
             "pooled_vector_l2_norm_mean": float(np.linalg.norm(pooled, axis=1).mean()),
         },
         "run": {
-            "runtime_seconds_encoder": runtime_seconds,
             "device": str(device),
             "gpu_name": gpu_name,
             "checkpoint": str(args.checkpoint.resolve()),

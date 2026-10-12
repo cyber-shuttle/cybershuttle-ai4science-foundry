@@ -1,5 +1,4 @@
 ---------------------------------------
-Begin Slurm Prolog: Oct-12-2026 04:34:23
 Job ID:    6209971
 User ID:   pkathalkar3
 Account:   coc
@@ -9,12 +8,10 @@ QOS:       coc-ice
 ---------------------------------------
 job_id=6209971
 node=atl1-1-02-009-32-0.pace.gatech.edu
-start=2026-10-12T04:34:29-04:00
 climax_commit=6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c
 workflow_commit=063697e0d18e615c3d662fc7c0076b6c3edf801c
 checkpoint=/home/hice1/pkathalkar3/scratch/climax-reproduction/checkpoints/5.625deg.ckpt
 data=/home/hice1/pkathalkar3/scratch/climax-reproduction/data/geopotential_npz_2016_test
-Mon Oct 12 04:34:29 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -108,7 +105,6 @@ Mon Oct 12 04:34:29 2026
     "pooled_vector_l2_norm_mean": 7.482089042663574
   },
   "run": {
-    "runtime_seconds_encoder": 1.6722011599922553,
     "device": "cuda",
     "gpu_name": "Tesla V100-PCIE-16GB",
     "checkpoint": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/checkpoints/5.625deg.ckpt",
@@ -134,8 +130,6 @@ Mon Oct 12 04:34:29 2026
     "output_sha256": "7965fd2362e4471d1a5bc92f32da040ced27ee5e5f24ae910fe22c5adfcf2158"
   }
 }
-end=2026-10-12T04:34:44-04:00
-Mon Oct 12 04:34:44 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -156,13 +150,11 @@ Mon Oct 12 04:34:44 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 ---------------------------------------
-Begin Slurm Epilog: Oct-12-2026 04:34:45
 Job ID:        6209971
 User ID:       pkathalkar3
 Account:       coc
 Job name:      climax-embed
 Resources:     cpu=4,gres/gpu:v100=1,mem=32G,node=1
-Rsrc Used:     cput=00:01:28,vmem=0,walltime=00:00:22,mem=2920136K,energy_used=0
 Partition:     ice-gpu
 QOS:           coc-ice
 Nodes:         atl1-1-02-009-32-0

@@ -72,7 +72,6 @@
     "pooled_vector_l2_norm_mean": 7.482089042663574
   },
   "run": {
-    "runtime_seconds_encoder": 1.6635712559800595,
     "device": "cuda",
     "gpu_name": "Tesla V100-PCIE-16GB",
     "checkpoint": "/storage/ice1/9/2/pkathalkar3/climax-reproduction/checkpoints/5.625deg.ckpt",

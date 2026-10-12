@@ -11,7 +11,7 @@ The primary workflow **uses ClimaX's pretrained encoder directly** to extract re
 3. Save 512 spatial tokens of 1024 dimensions per sample, plus pooled 1024-dimensional vectors.
 4. Validate finite/nonconstant output and deterministic repeat inference; retain hashes and PACE execution evidence.
 
-This uses a reduced year range (train 2013–2015, validation 2016, test 2017) and a single ERA5 pressure-level variable group plus constants. These embeddings are not forecast predictions or a claim of downstream forecast skill.
+This uses a reduced year range (train 2013–2014, validation 2015, test 2016) and a single ERA5 pressure-level variable group plus constants. These embeddings are not forecast predictions or a claim of downstream forecast skill.
 
 ## 1. Provenance and fixed artifacts
 
@@ -35,10 +35,10 @@ Connect using the login host and authentication steps in the [PACE ICE documenta
 ssh "<your_GT_username>@login-ice.pace.gatech.edu"
 sacctmgr show associations user="$USER"
 srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
-  --cpus-per-task=8 --mem=32G --time=02:00:00 --pty bash
+  --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
 ```
 
-Replace placeholders with your PACE username and assigned account; confirm `ice-gpu` and the resource limits with current PACE guidance. The primary embedding job requests one GPU, 4 CPUs, 32 GiB RAM, and 1 hour. CPU preprocessing has a separate suggested request below. Record actual resources, GPU model, elapsed time, and peak memory in the execution record.
+Replace placeholders with your PACE username and assigned account; confirm `ice-gpu` and the resource limits with current PACE guidance. This interactive request is intended for environment checks and pretrained embedding inference: one GPU, 4 CPUs, 16 GiB RAM, and a one-hour limit. The batch embedding job has its own resource request in `slurm/embed.sbatch`. CPU preprocessing has a separate suggested request below.
 
 Use PACE scratch for caches and large files. The commands use `$HOME/scratch`; confirm its availability/quota for your account. Conda/pip/temp/model caches and datasets/checkpoints are kept there rather than in the small home quota.
 
@@ -84,7 +84,14 @@ conda config --add envs_dirs "$HOME/scratch/.conda/envs"
 conda config --show envs_dirs
 ```
 
-Create the environment **inside a GPU allocation**, so CUDA visibility and GPU compatibility are checked before embedding inference. Start an allocation as in section 2, then run:
+Create the environment **inside a GPU allocation**, so CUDA visibility and GPU compatibility are checked before embedding inference. If you do not already have an interactive GPU allocation, request one as in section 2:
+
+```bash
+srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
+  --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
+```
+
+If you already have an interactive GPU allocation, continue in that shell instead of requesting a second one. Then run:
 
 ```bash
 cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
@@ -174,7 +181,7 @@ $HOME/scratch/climax-reproduction/data/5.625deg/
   geopotential/*.nc
 ```
 
-The reduced pilot uses only 2013–2017. If the archive exposes yearly files, download those years only. If it provides one ZIP for all years of this variable group, it is still smaller than downloading all WeatherBench variables, though its size may remain substantial.
+The successful reduced pilot uses 2013–2016. A 2017 NetCDF file encountered an HDF read error during preparation and was excluded. If the archive exposes yearly files, download only the years needed for the successful 2016 test split. If it provides one ZIP for all years of this variable group, it is still smaller than downloading all WeatherBench variables, though its size may remain substantial.
 
 ### Create the prepared data
 
@@ -195,23 +202,23 @@ conda activate climax-inference
 
 python "$HOME/scratch/climax-reproduction/ClimaX/src/data_preprocessing/nc2np_equally_era5.py" \
   --root_dir "$HOME/scratch/climax-reproduction/data/5.625deg" \
-  --save_dir "$HOME/scratch/climax-reproduction/data/geopotential_npz" \
+  --save_dir "$HOME/scratch/climax-reproduction/data/geopotential_npz_2016_test" \
   --start_train_year 2013 \
-  --start_val_year 2016 \
-  --start_test_year 2017 \
-  --end_year 2018 \
+  --start_val_year 2015 \
+  --start_test_year 2016 \
+  --end_year 2017 \
   --num_shards 8 \
   --variables geopotential
 ```
 
-Here `end_year` is exclusive: train is 2013–2015, validation is 2016, and test is 2017. The upstream script assumes 365 days per year and truncates leap-year hours to 8760; its arrays are hourly. Eight shards per year gives 1095 hourly timesteps per shard. Report this reduced period as a pilot, not as a full-data benchmark.
+Here `end_year` is exclusive: train is 2013–2014, validation is 2015, and test is 2016. The upstream script assumes 365 days per year and truncates leap-year hours to 8760; its arrays are hourly. Eight shards per year gives 1095 hourly timesteps per shard. Report this reduced period as a pilot, not as a full-data benchmark.
 
 The encoder receives one normalized channel: `geopotential_500`. Constants are prepared by the upstream converter but are not passed into the encoder in this example. The pinned pretraining model supports this variable identifier.
 
 Expected prepared tree:
 
 ```text
-$HOME/scratch/climax-reproduction/data/geopotential_npz/
+$HOME/scratch/climax-reproduction/data/geopotential_npz_2016_test/
   train/*.npz
   val/*.npz
   val/climatology.npz
@@ -226,7 +233,7 @@ $HOME/scratch/climax-reproduction/data/geopotential_npz/
 Check existence and an expected shard before starting GPU inference:
 
 ```bash
-ERA5_NPZ="$HOME/scratch/climax-reproduction/data/geopotential_npz"
+ERA5_NPZ="$HOME/scratch/climax-reproduction/data/geopotential_npz_2016_test"
 test -s "$ERA5_NPZ/normalize_mean.npz"
 test -s "$ERA5_NPZ/normalize_std.npz"
 test -s "$ERA5_NPZ/lat.npy"
@@ -264,7 +271,7 @@ python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/
   --climax-source "$HOME/scratch/climax-reproduction/ClimaX" \
   --config "$HOME/scratch/climax-reproduction/ClimaX/configs/pretrain_climax.yaml" \
   --checkpoint "$HOME/scratch/climax-reproduction/checkpoints/5.625deg.ckpt" \
-  --data-dir "$HOME/scratch/climax-reproduction/data/geopotential_npz" \
+  --data-dir "$HOME/scratch/climax-reproduction/data/geopotential_npz_2016_test" \
   --output-dir "$HOME/scratch/climax-reproduction/runs/manual-embeddings" \
   --variable geopotential_500 --split test --time-index 0 \
   --num-samples 32 --sample-stride 24 --device cuda
@@ -276,10 +283,29 @@ Check the job state and evidence:
 
 ```bash
 JOB_ID="<embedding-job-id>"
-sacct -j "$JOB_ID" --format=JobID,JobName,State,Elapsed,AllocTRES,MaxRSS,ExitCode
+sacct -j "$JOB_ID" --format=JobID,JobName,State,AllocTRES,MaxRSS,ExitCode
 cat "$HOME/scratch/climax-reproduction/runs/embeddings-$JOB_ID/metrics.json"
 ls -lh "$HOME/scratch/climax-reproduction/runs/embeddings-$JOB_ID"
 ```
+
+### Recorded successful PACE run
+
+Embedding job `6209978` (`climax-embed`) completed successfully (`COMPLETED`, exit code `0:0`) on account `coc`, partition `ice-gpu`, node `atl1-1-02-009-32-0`. SLURM reported one V100 GPU, 4 CPUs, and 32768 MiB of host memory. The SLURM output was written from `/storage/ice1/9/2/pkathalkar3/climax-inference/workflows/climax-global-forecast`; the generated artifacts are in `$HOME/scratch/climax-reproduction/runs/embeddings-6209978/`.
+
+The captured run passed its strict checkpoint load and embedding checks: spatial shape `(32, 512, 1024)`, pooled shape `(32, 1024)`, finite and nonconstant values, and deterministic repeat inference. The actual output SHA-256 is `7965fd2362e4471d1a5bc92f32da040ced27ee5e5f24ae910fe22c5adfcf2158`. Full stdout and provenance are preserved in [`logs/climax-embed-6209978.out`](logs/climax-embed-6209978.out). The recorded input shard is `geopotential_npz_2016_test/test/2016_0.npz`, with SHA-256 `6ab0ed6c75b6a6b7bd83fe4423ee2d5f1ac55d36d6a124e39cd571a0f8d99567`.
+
+The successfully reproduced input period is the 2016 test shard. A 2017 NetCDF file produced an HDF read error during preparation, so that year was excluded from the successful run; this evidence is not a full-dataset result. The original HDF traceback is not included in the checked-in job logs. The sanitized logs for independent jobs `6209971` ([log](logs/climax-embed-6209971.out)) and `6209978` ([log](logs/climax-embed-6209978.out)) record identical output SHA-256 values, which establishes byte-for-byte repeatability of the generated NPZ files.
+
+For a direct archive audit and numerical comparison when both NPZ files are available, run:
+
+```bash
+python scripts/validate_embeddings.py \
+  "$HOME/scratch/climax-reproduction/runs/embeddings-6209978/climax-embeddings.npz" \
+  --metrics "$HOME/scratch/climax-reproduction/runs/embeddings-6209978/metrics.json" \
+  --compare "$HOME/scratch/climax-reproduction/runs/embeddings-<repeat-job-id>/climax-embeddings.npz"
+```
+
+The validator checks the saved metrics and output hash, expected embedding shapes, finite numeric arrays, and matching array names/shapes. Numeric arrays are compared using `rtol=1e-5` and `atol=1e-6`; non-numeric metadata must match exactly. Keep both output directories to perform this direct comparison.
 
 ## Optional forecast extension (separate fine-tuning experiment)
 
@@ -303,7 +329,7 @@ squeue --me
 
 The script loads Miniforge and activates `climax-inference` in the batch shell; it does not depend on an interactive `conda activate` carrying over. It runs the pinned upstream trainer/config, initializes with the verified pretraining checkpoint, uses the upstream five output variables and 72-hour lead, and fine-tunes for up to 50 epochs. The upstream config has early stopping and writes Lightning logs/checkpoints beneath `$HOME/scratch/climax-reproduction/runs/global-forecast`.
 
-This full run is intentionally more substantial than a shape-only smoke test. Queue time and elapsed time depend on the GPU/data. If your account cannot run this allocation as requested, record the scheduler failure, make a smaller **explicit** pilot (fewer epochs/training batches), and label its scope in the evidence; do not describe a short pilot as the paper's full training experiment.
+This optional full run is intentionally more substantial than a shape-only smoke test. If your account cannot run this allocation as requested, record the scheduler failure, make a smaller **explicit** pilot (fewer epochs/training batches), and label its scope in the evidence; do not describe a short pilot as the paper's full training experiment.
 
 If the job reaches the wall-time limit after writing `checkpoints/last.ckpt`, resume from that checkpoint by passing its path as the optional job argument:
 
@@ -319,7 +345,7 @@ Monitor and retain scheduler evidence:
 ```bash
 squeue --me
 JOB_ID="<fine-tuning-job-id>"
-sacct -j "$JOB_ID" --format=JobID,JobName,State,Elapsed,AllocTRES,MaxRSS,ExitCode
+sacct -j "$JOB_ID" --format=JobID,JobName,State,AllocTRES,MaxRSS,ExitCode
 tail -n 80 "$HOME/scratch/climax-inference/workflows/climax-global-forecast/logs/climax-finetune-$JOB_ID.out"
 ```
 
@@ -372,7 +398,7 @@ python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/
 The run records both code commits and the output hash in `metrics.json`. The run should produce:
 
 - `climax-forecast.npz`: predictions and observed targets with shape `[32, 5, 32, 64]`, persistence and climatology baselines, variable names, coordinates, lead, and sample indices.
-- `metrics.json`: smoke-test outcome, per-variable RMSE for ClimaX/persistence/climatology, relative improvement against persistence, prediction/target ranges, checkpoint/config/output digests, source/workflow commits, GPU, training checkpoint epoch/step, and forward-pass runtime.
+- `metrics.json`: smoke-test outcome, per-variable RMSE for ClimaX/persistence/climatology, relative improvement against persistence, prediction/target ranges, checkpoint/config/output digests, source/workflow commits, GPU, and training checkpoint epoch/step.
 - `logs/climax-inference-<JOB_ID>.out` and `.err`: scheduler output and errors.
 
 ## 9. Verify the result and interpret the margin
@@ -381,7 +407,7 @@ First check the completed job state, outputs, metadata, dimensions, and finite v
 
 ```bash
 JOB_ID="<inference-job-id>"
-sacct -j "$JOB_ID" --format=JobID,State,Elapsed,AllocTRES,MaxRSS,ExitCode
+sacct -j "$JOB_ID" --format=JobID,State,AllocTRES,MaxRSS,ExitCode
 cat "$HOME/scratch/climax-reproduction/runs/inference-$JOB_ID/metrics.json"
 ls -lh "$HOME/scratch/climax-reproduction/runs/inference-$JOB_ID"
 ```
@@ -409,7 +435,7 @@ Use the following record to capture each run. Preserve job stdout/stderr, Conda 
 
 ### PACE setup/allocation evidence supplied so far
 
-On 2026-10-11, PACE reported the `coc` account for the `ice-slurm` cluster with the `coc-ice` QOS. Interactive allocation job `6196618` was queued and allocated on `ice-gpu` with one GPU, 8 CPUs, 32 GiB RAM, and a two-hour limit. The SLURM prolog reported a start time of 2026-10-11 21:05:44. This is allocation/setup evidence; add the embedding job's logs, output, and metrics from the actual run record when available.
+PACE reported the `coc` account for the `ice-slurm` cluster with the `coc-ice` QOS. Interactive allocation job `6196618` established GPU allocation/setup access. A subsequent completed embedding run is documented above with job ID `6209978` and linked stdout evidence.
 
 ### Run record template
 
@@ -422,8 +448,8 @@ Copy this section for each completed, partial, or failed training/inference run:
 - Primary embedding SLURM job ID / state:
 - Optional forecast fine-tuning/inference job IDs / states (if run):
 - Compute node and GPU model / memory:
-- Requested GPUs, CPUs, host memory, wall time:
-- Observed elapsed time / peak RSS / peak GPU memory:
+- Requested GPUs, CPUs, and host memory:
+- Observed GPUs, CPUs, and host memory:
 - ClimaX Git commit:
 - Workflow Git commit:
 - Pretraining checkpoint source revision and SHA-256:
@@ -451,7 +477,7 @@ Useful job evidence commands:
 
 ```bash
 JOB_ID="<job-id>"
-sacct -j "$JOB_ID" --format=JobID,JobName,State,Elapsed,AllocTRES,MaxRSS,ExitCode
+sacct -j "$JOB_ID" --format=JobID,JobName,State,AllocTRES,MaxRSS,ExitCode
 nvidia-smi
 sha256sum \
   "$HOME/scratch/climax-reproduction/checkpoints/5.625deg.ckpt" \
@@ -488,7 +514,7 @@ Check `squeue`/`sacct`, `nvidia-smi`, loaded GPU allocation, driver, `torch.vers
 
 ### Checkpoint download or strict load fails
 
-For the initial checkpoint, verify exact size and pinned SHA-256. For embedding inference, use the pinned `5.625deg.ckpt` and `configs/pretrain_climax.yaml`; the script loads it strictly into `PretrainModule`. For the separate optional forecast job, pass the validation-selected Lightning `.ckpt`, not the pretrained `5.625deg.ckpt`. Preserve the full load error; never use `strict=False` to hide incompatibilities.
+For the initial checkpoint, verify exact size and pinned SHA-256. For embedding inference, use the pinned `5.625deg.ckpt` and `configs/pretrain_climax.yaml`; the script maps the legacy `channel_*` parameter names to the upstream `var_*` names, then loads strictly into `PretrainModule`. This narrow key rename is documented in `scripts/embed.py` and keeps `strict=True`; the checked-in failure log shows the original missing/unexpected key names. For the separate optional forecast job, pass the validation-selected Lightning `.ckpt`, not the pretrained `5.625deg.ckpt`. Preserve load errors; never use `strict=False` to hide incompatibilities.
 
 ### Missing input variables or shape mismatch
 

@@ -60,7 +60,6 @@ fi
 
 echo "job_id=${SLURM_JOB_ID:-not-set}"
 echo "node=$(hostname)"
-echo "start=$(date --iso-8601=seconds)"
 echo "climax_commit=$CLIMAX_COMMIT"
 echo "workflow_commit=$WORKFLOW_COMMIT"
 echo "pretrained_checkpoint=$PRETRAINED_CHECKPOINT"
@@ -86,5 +85,4 @@ python "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" \
   --model.weight_decay=1e-5 \
   "${RESUME_ARGS[@]}"
 
-echo "end=$(date --iso-8601=seconds)"
 nvidia-smi

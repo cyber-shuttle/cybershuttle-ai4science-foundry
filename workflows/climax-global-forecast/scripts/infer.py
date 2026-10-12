@@ -9,7 +9,6 @@ import json
 import os
 import subprocess
 import sys
-import time
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -268,7 +267,7 @@ def main() -> None:
     model.to(device)
     model.eval()
 
-    start_time = time.monotonic()
+
     prediction_samples: List[np.ndarray] = []
     with torch.no_grad():
         for input_index in input_indices:
@@ -296,7 +295,6 @@ def main() -> None:
                 * np.asarray(out_stds, dtype=np.float32)[:, None, None]
                 + np.asarray(out_means, dtype=np.float32)[:, None, None]
             )
-    runtime_seconds = time.monotonic() - start_time
     prediction = np.stack(prediction_samples)
     expected_output_shape = (args.num_samples, len(out_variables), height, width)
     if prediction.shape != expected_output_shape or target.shape != expected_output_shape:
@@ -368,7 +366,6 @@ def main() -> None:
             "latitude_weighted_rmse": scores,
         },
         "run": {
-            "runtime_seconds_forward_pass": runtime_seconds,
             "device": str(device),
             "gpu_name": gpu_name,
             "checkpoint": str(args.checkpoint.resolve()),

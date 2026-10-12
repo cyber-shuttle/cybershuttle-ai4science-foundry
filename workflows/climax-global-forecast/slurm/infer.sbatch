@@ -41,7 +41,6 @@ WORKFLOW_COMMIT="$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
 
 echo "job_id=${SLURM_JOB_ID:-not-set}"
 echo "node=$(hostname)"
-echo "start=$(date --iso-8601=seconds)"
 echo "climax_commit=$CLIMAX_COMMIT"
 echo "workflow_commit=$WORKFLOW_COMMIT"
 echo "python=$CLIMAX_PYTHON"
@@ -64,5 +63,4 @@ nvidia-smi
   --sample-stride 24 \
   --device cuda
 
-echo "end=$(date --iso-8601=seconds)"
 nvidia-smi

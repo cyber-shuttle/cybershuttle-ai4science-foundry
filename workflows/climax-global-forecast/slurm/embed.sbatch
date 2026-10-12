@@ -36,12 +36,11 @@ CLIMAX_PYTHON="$(command -v python)"
 
 echo "job_id=${SLURM_JOB_ID:-not-set}"
 echo "node=$(hostname)"
-echo "start=$(date --iso-8601=seconds)"
 echo "climax_commit=$(git -C "$CLIMAX_SOURCE" rev-parse HEAD)"
 echo "workflow_commit=$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
 echo "checkpoint=$CHECKPOINT"
 echo "data=$ERA5_NPZ"
-nvidia-smi
+nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv,noheader
 
 "$CLIMAX_PYTHON" scripts/embed.py \
   --climax-source "$CLIMAX_SOURCE" \
@@ -56,5 +55,4 @@ nvidia-smi
   --sample-stride 24 \
   --device cuda
 
-echo "end=$(date --iso-8601=seconds)"
-nvidia-smi
+nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv,noheader

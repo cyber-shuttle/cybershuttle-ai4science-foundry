@@ -1,0 +1,53 @@
+id: openfold
+name: openfold
+version: "2.2.0"
+
+description: >
+  OpenFold predicts protein structures from sequence and multiple sequence alignments
+
+domain:
+  - biology
+  - structural-biology
+
+model_family:
+  - protein-structure-prediction
+  - transformer
+
+tasks:
+  - inference
+
+upstream:
+  github: https://github.com/aqlaboratory/openfold
+  documentation: https://openfold.readthedocs.io/
+  paper: https://doi.org/10.1101/2022.11.20.517210
+  license: Apache-2.0
+
+input:
+  format: FASTA with precomputed alignments
+  example: 6KWC_1
+
+output:
+  format: PDB
+  confidence: pLDDT in the PDB b-factor field
+
+software:
+  python: "3.10"
+  pytorch: "2.5.1"
+  cuda: "12.4"
+
+resource_profiles:
+  inference:
+    platform: Georgia Tech PACE ICE
+    gpu: 1 x RTX 6000
+    cpus: 4
+    memory: 32 GB
+
+readiness:
+  registry_status: candidate
+  nexus_validation: untested
+  benchmark_status: not-started
+  workflow_status: verified
+
+maintainers:
+  - name: Akshit Kumar
+    github: akshitk26

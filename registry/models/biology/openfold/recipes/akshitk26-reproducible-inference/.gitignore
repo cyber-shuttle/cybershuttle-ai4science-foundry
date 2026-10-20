@@ -1,0 +1,25 @@
+.DS_Store
+.env
+.snakemake/
+
+# Downloaded artifacts: document these in inputs/MANIFEST.md instead.
+artifacts/
+data/
+results/*
+!results/run-001/
+!results/run-001/timings.json
+!results/run-001/predictions/
+!results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb
+evidence/*
+!evidence/*.log
+!evidence/*.txt
+!evidence/*.json
+!evidence/*.csv
+!evidence/*.out
+!evidence/*.err
+
+# Local environments and Python files.
+.conda/
+.venv/
+__pycache__/
+*.py[cod]

@@ -1,0 +1,2 @@
+/usr/local/pace-apps/lmod/lmod/init/bash: line 206: conda: command not found
+/home/hice1/akumar3097/.conda/envs/openfold-repro/etc/conda/activate.d/activate-gcc_linux-64.sh: line 114: SYS_SYSROOT: unbound variable

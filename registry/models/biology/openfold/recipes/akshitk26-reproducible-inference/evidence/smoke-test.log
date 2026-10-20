@@ -1,0 +1,5 @@
+PyTorch: 2.5.1
+CUDA available: True
+GPU: Tesla V100-PCIE-16GB
+openfold module: /home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/__init__.py
+setup check passed

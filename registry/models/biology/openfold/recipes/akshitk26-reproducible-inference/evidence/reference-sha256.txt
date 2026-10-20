@@ -1,0 +1,1 @@
+497238e6657af9ea946f4dc242937688ce7cb917a663aa283cbaa9a03e43033c  inputs/reference/6kwc.pdb

@@ -1,0 +1,3 @@
+node: atl1-1-02-011-31-0
+Tesla V100-PCIE-16GB, 16384 MiB, driver 580.178.04
+torch.cuda.is_available: True

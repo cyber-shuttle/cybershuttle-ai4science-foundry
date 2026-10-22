@@ -36,7 +36,8 @@ steps:
     description: Build the conda environment on scratch (torch 2.2.2+cu121, numpy<2)
     commands:
       - git clone https://github.com/NVlabs/FourCastNet.git ~/FourCastNet
-      - git clone https://github.com/srir1607/fourcastnet-reproducible-inference.git ~/scratch/fcn-repro
+      - git clone -b recipe-fourcastnet-ice-rollout https://github.com/srir1607/cybershuttle-ai4science-foundry.git ~/scratch/foundry
+      - cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout
       - mamba env create -f environment/environment.yml -p ~/scratch/.conda/envs/fourcastnet-inference
 
   - name: download
@@ -52,7 +53,7 @@ steps:
   - name: inference
     description: Submit the Slurm job from the repo root
     commands:
-      - cd ~/scratch/fcn-repro
+      - cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout
       - sbatch slurm/run_inference.sbatch
 
   - name: validate

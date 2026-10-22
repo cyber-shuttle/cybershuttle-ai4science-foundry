@@ -1,0 +1,28 @@
+
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu-v100
+name: PACE-ICE, coc account, ice-gpu partition (Tesla V100-PCIE-16GB)
+system: pace-ice
+partition: ice-gpu
+
+gpu:
+  model: Tesla V100-PCIE-16GB
+  count: 1
+  vram_gb: 16
+  interconnect: PCIe
+
+cpu:
+  cores: 8
+  ram_gb: 64
+
+storage:
+  parallel_fs: NFS
+
+scheduler: slurm
+
+notes: >
+  Verified on job 6205007 with account coc and partition ice-gpu. The 8 cores
+  and 64 GB are what the job requested. Measured use was 21.7 GB of host RAM
+  and 11.3 GiB of GPU memory. The home quota is about 30 GB, so keep the
+  environment and artifacts on scratch.

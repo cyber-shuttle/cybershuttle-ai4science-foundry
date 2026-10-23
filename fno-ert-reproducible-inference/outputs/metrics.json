@@ -1,0 +1,26 @@
+{
+  "test_samples": 1001,
+  "model_rel_l2_pct": {
+    "mean": 21.693113327026367,
+    "std": 21.63936996459961,
+    "median": 16.75806427001953,
+    "p95": 53.44765853881836,
+    "max": 407.6872253417969
+  },
+  "frac_samples_below_5pct": 0.001998001942411065,
+  "frac_samples_below_10pct": 0.17282716929912567,
+  "mean_baseline_rel_l2_pct": 94.57070922851562,
+  "model_vs_baseline_error_ratio": 0.2293851226568222,
+  "normalized_mae_pct_of_peak": 0.28644534945487976,
+  "paper_reported": {
+    "mean_rel_error_pct_below": 0.3,
+    "std_pct_below": 5.0,
+    "note": "paper metric definition and test set differ (49,500 solutions); not directly comparable"
+  },
+  "checks": {
+    "predictions finite": true,
+    "shape matches ground truth": true,
+    "model error < 0.5 x trivial mean-field baseline (criterion set before running)": true
+  },
+  "paper_target_met": false
+}

@@ -1,0 +1,12 @@
+{
+  "device": "NVIDIA A40",
+  "torch": "2.14.1+cu130",
+  "test_samples": 1001,
+  "batched_total_s": 0.19837594032287598,
+  "batched_ms_per_sample": 0.19817776256031566,
+  "single_sample_forward_ms": 1.4974594116210938,
+  "checkpoint": "outputs/fno_ert.pt",
+  "checkpoint_sha256": "08780db845f3b980ddb744e4d3d2f1237d0e4cc28b940544ffb1de874f6514b2",
+  "test_file": "/storage/ice1/0/5/ityagi8/FNO_ERT/data/testV.mat",
+  "predictions": "outputs/predictions.npz"
+}

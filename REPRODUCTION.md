@@ -40,7 +40,32 @@ the `*_rgb_crop_0.jpg` dump. This recipe reconstructs tight JSON bbox crops;
 the official fMoW baseline pads context around the box. Full write-up:
 [Verification](registry/models/earth-science/satmae-temporal/README.md#verification).
 
+## Clone this fork (not `main`)
+
+The recipe lives on **`satmae-temporal-inference`**. `main` does not have these
+scripts. Clone that branch of this fork:
+
+```bash
+ssh login-ice.pace.gatech.edu
+git clone -b satmae-temporal-inference \
+  https://github.com/rohan5986/cybershuttle-ai4science-foundry.git \
+  ~/scratch/cybershuttle-ai4science-foundry
+cd ~/scratch/cybershuttle-ai4science-foundry
+```
+
+If you already have a clone, switch to the branch instead of cloning again:
+
+```bash
+git fetch origin
+git checkout satmae-temporal-inference
+```
+
 ## Submit jobs from the repo root on ICE
+
+Each stage depends on the previous one. **Submit one `sbatch`, wait until
+`sacct` shows `COMPLETED` with exit `0:0`, then submit the next.** Do not
+queue the whole ladder at once: later jobs need the conda prefix, weights,
+and cropped chips from earlier jobs.
 
 ```bash
 cd ~/scratch/cybershuttle-ai4science-foundry
@@ -48,13 +73,15 @@ export SATMAE_TEMPORAL_WORKDIR="$HOME/scratch/satmae-temporal"
 mkdir -p logs "$SATMAE_TEMPORAL_WORKDIR"
 
 sinfo -p coc-gpu -o "%P %G %N"    # confirm L40S vs A100 before GPU jobs
-sbatch scripts/satmae_temporal_build_env.sbatch
-sbatch scripts/satmae_temporal_download_weights.sbatch
-sbatch scripts/satmae_temporal_download_data.sbatch
+
+# After each sbatch: JOBID=...; sacct -j $JOBID -n -X -o State,ExitCode
+sbatch scripts/satmae_temporal_build_env.sbatch          # wait: COMPLETED
+sbatch scripts/satmae_temporal_download_weights.sbatch   # wait: COMPLETED
+sbatch scripts/satmae_temporal_download_data.sbatch      # wait: COMPLETED
 # if prepare_csv reports 0 existing images (job 6192078):
-sbatch scripts/satmae_temporal_crop_fmow.sbatch
-sbatch scripts/satmae_temporal_smoke_test.sbatch
-sbatch scripts/satmae_temporal_eval_subset.sbatch
+sbatch scripts/satmae_temporal_crop_fmow.sbatch          # wait: COMPLETED
+sbatch scripts/satmae_temporal_smoke_test.sbatch         # wait: COMPLETED
+sbatch scripts/satmae_temporal_eval_subset.sbatch        # wait: COMPLETED
 sbatch scripts/satmae_temporal_eval_full.sbatch
 ```
 

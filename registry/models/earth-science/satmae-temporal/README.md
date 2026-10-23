@@ -26,10 +26,27 @@ Cross-links:
 
 ## Setup
 
-All jobs are submitted **from the Foundry repo root**. The sbatch scripts
-resolve paths from `$SLURM_SUBMIT_DIR`. Slurm also needs `logs/` to exist
-before it can write `#SBATCH --output` files. Do not build or evaluate on
-the login node (about 1 CPU / 4 GB).
+Clone **this fork** on the **`satmae-temporal-inference`** branch. Upstream
+`main` does not include these scripts.
+
+```bash
+ssh login-ice.pace.gatech.edu
+git clone -b satmae-temporal-inference \
+  https://github.com/rohan5986/cybershuttle-ai4science-foundry.git \
+  ~/scratch/cybershuttle-ai4science-foundry
+cd ~/scratch/cybershuttle-ai4science-foundry
+```
+
+All jobs are submitted **from that repo root**. The sbatch scripts resolve
+paths from `$SLURM_SUBMIT_DIR`. Slurm also needs `logs/` to exist before it
+can write `#SBATCH --output` files. Do not build or evaluate on the login
+node (about 1 CPU / 4 GB).
+
+**Wait for each Slurm stage to finish before submitting the next.** Later
+jobs need artifacts from earlier ones (conda prefix, checkpoint, imagery,
+AOI crops). After `sbatch` prints a job id, wait until
+`sacct -j <jobid> -n -X -o State,ExitCode` is `COMPLETED` / `0:0`. Do not
+queue the full ladder in one shot.
 
 Data, weights, the upstream SatMAE checkout, and results go under
 `$SATMAE_TEMPORAL_WORKDIR` (default `~/scratch/satmae-temporal`), not into
@@ -46,35 +63,36 @@ $SATMAE_TEMPORAL_WORKDIR/
 ```
 
 ```bash
-ssh login-ice.pace.gatech.edu
-cd ~/scratch/cybershuttle-ai4science-foundry
 export SATMAE_TEMPORAL_WORKDIR="$HOME/scratch/satmae-temporal"
 mkdir -p logs
 
 # confirm GPU type before any GPU job (edit --gres= if not L40S)
 sinfo -p coc-gpu -o "%P %G %N"
 
+# After every sbatch below, wait for COMPLETED / 0:0 before the next:
+#   sacct -j <jobid> -n -X -o State,ExitCode
+
 # 1. Clone upstream SatMAE @ 0b210ace… and build the conda env (coc-cpu)
-sbatch scripts/satmae_temporal_build_env.sbatch
+sbatch scripts/satmae_temporal_build_env.sbatch          # wait: COMPLETED
 
 # 2. One-time timm / numpy dtype patch (also run by the build job)
 #    conda activate ~/scratch/envs/satmae-temporal
 #    bash scripts/satmae_temporal_patch_env.sh
 
 # 3. Checkpoint (wget from Zenodo + sha256)
-sbatch scripts/satmae_temporal_download_weights.sbatch
+sbatch scripts/satmae_temporal_download_weights.sbatch   # wait: COMPLETED
 
 # 4. fMoW-RGB val imagery + val_62classes.csv (coc-cpu; do not download train)
-sbatch scripts/satmae_temporal_download_data.sbatch
+sbatch scripts/satmae_temporal_download_data.sbatch      # wait: COMPLETED
 
 # 4b. If the data job finished before AOI crops existed (job 6192078):
 #     SpaceNet S3 has *_rgb.jpg; SatMAE CSVs / temporal glob need
 #     *_rgb_crop_0.jpg. This writes those chips from each scene's JSON bbox
 #     and reruns prepare_csv.
-sbatch scripts/satmae_temporal_crop_fmow.sbatch
+sbatch scripts/satmae_temporal_crop_fmow.sbatch          # wait: COMPLETED
 
 # 5. Rebuild image paths (the data and crop sbatches already do this; rerun
-#    if you copied the CSV in by hand)
+#    if you copied the CSV in by hand). Run on a compute node, not login.
 python scripts/satmae_temporal_prepare_csv.py \
   --csv "$SATMAE_TEMPORAL_WORKDIR/data/val_62classes.csv" \
   --data-root "$SATMAE_TEMPORAL_WORKDIR/data" \
@@ -94,15 +112,20 @@ the resolved lock file and `pip freeze` to `$SATMAE_TEMPORAL_WORKDIR/env/`.
 
 ## Execution
 
+Submit these only after the setup jobs above have `COMPLETED`. Run smoke,
+then subset, then full — each after the previous job finishes. Full val
+needs the cropped chips and the conda env from setup; it does not depend
+on the subset score, but the ladder is the intended check.
+
 ```bash
 # smoke test: first 100 rows, 30-minute limit
-sbatch scripts/satmae_temporal_smoke_test.sbatch
+sbatch scripts/satmae_temporal_smoke_test.sbatch         # wait: COMPLETED
+
+# secondary / fallback: class-stratified 500-row subset
+sbatch scripts/satmae_temporal_eval_subset.sbatch        # wait: COMPLETED
 
 # primary result: full prepared validation CSV (only if val imagery fits)
 sbatch scripts/satmae_temporal_eval_full.sbatch
-
-# secondary / fallback: class-stratified 500-row subset
-sbatch scripts/satmae_temporal_eval_subset.sbatch
 
 # optional chance baseline (~1/62); not required for the pass criterion
 sbatch scripts/satmae_temporal_eval_random.sbatch

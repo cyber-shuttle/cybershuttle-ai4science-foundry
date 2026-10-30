@@ -109,12 +109,11 @@ choice, not a shortcut forced by a limitation: see
 notes for why the quick-start exercises the same training code path as
 full pretraining, just at a scale that fits a single GPU in minutes.
 
-> **Status:** the training command itself was run manually and verified
-> (see [Verification](#verification-1) below), but `scripts/hyenadna_train.sbatch`
-> and `scripts/hyenadna_train_validate.py`, which package that command into
-> a reproducible job, have not yet been re-run end to end as committed —
-> confirm that before relying on this section for graded evidence, and
-> update this note once confirmed.
+> **Status:** verified. `scripts/hyenadna_train.sbatch` has been re-run
+> end to end as committed via a real `sbatch` submission on PACE ICE (see
+> [Verification](#verification-1) below), including
+> `scripts/hyenadna_train_validate.py` running automatically at the end of
+> that same job and printing `VALIDATION PASSED`.
 
 ### Setup
 
@@ -160,19 +159,32 @@ default timestamp, captures the log, and runs the validator automatically.
 
 ### Verification {#verification-1}
 
-Run manually on an ICE H200 (before `hyenadna_train_validate.py` existed as
-a committed script, so this is the raw training output, not that script's
-formatted result):
+Re-run end to end as committed via `sbatch scripts/hyenadna_train.sbatch`
+on PACE ICE (Tesla V100), with `hyenadna_train_validate.py` running
+automatically at the end of the same job:
 
 ```
-Epoch 0:  20%|██        | 1/5 [00:20<01:21, 0.04it/s, train/loss=61.10]
-...
-Epoch 99: 100%|██████████| 10/10 [00:01<00:00, 5.72it/s, train/loss=59.70, val/accuracy=0.674, val/loss=2.050, train/accuracy=0.994, train/loss=0.0281]
+Epoch 99: 100%|██████████| 10/10 [00:02<00:00,  3.55it/s, loss=0.0353, val/accuracy=0.711, val/loss=1.760, train/accuracy=0.992, train/loss=0.0323]
 `Trainer.fit` stopped: `max_epochs=100` reached.
+[smoke test] checkpoint: .../checkpoints/last.ckpt (62 tensors, epoch=99, global_step=800)
+[validation] loss: first=0.7070 last=0.0323 (n=2180 logged steps)
+[validation] final val/accuracy: 0.7110
+
+VALIDATION PASSED
 ```
 
-100 epochs completed in under 2 minutes; `train/loss` fell from ~61 to
-~0.03 and `train/accuracy` reached 0.994, with `val/accuracy` around 0.67.
+100 epochs completed in ~6 minutes; `train/loss` fell from 0.707 to 0.032
+and `train/accuracy` reached 0.992, with `val/accuracy` at 0.711 — all
+within the validator's checked ranges.
+
+Getting this clean run surfaced three real bugs in the committed scripts
+(each hit live, each now fixed and covered in
+[Troubleshooting](#troubleshooting)): an Lmod module-swap crash under
+`set -u`, a `matplotlib`/home-quota crash, and a SLURM-spool-directory path
+bug in the training script's sibling-script lookup. An earlier manual run
+(before these scripts existed) hit 100 epochs on an H200 in under 2
+minutes with `train/accuracy` 0.994 — consistent with this run, modulo GPU
+and minor run-to-run variance.
 `scripts/hyenadna_train_validate.py` formalizes two checks against a
 captured log and checkpoint directory:
 
@@ -192,9 +204,11 @@ see [Execution](#execution-1).
 ## Hardware and provenance
 
 - **Verified hardware:** PACE ICE `ice-gpu` partition. Inference confirmed
-  on a Tesla V100-16GB (compute capability 7.0); the from-scratch training
-  command confirmed on an H200 (compute capability 9.0). The setup script
-  handles both compute-capability ranges — see
+  on a Tesla V100-16GB (compute capability 7.0); from-scratch training
+  confirmed on both a V100 (the packaged `sbatch` job, see
+  [Verification](#verification-1)) and an H100/H200-class GPU (compute
+  capability 9.0, an earlier manual run). The setup script handles both
+  compute-capability ranges — see
   [GPU architecture mismatch](#troubleshooting) below.
 - **Checkpoint:** `LongSafari/hyenadna-tiny-1k-seqlen` from HuggingFace
   (BSD-3-Clause), downloaded via `git clone` (git-lfs) in
@@ -282,6 +296,34 @@ instead of to wandb." The only record of training progress is whatever
 reaches stdout, which is why `scripts/hyenadna_train.sbatch` captures it to
 a log file and `scripts/hyenadna_train_validate.py` parses that file rather
 than a structured metrics format.
+
+**`module load miniforge` can crash a fresh job under `set -u`.** A fresh
+ICE job or shell starts with `anaconda3` loaded by default. Loading
+`miniforge` on top of that triggers Lmod's automatic swap-out of
+`anaconda3`, whose deactivation hook references an unset shell variable —
+fatal under `set -u`, and with no error message of its own: the job just
+exits in seconds, before reaching anything else in the script. Fix:
+`module purge` before `module load miniforge`, in
+`scripts/hyenadna_setup_env.sh` and both sbatch scripts.
+
+**`matplotlib`'s font cache hits the home quota.** `pytorch_lightning`
+pulls in `torchmetrics`, which imports `matplotlib`, which writes a font
+cache to `$HOME` on first import — the same quota that `pip`'s wheel cache
+and HuggingFace's hub cache already needed redirecting off of (see above).
+Training fails with `OSError: [Errno 122] Disk quota exceeded` partway
+through importing `pytorch_lightning`, before any training code runs.
+Fix: `scripts/hyenadna_train.sbatch` also redirects `MPLCONFIGDIR` (and
+`HF_HOME`, for the GenomicBenchmarks dataset download) to scratch.
+
+**`${BASH_SOURCE[0]}` doesn't point where you'd expect under `sbatch`.**
+SLURM copies a submitted batch script into a per-job spool directory on
+the compute node and runs it from there, so deriving a script's own
+directory from `${BASH_SOURCE[0]}` resolves to that spool directory, not
+to wherever the script actually lives — breaking any lookup of sibling
+files (here, `hyenadna_train_validate.py`). Fix: both sbatch scripts use
+`$SLURM_SUBMIT_DIR` (the directory `sbatch` was invoked from) instead,
+falling back to the `${BASH_SOURCE[0]}` form only for direct, non-`sbatch`
+invocation.
 
 ## Cleanup
 

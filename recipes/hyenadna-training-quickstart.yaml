@@ -13,16 +13,16 @@ description: >
   objective, optimizer, and scheduler all run for real, just at a scale
   that fits a single GPU in minutes instead of a multi-GPU multi-day job.
 
-status: written, pending live re-verification
+status: verified
 status_notes: >
-  This exact command was run successfully on PACE ICE earlier in this
-  model's reproduction work (100 epochs on an H200, ~2 minutes, final
-  train/accuracy 0.994, val/accuracy 0.67-0.70) before scripts/hyenadna_train.sbatch
-  and scripts/hyenadna_train_validate.py existed as committed artifacts.
-  Those two files package that same command into a reproducible job
-  script and a validation check, but have not yet been re-run end to end
-  as committed -- do that before relying on this recipe for grading
-  evidence, and update this field once confirmed.
+  Re-run end to end as committed via `sbatch scripts/hyenadna_train.sbatch`
+  on PACE ICE (job 6671093, V100, 100 epochs, ~6 minutes, final
+  train/accuracy 0.992, val/accuracy 0.711); scripts/hyenadna_train_validate.py
+  ran as part of that same job and printed VALIDATION PASSED. Getting a
+  clean run surfaced and fixed three real bugs in the packaged scripts
+  (an Lmod module-swap crash under `set -u`, a matplotlib/$HOME disk-quota
+  crash, and a SLURM-spool-directory path bug in the sibling-script
+  lookup) -- see scripts/hyenadna_train.sbatch's comments for each.
 
 input:
   format: none provided by the user -- GenomicBenchmarks auto-downloads its own data

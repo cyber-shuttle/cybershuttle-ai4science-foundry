@@ -46,8 +46,9 @@ steps:
   - name: setup_environment
     description: >
       Create the conda env and install a PyTorch build matched to the
-      allocated GPU's compute capability, then flash-attn (a hard dependency
-      even for inference-adjacent code paths in this repo).
+      allocated GPU's compute capability. flash-attn is skipped by default
+      (it's only needed by the Lightning training path, not standalone
+      inference) -- set HYENADNA_INSTALL_FLASH_ATTN=1 to install it.
     script: scripts/hyenadna_setup_env.sh
     args:
       env_prefix: ~/scratch/.conda/envs/hyena-dna

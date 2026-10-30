@@ -13,18 +13,22 @@ description: >
   capability — see `model_compatibility` and the HyenaDNA notes below for a
   concrete example of why that matters.
 
-hardware:
-  gpu:
-    model: "mixed: V100-16GB, A100, H100, H200, L40S, RTX 6000 (varies by allocation)"
-    count: 1
-    vram_gb: 16  # minimum across the fleet (V100); plan for this unless a specific GPU is requested
-    interconnect: PCIe
-  cpu:
-    cores: 8     # as typically requested; partition supports more
-    ram_gb: 32   # as typically requested
-  storage:
-    scratch_gb: null  # per-user scratch quota not fixed-size in the same way home is; home is ~30GB and fills fast
-    parallel_fs: Lustre-like shared filesystem under /storage/ice1
+# gpu/cpu/storage are top-level fields per ResourceProfileSchema
+# (tools/schemas/schemas.py) -- nesting them under a `hardware:` key, as
+# resource-profiles/nexus/*.yaml do, makes them invisible to schema-aware
+# consumers (the fields parse as None instead of erroring, since they're
+# Optional).
+gpu:
+  model: "mixed: V100-16GB, A100, H100, H200, L40S, RTX 6000 (varies by allocation)"
+  count: 1
+  vram_gb: 16  # minimum across the fleet (V100); plan for this unless a specific GPU is requested
+  interconnect: PCIe
+cpu:
+  cores: 8     # as typically requested; partition supports more
+  ram_gb: 32   # as typically requested
+storage:
+  scratch_gb: null  # per-user scratch quota not fixed-size in the same way home is; home is ~30GB and fills fast
+  parallel_fs: Lustre-like shared filesystem under /storage/ice1
 
 scheduler: slurm
 partition: ice-gpu

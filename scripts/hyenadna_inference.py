@@ -16,6 +16,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -45,19 +46,26 @@ def inject_substring(key):
 
 def load_pretrained(checkpoint_dir, model_name, device):
     model_dir = os.path.join(checkpoint_dir, model_name)
-    if not os.path.isdir(model_dir):
+    config_path = os.path.join(model_dir, "config.json")
+    weights_path = os.path.join(model_dir, "weights.ckpt")
+    # A directory can exist but be incomplete (e.g. an interrupted clone), so
+    # check for the files we actually need rather than just the directory.
+    if not (os.path.isfile(config_path) and os.path.isfile(weights_path)):
+        if os.path.isdir(model_dir):
+            shutil.rmtree(model_dir)  # git clone refuses a non-empty target dir
+        subprocess.run(["git", "lfs", "install"], check=True)
         subprocess.run(
-            ["git", "clone", f"https://huggingface.co/LongSafari/{model_name}"],
+            ["git", "clone", "--depth", "1", f"https://huggingface.co/LongSafari/{model_name}"],
             cwd=checkpoint_dir, check=True,
         )
 
-    config = json.load(open(os.path.join(model_dir, "config.json")))
+    config = json.load(open(config_path))
     model = HyenaDNAModel(**config, use_head=False, n_classes=2)
 
     # weights.ckpt is a full PyTorch Lightning checkpoint, not a bare state
     # dict — the actual weights are nested under ckpt["state_dict"], and its
     # keys carry a "model." prefix that the standalone model doesn't use.
-    ckpt = torch.load(os.path.join(model_dir, "weights.ckpt"), map_location=device)
+    ckpt = torch.load(weights_path, map_location=device)
     checkpointing = config.get("checkpoint_mixer", False) is True
 
     state_dict = model.state_dict()
@@ -69,6 +77,22 @@ def load_pretrained(checkpoint_dir, model_name, device):
             state_dict[key] = ckpt["state_dict"][loaded_key]
     model.load_state_dict(state_dict)
     return model, config
+
+
+def read_first_fasta_record(path):
+    lines = []
+    in_record = False
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith(">"):
+                if in_record:
+                    break  # second header reached; stop before the next record
+                in_record = True
+                continue
+            if in_record:
+                lines.append(line)
+    return "".join(lines)
 
 
 def embed(model, tokenizer, sequence, device):
@@ -102,9 +126,7 @@ def main():
     if args.sequence:
         sequence = args.sequence
     else:
-        with open(args.fasta) as f:
-            lines = [l.strip() for l in f if not l.startswith(">")]
-        sequence = "".join(lines)
+        sequence = read_first_fasta_record(args.fasta)
 
     if len(sequence) > max_length:
         print(f"warning: sequence length {len(sequence)} exceeds {args.model}'s "

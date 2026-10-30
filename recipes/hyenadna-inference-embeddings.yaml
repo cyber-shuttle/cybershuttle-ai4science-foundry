@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: hyenadna-inference-embeddings
+name: HyenaDNA — DNA sequence embedding inference
+model: hyenadna
+task: inference
+description: >
+  Load a pretrained HyenaDNA checkpoint and extract per-nucleotide embeddings
+  from a DNA sequence using the model's standalone (non-Lightning) interface.
+  Verified end-to-end on PACE ICE: real pretrained weights downloaded from
+  HuggingFace, loaded into the model, and run through a forward pass with a
+  validation check confirming the output actually reflects the input
+  sequence rather than being a shape-correct but meaningless tensor.
+
+variants_supported:
+  - hyenadna-tiny-1k-seqlen       # recommended starting point; ~1k context
+  - hyenadna-tiny-1k-seqlen-d256
+  - hyenadna-small-32k-seqlen
+  - hyenadna-medium-160k-seqlen
+  - hyenadna-medium-450k-seqlen
+  - hyenadna-large-1m-seqlen      # needs an A100-class GPU
+
+input:
+  format: raw DNA sequence (string) or FASTA file
+  tokenization: single-nucleotide character tokenizer (A, C, G, T, N), handled by scripts/hyenadna_inference.py
+  max_length: variant-dependent; 1024 for tiny-1k up to 1,000,000 for large-1m
+  notes: >
+    Sequences longer than the selected checkpoint's trained context are
+    truncated with a warning, not rejected.
+
+output:
+  embeddings:
+    format: PyTorch tensor (.pt)
+    shape: "[1, sequence_length + 2, d_model]"
+    notes: >
+      +2 accounts for the tokenizer's special tokens. d_model is 128 for the
+      tiny checkpoints; see each checkpoint's config.json on HuggingFace for
+      larger variants.
+
+environment:
+  conda_env: hyena-dna (Python 3.8)
+  pytorch: "1.13.0+cu117 on GPUs through Ampere (compute capability <=8.6); 2.1.2+cu118 on Hopper (H100/H200, compute capability 9.0+) — see notes"
+  setup_script: scripts/hyenadna_setup_env.sh
+
+steps:
+  - name: setup_environment
+    description: >
+      Create the conda env and install a PyTorch build matched to the
+      allocated GPU's compute capability. flash-attn is skipped by default
+      (it's only needed by the Lightning training path, not standalone
+      inference) -- set HYENADNA_INSTALL_FLASH_ATTN=1 to install it.
+    script: scripts/hyenadna_setup_env.sh
+    args:
+      env_prefix: ~/scratch/.conda/envs/hyena-dna
+      repo_dir: ~/scratch/hyena-dna
+
+  - name: validate
+    description: >
+      Smoke test (correct output shape, no NaN/Inf) plus a validation check
+      that embeddings actually respond to input content, not just that
+      nothing crashed, plus a pretraining-objective check that a real
+      sequence (data/example.fasta) is more predictable than its shuffle. Downloads the hyenadna-tiny-1k-seqlen checkpoint on
+      first run via git-lfs.
+    script: scripts/hyenadna_validate.py
+    args:
+      model: hyenadna-tiny-1k-seqlen
+
+  - name: inference
+    description: Embed a DNA sequence or FASTA file with a chosen pretrained checkpoint.
+    script: scripts/hyenadna_inference.py
+    args:
+      model: hyenadna-tiny-1k-seqlen
+      fasta: data/example.fasta
+      output: results/hyenadna-embeddings.pt
+
+resource_requirements:
+  hyenadna_tiny_1k:
+    gpu_memory_gb: 4          # observed comfortably under this on a 16GB V100
+    gpu_count: 1
+    recommended_gpu: any CUDA GPU PACE ICE's ice-gpu partition allocates (V100 and up)
+  hyenadna_large_1m:
+    gpu_memory_gb: 80
+    gpu_count: 1
+    recommended_gpu: A100 80GB (per HuggingFace model card guidance; not independently verified here)
+  storage_gb: 5   # checkpoint (well under 1GB for tiny/small) + conda env + caches
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/ice-gpu.yaml
+
+compatible_optimization_profiles: []  # none published yet for this model
+
+slurm_example: |
+  #!/bin/bash
+  #SBATCH --job-name=hyenadna-inference
+  #SBATCH --account=coc
+  #SBATCH --partition=ice-gpu
+  #SBATCH --gres=gpu:1
+  #SBATCH --cpus-per-task=8
+  #SBATCH --mem=32G
+  #SBATCH --time=00:30:00
+  #SBATCH --output=logs/hyenadna-inference-%j.out
+
+  module load miniforge
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  conda activate ~/scratch/.conda/envs/hyena-dna
+
+  export HF_HOME=~/scratch/.cache/huggingface HYENADNA_REPO=~/scratch/hyena-dna
+  python scripts/hyenadna_validate.py --model hyenadna-tiny-1k-seqlen
+  python scripts/hyenadna_inference.py --model hyenadna-tiny-1k-seqlen \
+      --fasta data/example.fasta --output results/hyenadna-embeddings.pt
+
+  # The full, idempotent version of this job (builds the env if missing,
+  # mkdir's logs/, takes the FASTA path as an argument) is
+  # scripts/hyenadna_inference.sbatch — submit that directly for real runs:
+  #   sbatch scripts/hyenadna_inference.sbatch data/example.fasta
+
+notes: >
+  Three reproducibility gotchas found and fixed while verifying this recipe
+  on PACE ICE, each documented inline in the relevant script:
+
+  1. The upstream repo's own huggingface.py runs a full hardcoded inference
+     example as a side effect of being imported (no `__main__` guard), so
+     scripts/hyenadna_inference.py reimplements its small amount of
+     checkpoint-loading logic against standalone_hyenadna.py directly
+     instead of importing it.
+  2. `pip install -r requirements.txt` pulls in torchtext==0.14.0, which
+     hard-pins torch==1.13.0 and silently downgrades whatever GPU-enabled
+     torch build was installed first (pip warns, does not fail). The GPU
+     build must be (re)installed after requirements.txt, not before.
+  3. PACE ICE's home directory quota (~30GB) is hit by pip's wheel cache,
+     HuggingFace's hub cache, and git's global config (written by git-lfs)
+     well before scratch storage fills up. All must be redirected to a
+     scratch path before installing or downloading anything.
+
+  See registry/models/genomics/hyenadna/README.md for full setup, execution,
+  verification, troubleshooting, and cleanup steps.

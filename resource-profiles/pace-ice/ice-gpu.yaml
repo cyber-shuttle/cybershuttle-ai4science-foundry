@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-gpu
+name: Georgia Tech PACE ICE — ice-gpu partition
+system: pace-ice
+provider: Georgia Tech PACE (campus cluster)
+
+description: >
+  GPU partition on Georgia Tech's PACE ICE instructional cluster, used for
+  the Georgia Tech AI Makerspace. Slurm allocates whichever GPU type is free
+  on request (V100, A100, H100, H200, L40S, or RTX 6000 observed so far), so
+  a recipe targeting this profile should not assume a specific compute
+  capability — see `model_compatibility` and the HyenaDNA notes below for a
+  concrete example of why that matters.
+
+# gpu/cpu/storage are top-level fields per ResourceProfileSchema
+# (tools/schemas/schemas.py) -- nesting them under a `hardware:` key, as
+# resource-profiles/nexus/*.yaml do, makes them invisible to schema-aware
+# consumers (the fields parse as None instead of erroring, since they're
+# Optional).
+gpu:
+  model: "mixed: V100-16GB, A100, H100, H200, L40S, RTX 6000 (varies by allocation)"
+  count: 1
+  vram_gb: 16  # minimum across the fleet (V100); plan for this unless a specific GPU is requested
+  interconnect: PCIe
+cpu:
+  cores: 8     # as typically requested; partition supports more
+  ram_gb: 32   # as typically requested
+storage:
+  scratch_gb: null  # per-user scratch quota not fixed-size in the same way home is; home is ~30GB and fills fast
+  parallel_fs: Lustre-like shared filesystem under /storage/ice1
+
+scheduler: slurm
+partition: ice-gpu
+max_walltime_hours: 16
+
+notes: >
+  Account/QOS: request with `--account=<your-account> --partition=ice-gpu
+  --gres=gpu:1` (add a GPU type, e.g. `gpu:a100:1`, to pin a specific
+  architecture instead of taking whatever is free).
+
+  Home directory quota is small (~30GB) and is hit by package manager caches
+  long before scratch fills up — `pip`, `git lfs`, and HuggingFace's hub
+  cache all default to paths under $HOME. Every job script for this profile
+  should redirect PIP_CACHE_DIR, TMPDIR, HF_HOME, and GIT_CONFIG_GLOBAL to a
+  scratch path before installing anything or downloading checkpoints/data.
+
+  GPU architecture varies per allocation on this partition. A software stack
+  pinned to an older PyTorch/CUDA build (e.g. torch+cu11x) may only ship
+  compiled kernels through Ampere (compute capability 8.6) and silently fail
+  on newer Hopper GPUs (H100/H200, compute capability 9.0) that this
+  partition can also allocate. Confirmed directly with HyenaDNA's documented
+  `torch==1.13.0+cu117` pin: it works on the V100/A100 nodes this partition
+  allocates but needs `torch>=2.1` with a CUDA 11.8+ build on H100/H200
+  nodes. See `scripts/hyenadna_setup_env.sh` for a GPU-aware installer.

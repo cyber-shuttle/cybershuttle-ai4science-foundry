@@ -1,0 +1,154 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: hyenadna
+name: HyenaDNA
+version: "1.0"
+
+description: >
+  HyenaDNA is a genomic foundation model that predicts the next nucleotide
+  in a DNA sequence, pretrained on the human reference genome (hg38) at
+  single-nucleotide resolution with context windows up to 1 million tokens.
+  Its Hyena-operator backbone (implicit long convolutions + gating) scales
+  sub-quadratically with sequence length, unlike attention-based genomic
+  models that are limited to a few thousand tokens of context. It is
+  primarily intended as an embedding backbone for downstream genomic tasks
+  (classification, regulatory element prediction) via fine-tuning or
+  frozen-feature extraction, and for in-context learning via soft prompting.
+
+domain:
+  - genomics
+  - genomic-language-model
+
+model_family:
+  - hyena
+  - foundation-model
+  - genomic-language-model
+  - decoder-only
+
+tasks:
+  - inference
+  - fine-tuning
+  - training
+  - evaluation
+
+upstream:
+  huggingface: LongSafari/hyenadna-tiny-1k-seqlen
+  github: https://github.com/HazyResearch/hyena-dna
+  paper: https://arxiv.org/abs/2306.15794
+  paper_title: "HyenaDNA: Long-Range Genomic Sequence Modeling at Single Nucleotide Resolution"
+  license: Apache-2.0
+
+# Required by the model schema (tools/schemas/schemas.py); several existing
+# registry entries at the time of writing (e.g. molformer) predate this
+# field and would also fail validation once CI is wired up.
+lifecycle:
+  supported_stages:
+    - inference
+    - fine-tuning
+    - training
+    - evaluation
+
+input:
+  format: raw DNA sequence (A/C/G/T/N) or FASTA
+  description: >
+    Single-nucleotide character-level tokenization. Sequences longer than
+    the chosen checkpoint's trained context length should be truncated or
+    chunked.
+  example: "ACTGACTGACTGACTG..."
+
+output:
+  inference:
+    format: embeddings (float32 tensor, shape [1, seq_len+2, d_model])
+    description: Per-nucleotide embeddings suitable for downstream classification or regression tasks
+  training:
+    format: next-nucleotide logits
+    description: Autoregressive next-token prediction over the character-level DNA vocabulary
+
+architecture:
+  type: hyena-operator stack (decoder-only)
+  attention: none — long implicit convolutions (MLP-generated filters) with element-wise gating, in place of self-attention
+  positional_encoding: implicit, via the convolution filters
+  parameters_approx: "~400K (tiny-1k) to ~6.5M (large-1m)"
+  hidden_size: 128  # tiny checkpoints; see each checkpoint's config.json for larger variants
+  num_layers: 2     # tiny checkpoints
+  vocab_size: 12    # A, C, G, T, N + special/padding tokens
+  max_sequence_length: "1,024 (tiny) to 1,000,000 (large)"
+
+datasets:
+  pretraining:
+    - id: hg38
+      description: Human reference genome (GRCh38), ~24 chromosome sequences merged into one FASTA
+      size_approx: "a few GB (fasta + bed interval files)"
+  fine_tuning_benchmarks:
+    - id: genomic-benchmarks
+      description: GenomicBenchmarks suite (binary/multi-class genomic sequence classification)
+      url: https://github.com/ML-Bioinfo-CEITEC/genomic_benchmarks
+    - id: nucleotide-transformer-tasks
+      description: 18 downstream tasks used in the Nucleotide Transformer paper, for head-to-head comparison
+      url: https://arxiv.org/abs/2306.15794
+
+software:
+  python: "3.8"
+  frameworks:
+    - torch==1.13.0+cu117 (GPUs through Ampere, compute capability <=8.6) OR torch==2.1.2+cu118 (Hopper, compute capability >=9.0)
+    - pytorch-lightning==1.8.6
+    - flash-attn (hard dependency for the repo's Lightning training path; not required for standalone inference)
+  optional:
+    - datasets   # GenomicBenchmarks auto-download
+  container: null  # no validated container yet; conda env only, see scripts/hyenadna_setup_env.sh
+
+# resource_profiles values must be lists of profile paths (schema-enforced);
+# numeric GPU-memory minimums live in minimum_requirements below instead —
+# nesting them here (as in molformer's example) fails schema validation.
+resource_profiles:
+  recommended:
+    - resource-profiles/pace-ice/ice-gpu.yaml
+
+minimum_requirements:
+  gpu_memory_gb: 4             # inference, tiny-1k checkpoint, observed on a 16GB V100
+  gpu_memory_gb_large_1m: 80   # per HuggingFace model card; not independently verified
+
+cybershuttle:
+  enabled: false  # no workflow template yet
+  workflow_templates: []
+
+readiness:
+  registry_status: containerized
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: candidate
+  last_updated: "2026-10-02"
+  notes: >
+    `containerized` here means a validated, reproducible conda environment,
+    not a container image — none exists yet. Inference verified end-to-end
+    on PACE ICE (not Nexus): pretrained hyenadna-tiny-1k-seqlen checkpoint
+    downloaded from HuggingFace, loaded, and run through a forward pass that
+    passes a shape/NaN smoke test and an input-sensitivity validation check.
+    From-scratch training (the repo's documented quick-start, on the
+    GenomicBenchmarks suite) is packaged as
+    recipes/hyenadna-training-quickstart.yaml plus
+    scripts/hyenadna_train.sbatch and scripts/hyenadna_train_validate.py,
+    and has been verified end-to-end as committed via a real `sbatch`
+    submission on PACE ICE (100 epochs, final train/accuracy 0.992,
+    val/accuracy 0.711, validator printed VALIDATION PASSED). Nexus-specific
+    validation, fine-tuning, and full hg38 pretraining remain untested.
+
+maintainers:
+  - name: Vishal Subramanian Ramasubramanian
+    github: "@vishram1123"
+    affiliation: Georgia Institute of Technology
+  - name: Kevin Yin
+    github: "@kyin68"
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  Multiple checkpoint sizes are available on HuggingFace (LongSafari org):
+  tiny-1k, tiny-1k-d256, tiny-16k-d128, small-32k, medium-160k, medium-450k,
+  large-1m, named for their trained context length. tiny-1k is the
+  recommended starting point for inference and the from-scratch quick-start;
+  large-1m requires an A100-class GPU per HuggingFace's own guidance.
+
+  See recipes/hyenadna-inference-embeddings.yaml for the inference recipe
+  and registry/models/genomics/hyenadna/README.md for full setup,
+  execution, verification, troubleshooting, and cleanup instructions.

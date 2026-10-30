@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: hyenadna-training-quickstart
+name: HyenaDNA — from-scratch training quick-start
+model: hyenadna
+task: training
+description: >
+  Train a small (2-layer) HyenaDNA model from scratch on one
+  GenomicBenchmarks classification task, using the upstream repo's own
+  documented "quick entry point" rather than full hg38 pretraining (see
+  notes for why that's a separate, heavier target). This is a genuine
+  training run, not a frozen-weights pass: the next-nucleotide/classification
+  objective, optimizer, and scheduler all run for real, just at a scale
+  that fits a single GPU in minutes instead of a multi-GPU multi-day job.
+
+status: verified
+status_notes: >
+  Re-run end to end as committed via `sbatch scripts/hyenadna_train.sbatch`
+  on PACE ICE (job 6671093, V100, 100 epochs, ~6 minutes, final
+  train/accuracy 0.992, val/accuracy 0.711); scripts/hyenadna_train_validate.py
+  ran as part of that same job and printed VALIDATION PASSED. Getting a
+  clean run surfaced and fixed three real bugs in the packaged scripts
+  (an Lmod module-swap crash under `set -u`, a matplotlib/$HOME disk-quota
+  crash, and a SLURM-spool-directory path bug in the sibling-script
+  lookup) -- see scripts/hyenadna_train.sbatch's comments for each.
+
+input:
+  format: none provided by the user -- GenomicBenchmarks auto-downloads its own data
+  dataset: dummy_mouse_enhancers_ensembl (binary classification, 1210 sequences, median length 2381nt)
+  notes: >
+    7 other GenomicBenchmarks tasks are selectable by swapping the
+    `dataset` block in configs/experiment/hg38/genomic_benchmark_scratch.yaml
+    (see that file's header comment for the full list and their sizes).
+
+output:
+  checkpoint:
+    format: PyTorch Lightning checkpoint (.ckpt)
+    path: "<hydra_run_dir>/checkpoints/last.ckpt (and a second file named after the monitored metric, val/accuracy -- Lightning treats the slash as a subdirectory separator)"
+  metrics:
+    format: plain stdout, captured to <hydra_run_dir>/train.log
+    notes: >
+      Running with wandb=null (so the recipe needs no wandb account)
+      means Lightning persists no metrics file at all -- the captured
+      stdout log is the only record of per-step loss and val/accuracy.
+      scripts/hyenadna_train_validate.py parses it for exactly that reason.
+
+environment:
+  conda_env: hyena-dna (Python 3.8) -- the same env inference uses, plus flash-attn
+  pytorch: "1.13.0+cu117 on GPUs through Ampere; 2.1.2+cu118 on Hopper (H100/H200) -- see resource-profiles/pace-ice/ice-gpu.yaml"
+  setup_script: scripts/hyenadna_setup_env.sh
+  notes: >
+    Training hard-requires flash-attn (src/models/sequence/dna_embedding.py
+    imports GenerationMixin from it unconditionally -- there is no
+    pure-PyTorch fallback on this code path, unlike standalone inference).
+    scripts/hyenadna_train.sbatch sets HYENADNA_INSTALL_FLASH_ATTN=1 when it
+    has to build the env itself, and separately checks for and installs
+    flash-attn if the env already existed from an inference-only setup.
+
+steps:
+  - name: setup_environment
+    description: Same as the inference recipe, but with flash-attn installed rather than skipped.
+    script: scripts/hyenadna_setup_env.sh
+    args:
+      env_prefix: ~/scratch/.conda/envs/hyena-dna
+      repo_dir: ~/scratch/hyena-dna
+    env:
+      HYENADNA_INSTALL_FLASH_ATTN: "1"
+
+  - name: train
+    description: >
+      Run the upstream repo's own Hydra-driven training entry point, with
+      the two fused-kernel config flags disabled (see notes) and the Hydra
+      output directory pinned to a predictable path instead of a
+      timestamp, so the validation step knows where to look.
+    command: >
+      python -m train wandb=null experiment=hg38/genomic_benchmark_scratch
+      model.fused_dropout_add_ln=false model.fused_mlp=false
+      hydra.run.dir=<run_dir>
+
+  - name: validate
+    description: >
+      Checkpoint exists and is finite; training loss decreased over the
+      run; final val/accuracy is a sane finite value in [0, 1].
+    script: scripts/hyenadna_train_validate.py
+    args:
+      log-file: <run_dir>/train.log
+      checkpoint-dir: <run_dir>/checkpoints
+
+resource_requirements:
+  gpu_memory_gb: 4   # small model (d_model=128, 2 layers), batch_size=128, 256nt sequences
+  gpu_count: 1
+  recommended_gpu: any CUDA GPU PACE ICE's ice-gpu partition allocates
+  runtime_minutes: 2   # observed: 100 epochs in ~2 minutes on an H200
+  storage_gb: 1   # GenomicBenchmarks task data + checkpoint are both small
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/ice-gpu.yaml
+
+compatible_optimization_profiles: []  # none published yet for this model
+
+slurm_example: |
+  #!/bin/bash
+  #SBATCH --job-name=hyenadna-train
+  #SBATCH --account=coc
+  #SBATCH --partition=ice-gpu
+  #SBATCH --gres=gpu:1
+  #SBATCH --cpus-per-task=8
+  #SBATCH --mem=32G
+  #SBATCH --time=00:30:00
+  #SBATCH --output=logs/hyenadna-train-%j.out
+
+  # The full, idempotent version of this job (handles flash-attn being
+  # missing from an existing env, pins hydra.run.dir, runs the validator)
+  # is scripts/hyenadna_train.sbatch -- submit that directly:
+  #   sbatch scripts/hyenadna_train.sbatch
+  # Optionally override which GenomicBenchmarks task and output dir:
+  #   sbatch scripts/hyenadna_train.sbatch hg38/genomic_benchmark_scratch ~/scratch/hyena-dna/hyena_train_runs/my_run
+
+notes: >
+  This recipe deliberately targets the small GenomicBenchmarks quick-start,
+  not full hg38 pretraining. Full pretraining is documented in the upstream
+  README (docs/usage.md's Pretraining section) and uses the same code path
+  and objective at a much larger scale: downloading and preprocessing the
+  full human reference genome (a few GB), then
+  `python src/climax/pretrain/train.py`-style multi-GPU training for far
+  longer than a single ICE job's time limit comfortably allows. The
+  quick-start exercises the identical training code path (same train.py,
+  same Hydra config system, same optimizer/scheduler/checkpoint machinery)
+  at a scale that actually fits a course assignment, which is the same
+  "preserve the code path, reduce the scale" approach used for this
+  model's scaled-pretraining assignment generally.
+
+  Two config flags needed disabling to get this running at all:
+  model.fused_dropout_add_ln and model.fused_mlp both default to values
+  that require dropout_add_layer_norm, an optional fused CUDA kernel from
+  flash-attn's csrc/layer_norm subdirectory that this environment does not
+  build (a speed optimization, not a correctness requirement) -- left at
+  their defaults, train.py fails immediately with
+  "dropout_add_layer_norm is not installed" before any training happens.
+
+  See registry/models/genomics/hyenadna/README.md for full setup,
+  execution, verification, troubleshooting, and cleanup steps.

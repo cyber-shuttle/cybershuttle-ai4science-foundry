@@ -1,0 +1,120 @@
+##### CONFIG #####
+
+{'_config_name': 'default', 'n_params_baseline': None, 'verbose': True, 'arch': 'fno', 'distributed': {'use_distributed': False, 'model_parallel_size': 1, 'seed': None}, 'model': {'model_arch': 'fno', 'lifting_channel_ratio': 2, 'projection_channel_ratio': 2, 'n_layers': 4, 'domain_padding': 0.0, 'norm': None, 'fno_skip': 'linear', 'implementation': 'factorized', 'use_channel_mlp': True, 'channel_mlp_expansion': 0.5, 'channel_mlp_dropout': 0.0, 'separable': False, 'factorization': None, 'rank': 1.0, 'fixed_rank_modes': False, 'stabilizer': None, 'data_channels': 1, 'out_channels': 1, 'n_modes': [16, 16], 'hidden_channels': 24}, 'opt': {'training_loss': 'h1', 'testing_loss': 'l2', 'learning_rate': 0.005, 'weight_decay': 0.0001, 'eval_interval': 1, 'mixed_precision': False, 'scheduler': 'StepLR', 'scheduler_T_max': 500, 'scheduler_patience': 50, 'step_size': 60, 'gamma': 0.5, 'n_epochs': 300}, 'data': {'folder': '~/data/darcy/', 'batch_size': 8, 'n_train': 1000, 'train_resolution': 16, 'n_tests': [100, 50], 'test_resolutions': [16, 32], 'test_batch_sizes': [16, 16], 'encode_input': True, 'encode_output': True, 'download': True}, 'patching': {'levels': 0, 'padding': 0, 'stitching': False}, 'wandb': {'log': False, 'entity': None, 'project': None, 'name': None, 'group': None, 'sweep': False, 'log_output': True}}
+Loading test db for resolution 16 with 100 samples 
+Loading test db for resolution 32 with 50 samples 
+
+### MODEL ###
+ FNO(
+  (positional_embedding): GridEmbeddingND()
+  (fno_blocks): FNOBlocks(
+    (convs): ModuleList(
+      (0-3): 4 x SpectralConv(
+        (weight): DenseTensor(shape=torch.Size([24, 24, 16, 9]), rank=None)
+      )
+    )
+    (fno_skips): ModuleList(
+      (0-3): 4 x Flattened1dConv(
+        (conv): Conv1d(24, 24, kernel_size=(1,), stride=(1,), bias=False)
+      )
+    )
+    (channel_mlp): ModuleList(
+      (0-3): 4 x ChannelMLP(
+        (fcs): ModuleList(
+          (0): Conv1d(24, 12, kernel_size=(1,), stride=(1,))
+          (1): Conv1d(12, 24, kernel_size=(1,), stride=(1,))
+        )
+      )
+    )
+    (channel_mlp_skips): ModuleList(
+      (0-3): 4 x SoftGating()
+    )
+  )
+  (lifting): ChannelMLP(
+    (fcs): ModuleList(
+      (0): Conv1d(3, 48, kernel_size=(1,), stride=(1,))
+      (1): Conv1d(48, 24, kernel_size=(1,), stride=(1,))
+    )
+  )
+  (projection): ChannelMLP(
+    (fcs): ModuleList(
+      (0): Conv1d(24, 48, kernel_size=(1,), stride=(1,))
+      (1): Conv1d(48, 1, kernel_size=(1,), stride=(1,))
+    )
+  )
+)
+
+### OPTIMIZER ###
+ AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    initial_lr: 0.005
+    lr: 0.005
+    weight_decay: 0.0001
+)
+
+### SCHEDULER ###
+ <torch.optim.lr_scheduler.StepLR object at 0x15548ff07c70>
+
+### LOSSES ###
+
+ * Train: <neuralop.losses.data_losses.H1Loss object at 0x15548ff2c160>
+
+ * Test: {'h1': <neuralop.losses.data_losses.H1Loss object at 0x15548ff2c160>, 'l2': <neuralop.losses.data_losses.LpLoss object at 0x15548ff07d00>}
+
+### Beginning Training...
+
+
+n_params: 671113
+Training on 1000 samples
+Testing on [50, 50] samples         on resolutions [16, 32].
+/home/hice1/tkohli7/.local/lib/python3.10/site-packages/torch/nn/modules/module.py:1527: UserWarning: FNO.forward() received unexpected keyword arguments: ['y']. These arguments will be ignored.
+  return forward_call(*args, **kwargs)
+/storage/ice1/7/1/tkohli7/NeuralOperator/neuraloperator/neuralop/training/trainer.py:536: UserWarning: H1Loss.__call__() received unexpected keyword arguments: ['x']. These arguments will be ignored.
+  loss += training_loss(out, **sample)
+Raw outputs of shape torch.Size([8, 1, 16, 16])
+[0] time=2.07, avg_loss=0.4180, train_err=3.3437
+/storage/ice1/7/1/tkohli7/NeuralOperator/neuraloperator/neuralop/training/trainer.py:581: UserWarning: LpLoss.__call__() received unexpected keyword arguments: ['x']. These arguments will be ignored.
+  val_loss = loss(out, **sample)
+Eval: 16_h1=0.2670, 16_l2=0.1904, 32_h1=0.5185, 32_l2=0.2229
+[Rank 0]: saved training state to ./checkpoints
+[1] time=1.36, avg_loss=0.2482, train_err=1.9856
+Eval: 16_h1=0.2249, 16_l2=0.1604, 32_h1=0.5150, 32_l2=0.1938
+[2] time=1.36, avg_loss=0.2171, train_err=1.7365
+Eval: 16_h1=0.2157, 16_l2=0.1510, 32_h1=0.4899, 32_l2=0.1868
+[3] time=1.36, avg_loss=0.1951, train_err=1.5606
+Eval: 16_h1=0.2048, 16_l2=0.1428, 32_h1=0.4957, 32_l2=0.1825
+[4] time=1.36, avg_loss=0.1754, train_err=1.4030
+Eval: 16_h1=0.2009, 16_l2=0.1353, 32_h1=0.5044, 32_l2=0.1778
+[5] time=1.36, avg_loss=0.1652, train_err=1.3217
+Eval: 16_h1=0.2244, 16_l2=0.1631, 32_h1=0.5094, 32_l2=0.2008
+[6] time=1.36, avg_loss=0.1696, train_err=1.3568
+Eval: 16_h1=0.1936, 16_l2=0.1201, 32_h1=0.5038, 32_l2=0.1650
+[7] time=1.35, avg_loss=0.1668, train_err=1.3340
+Eval: 16_h1=0.2052, 16_l2=0.1323, 32_h1=0.5107, 32_l2=0.1796
+[8] time=1.35, avg_loss=0.1552, train_err=1.2414
+Eval: 16_h1=0.2093, 16_l2=0.1367, 32_h1=0.5252, 32_l2=0.1797
+[9] time=1.36, avg_loss=0.1503, train_err=1.2025
+Eval: 16_h1=0.1995, 16_l2=0.1287, 32_h1=0.5014, 32_l2=0.1714
+[10] time=1.36, avg_loss=0.1535, train_err=1.2284
+Eval: 16_h1=0.2229, 16_l2=0.1513, 32_h1=0.5156, 32_l2=0.1868
+[11] time=1.36, avg_loss=0.1515, train_err=1.2117
+Eval: 16_h1=0.2501, 16_l2=0.1888, 32_h1=0.5119, 32_l2=0.2162
+[12] time=1.36, avg_loss=0.1375, train_err=1.0996
+Eval: 16_h1=0.2389, 16_l2=0.1773, 32_h1=0.5097, 32_l2=0.2096
+[13] time=1.35, avg_loss=0.1289, train_err=1.0309
+Eval: 16_h1=0.2356, 16_l2=0.1672, 32_h1=0.5433, 32_l2=0.2117
+[14] time=1.36, avg_loss=0.1472, train_err=1.1773
+Eval: 16_h1=0.2116, 16_l2=0.1495, 32_h1=0.5572, 32_l2=0.1952
+[15] time=1.36, avg_loss=0.1493, train_err=1.1941
+Eval: 16_h1=0.2268, 16_l2=0.1661, 32_h1=0.5698, 32_l2=0.2036
+[16] time=1.37, avg_loss=0.1256, train_err=1.0051
+Eval: 16_h1=0.2064, 16_l2=0.1299, 32_h1=0.5534, 32_l2=0.1725
+[17] time=1.37, avg_loss=0.1257, train_err=1.0056
+Eval: 16_h1=0.2151, 16_l2=0.1313, 32_h1=0.5344, 32_l2=0.1764
+[18] time=1.36, avg_loss=0.1381, train_err=1.1046
+Eval: 16_h1=0.2140, 16_l2=0.1532, 32_h1=0.5169, 32_l2=0.1906
+[19] time=1.36, avg_loss=0.1271, train_err=1.0166
+Eval: 16_h1=0.2533, 16_l2=0.1982, 32_h1=0.5200, 32_l2=0.2251

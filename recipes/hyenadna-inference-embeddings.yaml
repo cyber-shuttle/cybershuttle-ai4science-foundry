@@ -58,7 +58,8 @@ steps:
     description: >
       Smoke test (correct output shape, no NaN/Inf) plus a validation check
       that embeddings actually respond to input content, not just that
-      nothing crashed. Downloads the hyenadna-tiny-1k-seqlen checkpoint on
+      nothing crashed, plus a pretraining-objective check that a real
+      sequence (data/example.fasta) is more predictable than its shuffle. Downloads the hyenadna-tiny-1k-seqlen checkpoint on
       first run via git-lfs.
     script: scripts/hyenadna_validate.py
     args:

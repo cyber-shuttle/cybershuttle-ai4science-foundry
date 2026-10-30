@@ -18,8 +18,16 @@ Raw per-position L2 distance on the un-pooled embeddings turned out to be a
 far more reliable signal (measured ~56 for two unrelated 200nt sequences,
 against a ~138 embedding norm, vs. exactly 0 for the same sequence twice).
 
+Pretraining-objective check: HyenaDNA is trained to predict the next
+nucleotide, so a real sequence (a human mRNA, HBB) should get a higher mean
+next-nucleotide log-likelihood than a random shuffle of the same nucleotides.
+Same composition, different order, so any gap reflects learned sequence
+structure rather than base frequencies. The LM head is the tied embedding
+matrix (logits = hidden_states @ word_embeddings.weight.T), as in upstream
+training. A missing gap points at a loading or tokenization bug.
+
 Usage:
-    python hyenadna_validate.py --model hyenadna-tiny-1k-seqlen
+    python hyenadna_validate.py --model hyenadna-tiny-1k-seqlen [--fasta path]
 """
 
 import argparse
@@ -28,6 +36,12 @@ import random
 import sys
 
 import torch
+import torch.nn.functional as F
+
+DEFAULT_FASTA = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..",
+    "registry", "models", "genomics", "hyenadna", "data", "example.fasta",
+)
 
 sys.path.insert(0, os.path.dirname(__file__))
 from hyenadna_inference import MAX_LENGTHS, embed, load_pretrained  # noqa: E402
@@ -40,9 +54,29 @@ def random_sequence(length, seed):
     return "".join(random.Random(seed).choices("ACGT", k=length))
 
 
+def read_fasta(path):
+    with open(path) as f:
+        return "".join(l.strip() for l in f if not l.startswith(">")).upper()
+
+
+def mean_next_nucleotide_loglik(model, sequence, max_length, device):
+    # Special tokens off, so every position is a real nucleotide with a real next token.
+    tokenizer = CharacterTokenizer(
+        characters=["A", "C", "G", "T", "N"], model_max_length=max_length + 2,
+        add_special_tokens=False, padding_side="left",
+    )
+    ids = torch.LongTensor(tokenizer(sequence)["input_ids"]).unsqueeze(0).to(device)
+    with torch.inference_mode():
+        hidden = model(ids)
+        logits = hidden @ model.backbone.embeddings.word_embeddings.weight.T
+        log_probs = F.log_softmax(logits.float(), dim=-1)[:, :-1]
+        return log_probs.gather(-1, ids[:, 1:].unsqueeze(-1)).mean().item()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="hyenadna-tiny-1k-seqlen", choices=MAX_LENGTHS.keys())
+    parser.add_argument("--fasta", default=DEFAULT_FASTA, help="real sequence for the pretraining-objective check")
     parser.add_argument("--checkpoint-dir", default=os.path.expanduser("~/scratch/hyena-dna/checkpoints"))
     args = parser.parse_args()
 
@@ -87,6 +121,20 @@ def main():
             f"embeddings barely changed between two unrelated sequences "
             f"(distance {diff_seq_dist:.2f}, <5% of embedding scale {embedding_scale:.2f}) "
             f"-- model may be ignoring its input"
+        )
+
+    # --- pretraining objective: real vs. composition-matched shuffle ----------
+    real = read_fasta(args.fasta)[:MAX_LENGTHS[args.model] - 2]
+    shuffled = "".join(random.Random(0).sample(real, len(real)))
+    max_length = MAX_LENGTHS[args.model]
+    real_ll = mean_next_nucleotide_loglik(model, real, max_length, device)
+    shuffled_ll = mean_next_nucleotide_loglik(model, shuffled, max_length, device)
+    print(f"[objective] mean next-nucleotide log-lik: real={real_ll:.4f} shuffled={shuffled_ll:.4f} "
+          f"(gap {real_ll - shuffled_ll:+.4f} nats)")
+    if real_ll <= shuffled_ll:
+        failures.append(
+            f"real sequence is not more predictable than its shuffle "
+            f"(log-lik {real_ll:.4f} vs {shuffled_ll:.4f}) -- possible loading or tokenization bug"
         )
 
     if failures:

@@ -80,7 +80,7 @@ the canonical, idempotent version of the steps above.
 VALIDATION PASSED
 ```
 
-Three properties are checked, each catching a different failure mode a
+Four properties are checked, each catching a different failure mode a
 shape-only smoke test would miss:
 
 1. **Shape and finiteness** — output tensor shape matches `config["d_model"]`
@@ -92,6 +92,14 @@ shape-only smoke test would miss:
    per-position embeddings (catches a checkpoint that loaded with the wrong
    keys, or silently fell back to random init, and so produces
    shape-correct but content-blind output).
+
+4. **Pretraining objective** — the model predicts the next nucleotide, so a
+   real human mRNA (NCBI `NM_000518.5`, HBB, at `data/example.fasta`) should get
+   a higher mean next-nucleotide log-likelihood than a shuffle of the same
+   nucleotides. The logits come from the tied embedding matrix, as in upstream
+   training. A missing gap points at a loading or tokenization bug. On an
+   H100 with the tiny-1k checkpoint, perplexity was 3.825 for the real
+   sequence against 4.212 for the shuffle.
 
 Cosine similarity on mean-pooled embeddings was tried first for check 3 and
 rejected: it stayed above 0.99 even between two unrelated random sequences

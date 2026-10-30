@@ -1,24 +1,28 @@
-# HyenaDNA — reproducible inference on PACE ICE
+# HyenaDNA — reproducible inference and training on PACE ICE
 
-This README covers one task: loading a pretrained [HyenaDNA](https://github.com/HazyResearch/hyena-dna)
-checkpoint and extracting DNA sequence embeddings, reproducibly, on Georgia
-Tech's PACE ICE cluster (`ice-gpu` partition / AI Makerspace). Everything
-here was run and verified on that cluster, not assumed from the upstream
-docs — see [Troubleshooting](#troubleshooting) for the gaps found along the
-way.
+This README covers two tasks for [HyenaDNA](https://github.com/HazyResearch/hyena-dna)
+on Georgia Tech's PACE ICE cluster (`ice-gpu` partition / AI Makerspace):
+loading a pretrained checkpoint to extract DNA sequence embeddings
+([Inference](#inference)), and training a small model from scratch
+([Training](#training)). Everything here was run and verified on that
+cluster, not assumed from the upstream docs — see
+[Troubleshooting](#troubleshooting) for the gaps found along the way.
 
-Model metadata: [`model.yaml`](model.yaml) · Execution recipe:
-[`../../../../recipes/hyenadna-inference-embeddings.yaml`](../../../../recipes/hyenadna-inference-embeddings.yaml) ·
+Model metadata: [`model.yaml`](model.yaml) · Recipes:
+[`../../../../recipes/hyenadna-inference-embeddings.yaml`](../../../../recipes/hyenadna-inference-embeddings.yaml),
+[`../../../../recipes/hyenadna-training-quickstart.yaml`](../../../../recipes/hyenadna-training-quickstart.yaml) ·
 Resource profile: [`../../../../resource-profiles/pace-ice/ice-gpu.yaml`](../../../../resource-profiles/pace-ice/ice-gpu.yaml)
 
-## Setup
+## Inference
+
+### Setup
 
 ```bash
 ssh login-ice.pace.gatech.edu
 srun --account=<your-account> --partition=ice-gpu --gres=gpu:1 \
      --cpus-per-task=8 --mem=32G --time=01:00:00 --pty bash
 
-bash scripts/hyenadna_setup_env.sh
+source scripts/hyenadna_setup_env.sh
 ```
 
 This clones `HazyResearch/hyena-dna` to `~/scratch/hyena-dna`, creates a
@@ -28,7 +32,17 @@ PyTorch build matched to whatever GPU Slurm actually allocated — see
 Run it inside a GPU allocation, not on the login node: picking the right
 PyTorch build depends on `nvidia-smi` seeing a real GPU.
 
-## Execution
+It must be `source`d, not run as `bash scripts/hyenadna_setup_env.sh`: the
+`conda activate` and cache-redirect exports it performs only take effect in
+the shell that runs them, and are lost immediately if it executes in its own
+subshell.
+
+By default this skips `flash-attn` — it's a slow from-source build, and
+standalone inference doesn't need it (see [Training](#training) for the one
+code path that does). Set `HYENADNA_INSTALL_FLASH_ATTN=1` before sourcing
+the script if you want it anyway.
+
+### Execution
 
 ```bash
 # smoke test + validation check (downloads the tiny-1k checkpoint on first run)
@@ -53,7 +67,7 @@ sbatch scripts/hyenadna_inference.sbatch data/example.fasta
 already there, runs the validation check, then the inference call — it is
 the canonical, idempotent version of the steps above.
 
-## Verification
+### Verification
 
 `scripts/hyenadna_validate.py` is the validation check, run against the
 `hyenadna-tiny-1k-seqlen` checkpoint on an ICE V100:
@@ -84,25 +98,122 @@ rejected: it stayed above 0.99 even between two unrelated random sequences
 for this checkpoint, so it couldn't actually discriminate anything. Raw
 per-position L2 distance could.
 
+## Training
+
+Trains a small (2-layer, `d_model=128`) HyenaDNA model from scratch on one
+[GenomicBenchmarks](https://github.com/ML-Bioinfo-CEITEC/genomic_benchmarks)
+classification task — the upstream repo's own documented "quick entry
+point" — rather than full hg38 pretraining. That's a deliberate scope
+choice, not a shortcut forced by a limitation: see
+[`recipes/hyenadna-training-quickstart.yaml`](../../../../recipes/hyenadna-training-quickstart.yaml)'s
+notes for why the quick-start exercises the same training code path as
+full pretraining, just at a scale that fits a single GPU in minutes.
+
+> **Status:** the training command itself was run manually and verified
+> (see [Verification](#verification-1) below), but `scripts/hyenadna_train.sbatch`
+> and `scripts/hyenadna_train_validate.py`, which package that command into
+> a reproducible job, have not yet been re-run end to end as committed —
+> confirm that before relying on this section for graded evidence, and
+> update this note once confirmed.
+
+### Setup
+
+Same as [Inference setup](#setup), except flash-attn is required, not
+optional: `src/models/sequence/dna_embedding.py` — the module the
+Lightning training path always loads — hard-imports `GenerationMixin` from
+`flash_attn`, with no pure-PyTorch fallback.
+
+```bash
+HYENADNA_INSTALL_FLASH_ATTN=1 source scripts/hyenadna_setup_env.sh
+```
+
+If an inference-only environment already exists (so the setup script would
+be skipped), `scripts/hyenadna_train.sbatch` checks for `flash_attn`
+separately and installs it on top of the existing env rather than failing.
+
+### Execution
+
+```bash
+python -m train wandb=null experiment=hg38/genomic_benchmark_scratch \
+    model.fused_dropout_add_ln=false model.fused_mlp=false \
+    hydra.run.dir=~/scratch/hyena-dna/hyena_train_runs/my_run \
+    2>&1 | tee ~/scratch/hyena-dna/hyena_train_runs/my_run/train.log
+```
+
+Run from inside the `hyena-dna` checkout (`~/scratch/hyena-dna`) — Hydra
+resolves `experiment=...` relative to `configs/experiment/`. `wandb=null`
+avoids needing a wandb account; the tradeoff is that Lightning then
+persists no metrics file at all, so the log is the only record of how
+training went (see [Verification](#verification-1)).
+
+As a batch job:
+
+```bash
+sbatch scripts/hyenadna_train.sbatch
+# or override which GenomicBenchmarks task / output dir:
+sbatch scripts/hyenadna_train.sbatch hg38/genomic_benchmark_scratch ~/scratch/hyena-dna/hyena_train_runs/my_run
+```
+
+`scripts/hyenadna_train.sbatch` builds the environment if needed (with
+flash-attn), pins `hydra.run.dir` to a predictable path instead of Hydra's
+default timestamp, captures the log, and runs the validator automatically.
+
+### Verification {#verification-1}
+
+Run manually on an ICE H200 (before `hyenadna_train_validate.py` existed as
+a committed script, so this is the raw training output, not that script's
+formatted result):
+
+```
+Epoch 0:  20%|██        | 1/5 [00:20<01:21, 0.04it/s, train/loss=61.10]
+...
+Epoch 99: 100%|██████████| 10/10 [00:01<00:00, 5.72it/s, train/loss=59.70, val/accuracy=0.674, val/loss=2.050, train/accuracy=0.994, train/loss=0.0281]
+`Trainer.fit` stopped: `max_epochs=100` reached.
+```
+
+100 epochs completed in under 2 minutes; `train/loss` fell from ~61 to
+~0.03 and `train/accuracy` reached 0.994, with `val/accuracy` around 0.67.
+`scripts/hyenadna_train_validate.py` formalizes two checks against a
+captured log and checkpoint directory:
+
+1. **Checkpoint integrity** — a `.ckpt` file exists under the run's
+   `checkpoints/` directory and its state dict is non-empty with no
+   NaN/Inf values (catches a run that crashed before checkpointing, or
+   wrote a corrupt one).
+2. **Learning actually happened** — the last logged training loss is
+   lower than the first, and the final `val/accuracy` is a finite value in
+   `[0, 1]` (catches a run that executes every step without the model
+   learning anything).
+
+Loss/accuracy are parsed from the captured stdout log via regex rather
+than a metrics file, because `wandb=null` means Lightning persists none —
+see [Execution](#execution-1).
+
 ## Hardware and provenance
 
-- **Verified hardware:** PACE ICE `ice-gpu` partition, confirmed on a Tesla
-  V100-16GB (compute capability 7.0). The setup script also handles Hopper
-  GPUs (H100/H200, compute capability 9.0) that the same partition can
-  allocate — confirmed separately, see below.
+- **Verified hardware:** PACE ICE `ice-gpu` partition. Inference confirmed
+  on a Tesla V100-16GB (compute capability 7.0); the from-scratch training
+  command confirmed on an H200 (compute capability 9.0). The setup script
+  handles both compute-capability ranges — see
+  [GPU architecture mismatch](#troubleshooting) below.
 - **Checkpoint:** `LongSafari/hyenadna-tiny-1k-seqlen` from HuggingFace
   (BSD-3-Clause), downloaded via `git clone` (git-lfs) in
   `scripts/hyenadna_inference.py`.
-- **Seeds:** the validation check uses fixed seeds (1, 2) for its two
-  comparison sequences; inference on real input has no stochastic step
-  (`model.eval()`, `torch.inference_mode()`), so no seed is needed there.
+- **Training data:** GenomicBenchmarks' `dummy_mouse_enhancers_ensembl`
+  task (binary classification, 1210 sequences), auto-downloaded by the
+  upstream repo's own dataset code — no manual download step.
+- **Seeds:** the inference validation check uses fixed seeds (1, 2) for its
+  two comparison sequences; inference on real input has no stochastic step
+  (`model.eval()`, `torch.inference_mode()`). Training uses the experiment
+  config's fixed seed (`train.seed: 2222` in
+  `configs/experiment/hg38/genomic_benchmark_scratch.yaml`).
 - **Software:** Python 3.8; PyTorch 1.13.0+cu117 or 2.1.2+cu118 depending on
   allocated GPU (see `scripts/hyenadna_setup_env.sh`); other pinned versions
   come from the upstream repo's `requirements.txt`.
 
 ## Troubleshooting
 
-Three real gaps found while getting this to run, each worked around in the
+Real gaps found while getting this to run, each worked around in the
 scripts rather than just noted here:
 
 **GPU architecture mismatch.** HyenaDNA's documented environment pins
@@ -121,16 +232,16 @@ it back to a CPU-only-equivalent build — `pip` prints a dependency-conflict
 warning but does not fail or stop. Fix: the setup script reinstalls the
 correct GPU build of torch *after* `requirements.txt`, not before.
 
-**Home directory quota breaks installs and downloads, not just training.**
-PACE ICE's home quota (~30GB) is consumed by `pip`'s wheel cache,
-HuggingFace's hub cache, and `git`'s global config file (written by
-`git lfs install` on every checkpoint clone) well before scratch storage
-fills up, and each one fails differently: `pip install` errors with `Disk
-quota exceeded`; `git lfs` prints a non-fatal warning and continues (but the
-clone can still fail depending on what else is pending); HuggingFace prints
-a cache-write warning. Fix: `PIP_CACHE_DIR`, `TMPDIR`, `HF_HOME`, and
-`GIT_CONFIG_GLOBAL` are all redirected to a scratch path before any install
-or download step, in both the setup script and the sbatch job.
+**Home directory quota breaks installs and downloads.** PACE ICE's home
+quota (~30GB) is consumed by `pip`'s wheel cache, HuggingFace's hub cache,
+and `git`'s global config file (written by `git lfs install` on every
+checkpoint clone) well before scratch storage fills up, and each one fails
+differently: `pip install` errors with `Disk quota exceeded`; `git lfs`
+prints a non-fatal warning and continues (but the clone can still fail
+depending on what else is pending); HuggingFace prints a cache-write
+warning. Fix: `PIP_CACHE_DIR`, `TMPDIR`, `HF_HOME`, and `GIT_CONFIG_GLOBAL`
+are all redirected to a scratch path before any install or download step,
+in both sbatch jobs.
 
 **Importing `huggingface.py` runs an inference example as a side effect.**
 The upstream repo's documented pattern, `from huggingface import
@@ -146,11 +257,39 @@ is a full PyTorch Lightning checkpoint dict (`epoch`, `global_step`,
 on a first reimplementation (it was missed here on the first attempt, and
 caught by a `KeyError` rather than a silent wrong-weights load).
 
+**`flash-attn` is a hard dependency for training, with no fallback.**
+Unlike the standalone inference path, `src/models/sequence/dna_embedding.py`
+— loaded by every Lightning training run — unconditionally imports from
+`flash_attn`. There's no config flag to avoid it; it must be installed
+(`HYENADNA_INSTALL_FLASH_ATTN=1`, a from-source compile) before training
+will even import successfully.
+
+**Two fused-kernel config flags default to unbuildable values.** Even with
+flash-attn installed, the `genomic_benchmark_scratch` experiment config
+defaults `model.fused_dropout_add_ln` and `model.fused_mlp` to settings
+that require `dropout_add_layer_norm`, an optional fused CUDA kernel from
+flash-attn's `csrc/layer_norm` subdirectory that this setup does not build
+(it's a speed optimization, not a correctness requirement). Left at their
+defaults, `train.py` fails immediately with `dropout_add_layer_norm is not
+installed`, before a single batch runs. Fix: pass
+`model.fused_dropout_add_ln=false model.fused_mlp=false` on the command
+line, as `scripts/hyenadna_train.sbatch` does.
+
+**`wandb=null` means no metrics file, not just no wandb upload.** Avoiding
+a wandb account requirement by passing `wandb=null` also means Lightning
+is configured with no logger at all for this pipeline — not "logs locally
+instead of to wandb." The only record of training progress is whatever
+reaches stdout, which is why `scripts/hyenadna_train.sbatch` captures it to
+a log file and `scripts/hyenadna_train_validate.py` parses that file rather
+than a structured metrics format.
+
 ## Cleanup
 
 ```bash
-rm -rf ~/scratch/hyena-dna/checkpoints   # downloaded weights (well under 1GB for tiny/small)
-rm -rf ~/scratch/.conda/envs/hyena-dna   # conda environment
+rm -rf ~/scratch/hyena-dna/checkpoints          # downloaded weights (well under 1GB for tiny/small)
+rm -rf ~/scratch/hyena-dna/hyena_train_runs     # training run outputs (checkpoints + logs)
+rm -rf ~/scratch/hyena-dna/data                 # auto-downloaded GenomicBenchmarks data
+rm -rf ~/scratch/.conda/envs/hyena-dna           # conda environment
 rm -rf ~/scratch/.cache/huggingface ~/scratch/.cache/pip  # redirected caches
 ```
 

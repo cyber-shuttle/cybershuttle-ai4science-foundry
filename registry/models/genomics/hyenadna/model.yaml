@@ -125,9 +125,16 @@ readiness:
     on PACE ICE (not Nexus): pretrained hyenadna-tiny-1k-seqlen checkpoint
     downloaded from HuggingFace, loaded, and run through a forward pass that
     passes a shape/NaN smoke test and an input-sensitivity validation check.
-    From-scratch training (the repo's documented quick-start) also verified
-    end-to-end on the same cluster. Nexus-specific validation, fine-tuning,
-    and full hg38 pretraining remain untested.
+    From-scratch training (the repo's documented quick-start, on the
+    GenomicBenchmarks suite) was run manually and verified end-to-end on
+    the same cluster (100 epochs on an H200, ~2 minutes, final
+    train/accuracy 0.994). That command is now packaged as
+    recipes/hyenadna-training-quickstart.yaml plus
+    scripts/hyenadna_train.sbatch and scripts/hyenadna_train_validate.py,
+    but the packaged version has not yet been re-run end to end as
+    committed — see that recipe's `status` field before relying on it for
+    grading evidence. Nexus-specific validation, fine-tuning, and full
+    hg38 pretraining remain untested.
 
 maintainers:
   - name: William Chen

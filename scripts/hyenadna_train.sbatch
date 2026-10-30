@@ -20,10 +20,32 @@ mkdir -p logs
 
 REPO_DIR="$HOME/scratch/hyena-dna"
 ENV_PREFIX="$HOME/scratch/.conda/envs/hyena-dna"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Not ${BASH_SOURCE[0]}'s dirname: sbatch copies this script into a per-job
+# spool directory on the compute node before running it, so that would
+# resolve to the spool dir, not to where the sibling scripts actually live
+# -- confirmed live, it broke the hyenadna_train_validate.py call below
+# after a full, successful 100-epoch run. SLURM_SUBMIT_DIR is the directory
+# `sbatch` was invoked from, which is where this file's siblings are.
+SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 EXPERIMENT="${1:-hg38/genomic_benchmark_scratch}"
 RUN_DIR="${2:-$REPO_DIR/hyena_train_runs/${SLURM_JOB_ID}}"
 
+# pytorch_lightning pulls in torchmetrics -> matplotlib, which writes a font
+# cache to $HOME on first import. $HOME has the same small quota that
+# PIP_CACHE_DIR/TMPDIR/HF_HOME already get redirected off of elsewhere in
+# this pipeline -- confirmed live: train.py died with "OSError: [Errno 122]
+# Disk quota exceeded" at the matplotlib import, before any training code
+# ran. HF_HOME covers the GenomicBenchmarks dataset download too.
+export MPLCONFIGDIR="$HOME/scratch/.cache/matplotlib"
+export HF_HOME="$HOME/scratch/.cache/huggingface"
+
+# module purge first: a fresh job starts with anaconda3 loaded by default,
+# and `module load miniforge` on top of that triggers Lmod's automatic
+# swap-out of anaconda3, whose deactivation hook references an unset
+# variable -- fatal under `set -u` (confirmed live: this killed the job in
+# 11 seconds, before training ever started, with no error of its own in
+# the captured log, just Lmod's warning followed by the job exiting).
+module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
 

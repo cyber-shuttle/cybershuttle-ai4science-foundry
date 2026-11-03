@@ -38,9 +38,12 @@ The three short `logs/*.log` files are auxiliary standalone runs. The authoritat
 
 ## ICE setup
 
-Run these commands from an ICE login shell after copying or cloning this repository into a storage location with adequate quota (scratch is recommended). No user-specific absolute path is required.
+Run these commands after copying or cloning this repository into a storage location with adequate quota (scratch is recommended). No user-specific absolute path is required.
+
+Because creating the Conda environment can be resource-intensive, use an interactive ICE CPU allocation rather than running `conda env create` on a shared login node. Replace `YOUR_ACCOUNT` and `YOUR_QOS` with values authorized for your account.
 
 ```bash
+salloc -A YOUR_ACCOUNT -q YOUR_QOS -p ice-cpu -N 1 --cpus-per-task=4 --mem=32G -t 01:00:00
 cd registry/models/astronomy/astropt/recipes/reproducible-inference
 module purge
 module load miniforge/24.3.0-0
@@ -79,9 +82,12 @@ Do not place a token in this repository or in the SLURM script.
 
 ## Execute the complete workflow
 
-Submit from the repository root; the script resolves its own location, activates `./env`, and sets the cache to `./hf_cache`.
+Submit from the repository root; the script uses the SLURM submission directory, activates `./env`, and sets the cache to `./hf_cache`.
+
+If your shell prompt shows an active Conda environment such as `(base)`, run `conda deactivate` before submitting. This avoids an activation conflict with the job's `set -u` setting.
 
 ```bash
+conda deactivate  # only if a Conda environment such as (base) is active
 JOB_ID=$(sbatch --parsable slurm/astropt_inference.slurm)
 echo "Submitted job: $JOB_ID"
 squeue -j "$JOB_ID"

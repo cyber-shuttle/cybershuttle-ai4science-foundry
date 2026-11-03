@@ -16,7 +16,7 @@ module load miniforge/24.3.0-0
 eval "$(conda shell.bash hook)"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJ="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJ="${SLURM_SUBMIT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 
 export HF_HOME="$PROJ/hf_cache"
 ASTROPT_SOURCE_COMMIT="fa361ae5b6631c89525429755ed3fc2b2d304eca"

@@ -40,7 +40,7 @@ The three short `logs/*.log` files are auxiliary standalone runs. The authoritat
 
 Run these commands after copying or cloning this repository into a storage location with adequate quota (scratch is recommended). No user-specific absolute path is required.
 
-Because creating the Conda environment can be resource-intensive, use an interactive ICE CPU allocation rather than running `conda env create` on a shared login node. Replace `YOUR_ACCOUNT` and `YOUR_QOS` with values authorized for your account.
+Because creating the Conda environment can be resource-intensive, use an interactive ICE CPU allocation rather than running `conda env create` on a shared login node. Replace `YOUR_ACCOUNT` and `YOUR_QOS` with values authorized for your account. Set `PYTHONNOUSERSITE=1` so packages previously installed under `~/.local` cannot override the pinned packages in this environment.
 
 ```bash
 salloc -A YOUR_ACCOUNT -q YOUR_QOS -p ice-cpu -N 1 --cpus-per-task=4 --mem=32G -t 01:00:00
@@ -48,6 +48,7 @@ cd registry/models/astronomy/astropt/recipes/reproducible-inference
 module purge
 module load miniforge/24.3.0-0
 eval "$(conda shell.bash hook)"
+export PYTHONNOUSERSITE=1
 conda env create --prefix "$PWD/env" --file environment.yml
 conda activate "$PWD/env"
 mkdir -p logs outputs hf_cache

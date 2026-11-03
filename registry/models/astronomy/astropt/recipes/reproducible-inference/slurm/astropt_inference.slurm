@@ -14,6 +14,7 @@ set -euo pipefail
 
 module load miniforge/24.3.0-0
 eval "$(conda shell.bash hook)"
+export PYTHONNOUSERSITE=1
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJ="${SLURM_SUBMIT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"

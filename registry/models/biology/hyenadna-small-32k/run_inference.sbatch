@@ -3,6 +3,7 @@
 #SBATCH -A coc                 # CHANGE if your Slurm account differs
 #SBATCH -p coc-gpu             # CHANGE if your GPU partition differs
 #SBATCH --gres=gpu:1
+#SBATCH -C nvidia-gpu
 #SBATCH --mem=32G
 #SBATCH -c 4
 #SBATCH --time=00:15:00
@@ -16,18 +17,27 @@ SCRATCH_DIR="${SCRATCH_DIR:-$HOME/scratch}"
 ENV_PREFIX="${ENV_PREFIX:-$SCRATCH_DIR/.conda/envs/hyenadna_env}"
 export HF_HOME="${HF_HOME:-$SCRATCH_DIR/.hf_cache}"
 
+if [ ! -x "$ENV_PREFIX/bin/python" ]; then
+    echo "ERROR: no Python environment at $ENV_PREFIX"
+    echo "Run 'bash setup_env.sh' first. If you built the env somewhere else, run"
+    echo "'export ENV_PREFIX=/your/env/path' before sbatch."
+    exit 1
+fi
+
 module load miniforge
 set +u   # conda's activate/deactivate scripts reference unset variables
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "$ENV_PREFIX"
 set -u
 
-mkdir -p outputs
+export OUT_DIR="outputs/run_${SLURM_JOB_ID}"
+mkdir -p "$OUT_DIR"
 
 echo "Job ID:  $SLURM_JOB_ID"
 echo "Node:    $(hostname)"
 echo "Started: $(date)"
 echo "Env:     $ENV_PREFIX"
+echo "Output:  $OUT_DIR"
 nvidia-smi
 pip freeze > "logs/pip_freeze_${SLURM_JOB_ID}.txt"
 

@@ -2,14 +2,14 @@ import json
 import math
 import random
 import sys
+import os
 
 import torch
 import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from config import MODEL, OUT_DIR, REVISION
 
-MODEL = "LongSafari/hyenadna-small-32k-seqlen-hf"
-REVISION = "8fe770c78eb13fe33bf81501612faeddf4d6f331"   # same commit as the smoke test
-FASTA = "data/hg38_regions.fasta"
+FASTA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "hg38_regions.fasta")
 SEED = 0
 
 
@@ -85,6 +85,7 @@ print(json.dumps(summary, indent=2))
 for k, v in checks.items():
     print(("PASS  " if v else "FAIL  ") + k)
 
-with open("outputs/validation_results.json", "w") as f:
+os.makedirs(OUT_DIR, exist_ok=True)
+with open(os.path.join(OUT_DIR, "validation_results.json"), "w") as f:
     json.dump({"summary": summary, "checks": checks, "per_region": rows}, f, indent=2)
 sys.exit(0 if all(checks.values()) else 1)

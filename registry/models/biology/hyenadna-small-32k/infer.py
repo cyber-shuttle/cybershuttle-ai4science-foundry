@@ -1,16 +1,16 @@
 import json
 import time
+import os
 
 import torch
 import transformers
-from huggingface_hub import HfApi
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from config import MODEL, OUT_DIR, REVISION
 
-MODEL = "LongSafari/hyenadna-small-32k-seqlen-hf"
 SEQ = "ACTGACTGACTGACTG"
 
-# find current commit and load it
-revision = HfApi().model_info(MODEL).sha
+# use pinned model commit
+revision = REVISION
 
 print("torch:", torch.__version__)
 print("transformers:", transformers.__version__)
@@ -38,11 +38,12 @@ print("Logits shape:", tuple(out.logits.shape))
 print("Inference time (s):", round(elapsed, 4))
 
 # write output to file
+os.makedirs(OUT_DIR, exist_ok=True)
 torch.save(
     {"input_ids": inputs["input_ids"].cpu(), "logits": out.logits.cpu()},
-    "outputs/smoke_test_logits.pt",
+    os.path.join(OUT_DIR, "smoke_test_logits.pt"),
 )
-with open("outputs/smoke_test_meta.json", "w") as f:
+with open(os.path.join(OUT_DIR, "smoke_test_meta.json"), "w") as f:
     json.dump(
         {
             "model": MODEL,
@@ -57,4 +58,4 @@ with open("outputs/smoke_test_meta.json", "w") as f:
         f,
         indent=2,
     )
-print("Saved outputs/smoke_test_logits.pt and outputs/smoke_test_meta.json")
+print(f"Saved {OUT_DIR}/smoke_test_logits.pt and {OUT_DIR}/smoke_test_meta.json")

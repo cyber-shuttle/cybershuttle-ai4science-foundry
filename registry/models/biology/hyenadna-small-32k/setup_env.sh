@@ -10,6 +10,13 @@ cd "$(dirname "$0")"
 SCRATCH_DIR="${SCRATCH_DIR:-$HOME/scratch}"
 ENV_PREFIX="${ENV_PREFIX:-$SCRATCH_DIR/.conda/envs/hyenadna_env}"
 
+if [ ! -d "$SCRATCH_DIR" ]; then
+    echo "ERROR: scratch directory '$SCRATCH_DIR' does not exist."
+    echo "On PACE ICE it is normally ~/scratch. On another system, run:"
+    echo "  SCRATCH_DIR=/path/to/your/scratch bash setup_env.sh"
+    exit 1
+fi
+
 # Keep caches off the quota-limited home directory
 export CONDA_PKGS_DIRS="$SCRATCH_DIR/.conda_pkgs"
 export PIP_CACHE_DIR="$SCRATCH_DIR/.pip_cache"

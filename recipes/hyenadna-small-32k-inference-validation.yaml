@@ -19,7 +19,7 @@ input:
     it needs no network access to UCSC.
 
 output:
-  format: logits saved under outputs/; metrics in outputs/validation_results.json
+  format: logits saved under outputs/run_<jobid>/; metrics in outputs/run_<jobid>/validation_results.json
   description: >
     Smoke-test logits have shape [1, n_bases + 1, 16]. validate.py writes mean
     real, shuffled and ln(4) losses and exits 1 if any of three pre-set checks
@@ -27,7 +27,7 @@ output:
     shuffled in most regions.
 
 environment:
-  conda_env: hyenadna_env (Python 3.10.21)
+  conda_env: hyenadna_env (Python 3.10)
   pytorch: "2.5.1+cu121; transformers 5.17.0; every package pinned in requirements.txt"
   setup_script: registry/models/biology/hyenadna-small-32k/setup_env.sh
 
@@ -47,7 +47,7 @@ steps:
 resource_requirements:
   gpu_memory_gb: 16   # ran on a 16 GB V100; peak usage not measured
   gpu_count: 1
-  recommended_gpu: any GPU on coc-gpu (ran on V100, A100, L40S)
+  recommended_gpu: any NVIDIA GPU on coc-gpu (ran on V100, A100, L40S)
   host_ram_gb: 1.25   # observed
 
 compatible_resource_profiles:
@@ -60,7 +60,7 @@ slurm_example: |
   bash setup_env.sh
   mkdir -p logs
   sbatch run_inference.sbatch
-  # the job requests: -A coc -p coc-gpu --gres=gpu:1 --mem=32G -c 4
+  # the job requests: -A coc -p coc-gpu --gres=gpu:1 -C nvidia-gpu --mem=32G -c 4
 
 notes: >
   Gotchas found while verifying: logs/ must exist before sbatch or no log is

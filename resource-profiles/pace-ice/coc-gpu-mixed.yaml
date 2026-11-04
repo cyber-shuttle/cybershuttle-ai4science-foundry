@@ -23,7 +23,9 @@ scheduler: slurm
 partition: coc-gpu
 
 notes: >
-  Request with `-A coc -p coc-gpu --gres=gpu:1`. The home quota is 30 GB and
+  Request with `-A coc -p coc-gpu --gres=gpu:1 -C nvidia-gpu`. The partition also
+  has AMD MI210 nodes, so a bare GPU request can land on one and fail when the
+  job calls nvidia-smi; the constraint avoids them. The home quota is 30 GB and
   conda's package cache can fill it, so keep conda and pip caches on scratch
   (~/scratch). The torch 2.5.1+cu121 wheel worked on nodes reporting CUDA
   drivers 12.9 to 13.4. Logits from V100 and L40S runs matched to 1.05e-5.

@@ -1,0 +1,14 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+=== AstroPT Assignment 2 Smoke Test ===
+AstroPT version: 2.0.5
+PyTorch version: 2.14.1+cu130
+CUDA available: True
+GPU: NVIDIA H100 80GB HBM3
+number of parameters: 95.18M
+model loaded successfully from smith42/astropt_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Model loaded successfully.
+Parameter count: 95,177,472
+Load time: 11.62 seconds
+CUDA memory allocated: 0.35 GB
+CUDA peak memory: 0.35 GB

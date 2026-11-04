@@ -1,0 +1,44 @@
+# Local environments
+env/
+venv/
+.venv/
+.conda/
+conda-bld/
+
+# Download and package caches
+hf_cache/
+.cache/
+pip-wheel-metadata/
+
+# Source checkouts and downloaded model weights
+official_astropt/
+checkpoints/
+weights/
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Large, regeneratable data products
+outputs/*.npy
+outputs/*.npz
+outputs/*.h5
+outputs/*.hdf5
+outputs/*.parquet
+outputs/*.arrow
+
+# Exploratory/manual files not needed for reproduction
+scripts/inspect_data.py
+logs/inspect_data.log
+
+# Python and test caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor and operating-system files
+.DS_Store
+*.swp

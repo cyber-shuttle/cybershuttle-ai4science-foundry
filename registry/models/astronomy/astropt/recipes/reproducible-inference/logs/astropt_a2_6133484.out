@@ -1,0 +1,102 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-09-2026 19:09:59
+Job ID:    6133484
+User ID:   bak8
+Account:   ece
+Job name:  astropt-a2
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+========================================
+AstroPT Assignment 2 Reproducible Run
+========================================
+Date: Fri Oct  9 19:10:06 EDT 2026
+Hostname: atl1-1-03-012-23-0.pace.gatech.edu
+SLURM Job ID: 6133484
+
+=== GPU ===
+NVIDIA H100 80GB HBM3, 81559 MiB, 615.71.09
+
+=== Software ===
+Python 3.10.22
+AstroPT: 2.0.5
+PyTorch: 2.14.1+cu130
+CUDA available: True
+
+=== AstroPT Source Commit ===
+fa361ae5b6631c89525429755ed3fc2b2d304eca
+
+=== Smoke Test ===
+=== AstroPT Assignment 2 Smoke Test ===
+AstroPT version: 2.0.5
+PyTorch version: 2.14.1+cu130
+CUDA available: True
+GPU: NVIDIA H100 80GB HBM3
+number of parameters: 95.18M
+model loaded successfully from smith42/astropt_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Model loaded successfully.
+Parameter count: 95,177,472
+Load time: 3.14 seconds
+CUDA memory allocated: 0.35 GB
+CUDA peak memory: 0.35 GB
+
+=== Small Inference ===
+=== AstroPT Reproducible Inference ===
+Device: NVIDIA H100 80GB HBM3
+number of parameters: 95.18M
+model loaded successfully from Smith42/astroPT_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Examples: 8
+Embedding shape: (8, 768)
+All embeddings finite: True
+Inference runtime: 0.5926 seconds
+Peak CUDA memory: 0.534 GB
+Saved: outputs/embeddings_small.npy
+Saved: outputs/mag_g_small.npy
+Saved: outputs/inference_results.json
+=== SUCCESS ===
+
+=== Scientific Validation ===
+=== AstroPT mag_g Validation ===
+Device: NVIDIA H100 80GB HBM3
+Examples: 1000
+number of parameters: 95.18M
+model loaded successfully from Smith42/astroPT_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Embedding shape: (1000, 768)
+Embedding runtime: 46.50 seconds
+Peak CUDA memory: 0.978 GB
+
+--- Linear Probe ---
+MSE: 0.965233
+MAE: 0.731518
+R2:  0.167680
+
+--- Mean Baseline ---
+MSE: 1.160485
+MAE: 0.772794
+R2:  -0.000686
+
+Probe beats baseline MSE: True
+Probe beats baseline MAE: True
+Saved: outputs/validation_mag_g.json
+Saved: outputs/mag_g_probe.png
+=== VALIDATION COMPLETE ===
+
+========================================
+WORKFLOW COMPLETED SUCCESSFULLY
+Finished: Fri Oct  9 19:11:29 EDT 2026
+========================================
+---------------------------------------
+Begin Slurm Epilog: Oct-09-2026 19:11:29
+Job ID:        6133484
+User ID:       bak8
+Account:       ece
+Job name:      astropt-a2
+Resources:     cpu=4,gres/gpu:h100=1,mem=32G,node=1
+Rsrc Used:     cput=00:06:00,vmem=0,walltime=00:01:30,mem=3392784K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-012-23-0
+---------------------------------------

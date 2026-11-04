@@ -1,0 +1,28 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/datasets/formatting/torch_formatter.py:93: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return torch.tensor(value, **{**default_dtype, **self.torch_tensor_kwargs})
+=== AstroPT mag_g Validation ===
+Device: NVIDIA H100 80GB HBM3
+Examples: 1000
+number of parameters: 95.18M
+model loaded successfully from Smith42/astroPT_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Embedding shape: (1000, 768)
+Embedding runtime: 47.59 seconds
+Peak CUDA memory: 0.978 GB
+
+--- Linear Probe ---
+MSE: 0.965233
+MAE: 0.731518
+R2:  0.167680
+
+--- Mean Baseline ---
+MSE: 1.160485
+MAE: 0.772794
+R2:  -0.000686
+
+Probe beats baseline MSE: True
+Probe beats baseline MAE: True
+Saved: outputs/validation_mag_g.json
+Saved: outputs/mag_g_probe.png
+=== VALIDATION COMPLETE ===

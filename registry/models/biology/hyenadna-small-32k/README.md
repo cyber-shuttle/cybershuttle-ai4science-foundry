@@ -11,8 +11,9 @@ This workflow runs HyenaDNA small-32k, a pretrained model that reads DNA, on 8 s
 
 ## Setup
 
-On a login node:
+Clone into scratch so the repo, logs, and outputs stay off your 30 GB home quota. On a login node:
 
+    cd "${SCRATCH_DIR:-$HOME/scratch}"
     git clone https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry
     cd cybershuttle-ai4science-foundry
     git fetch origin pull/34/head:hyenadna-small-32k
@@ -71,10 +72,11 @@ If the job ran in the wrong environment, you probably built it at a custom `ENV_
 
     scancel JOBNUMBER
     SCRATCH_DIR="${SCRATCH_DIR:-$HOME/scratch}"
-    rm -rf "$SCRATCH_DIR/.conda/envs/hyenadna_env" "$SCRATCH_DIR/.hf_cache" \
+    rm -rf "$SCRATCH_DIR/cybershuttle-ai4science-foundry" \
+           "$SCRATCH_DIR/.conda/envs/hyenadna_env" "$SCRATCH_DIR/.hf_cache" \
            "$SCRATCH_DIR/.conda_pkgs" "$SCRATCH_DIR/.pip_cache"
 
-Change the paths if you set `ENV_PREFIX` or `HF_HOME`.
+Change the paths if you cloned somewhere else or set 'ENV_PREFIX' or 'HF_HOME'.
 
 ## Sources
 

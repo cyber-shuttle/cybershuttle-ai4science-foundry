@@ -38,6 +38,12 @@ The three short `logs/*.log` files are auxiliary standalone runs. The authoritat
 
 ## ICE setup
 
+On ICE, clone the correct PR branch into your scratch directory:
+
+    cd ~/scratch
+    git clone --branch recipe-astropt-inference --single-branch https://github.com/Bora-ak/cybershuttle-ai4science-foundry.git
+    cd cybershuttle-ai4science-foundry
+
 Run these commands after copying or cloning this repository into a storage location with adequate quota (scratch is recommended). No user-specific absolute path is required.
 
 Because creating the Conda environment can be resource-intensive, use an interactive ICE CPU allocation rather than running `conda env create` on a shared login node. Replace `YOUR_ACCOUNT` and `YOUR_QOS` with values authorized for your account. Set `PYTHONNOUSERSITE=1` so packages previously installed under `~/.local` cannot override the pinned packages in this environment.

@@ -7,12 +7,12 @@ provider: Georgia Tech PACE (instructional cluster)
 
 description: >
   Single-GPU Slurm jobs on account coc, partition coc-gpu. The scheduler gave
-  V100 (16 GB), A100, and L40S nodes across HyenaDNA small-32k runs, so recipes
-  should not assume one GPU type.
+  V100 (16 GB), A100, L40S, and RTX 6000 nodes across HyenaDNA small-32k runs, so
+  recipes should not assume one GPU type.
 
 hardware:
   gpu:
-    model: "mixed: V100-PCIE-16GB, A100, L40S (varies by allocation)"
+    model: "mixed: V100-PCIE-16GB, A100, L40S, RTX 6000 (varies by allocation)"
     count: 1
     vram_gb: 16  # smallest GPU seen (V100)
   cpu:

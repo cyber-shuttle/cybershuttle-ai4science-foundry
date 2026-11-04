@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J hyenadna-infer
-#SBATCH -A coc                 # CHANGE if your Slurm account differs
-#SBATCH -p coc-gpu             # CHANGE if your GPU partition differs
+# Set your account and partition before submitting (see README):
+#   export SBATCH_ACCOUNT=<account>  SBATCH_PARTITION=<partition>
 #SBATCH --gres=gpu:1
 #SBATCH -C nvidia-gpu
 #SBATCH --mem=32G

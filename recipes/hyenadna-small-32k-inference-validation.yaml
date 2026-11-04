@@ -59,8 +59,9 @@ slurm_example: |
   # run from registry/models/biology/hyenadna-small-32k/
   bash setup_env.sh
   mkdir -p logs
+  export SBATCH_ACCOUNT=<account> SBATCH_PARTITION=<partition>
   sbatch run_inference.sbatch
-  # the job requests: -A coc -p coc-gpu --gres=gpu:1 -C nvidia-gpu --mem=32G -c 4
+  # the job requests: --gres=gpu:1 -C nvidia-gpu --mem=32G -c 4
 
 notes: >
   Gotchas found while verifying: logs/ must exist before sbatch or no log is

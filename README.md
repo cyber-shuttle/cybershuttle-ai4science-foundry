@@ -37,6 +37,12 @@ If `conda` is missing, initialize Miniforge as above in the current shell. Do no
 
 ### 2. Create the environment and verify GPU support
 
+Note that you can find your pace account using:
+
+```bash
+sacctmgr show associations user=$USER
+```
+
 Start an allocation using your assigned account and a currently available GPU partition:
 
 ```bash
@@ -54,12 +60,11 @@ module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
 cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
 bash scripts/setup_env.sh
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 python --version
-python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
 ```
 
-Expected versions: Python `3.8.16`, PyTorch `1.12.1`, CUDA runtime `11.3.1`, and `CUDA available: True` inside the GPU allocation. The helper uses Mamba if available, pins pip 24.0 and MKL 2024.0, and records Conda/pip inventories under `workflows/climax-global-forecast/execution/`. Full pins are in [`environment.yml`](workflows/climax-global-forecast/environment.yml). To create the environment directly with Mamba instead of using the helper, follow the [Mamba alternative](workflows/climax-global-forecast/README.md#alternative-create-the-environment-directly-with-mamba) in the detailed guide.
+The helper verifies PyTorch imports and runs a CUDA tensor smoke test using the environment's absolute Python path, then prints the Python, PyTorch, CUDA, and GPU versions. This avoids accidentally checking a different Python interpreter. It prefers Mamba, falls back to Conda with a notice, pins pip 24.0 and MKL 2024.0, and records Conda/pip inventories under `workflows/climax-global-forecast/execution/`. Full pins are in [`environment.yml`](workflows/climax-global-forecast/environment.yml). To rerun the detailed import/GPU diagnostics manually, use `"$HOME/scratch/.conda/envs/climax-inference/bin/python" scripts/check_environment.py --require-cuda`. To create the environment directly with Mamba instead of using the helper, follow the [Mamba alternative](workflows/climax-global-forecast/README.md#alternative-create-the-environment-directly-with-mamba) in the detailed guide.
 
 ### 3. Clone the pinned model source and retrieve pretrained weights
 
@@ -262,7 +267,7 @@ Inside the allocation, initialize the environment:
 module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 
 export CLIMAX_SOURCE="$HOME/scratch/climax-reproduction/ClimaX"
 export PYTHONPATH="$CLIMAX_SOURCE/src:$PYTHONPATH"

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=climax-finetune
 #SBATCH --partition=ice-gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:v100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
@@ -17,13 +17,16 @@ CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"
 PRETRAINED_CHECKPOINT="${PRETRAINED_CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625deg.ckpt}"
 ERA5_NPZ="${ERA5_NPZ:-$PROJECT_DIR/data/5.625deg_npz}"
 TRAIN_DIR="${TRAIN_DIR:-$PROJECT_DIR/runs/global-forecast}"
+FORECAST_VARIABLE="${FORECAST_VARIABLE:-}"
 
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$TRAIN_DIR"
 
 module purge
 module load miniforge
+set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
+set -u
 export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
 export PIP_CACHE_DIR="$HOME/scratch/.cache/pip"
 export TMPDIR="$HOME/scratch/tmp"
@@ -32,7 +35,9 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"
 export TORCH_HOME="$HOME/scratch/.cache/torch"
 export GIT_CONFIG_GLOBAL="$HOME/scratch/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
+set +u
 conda activate "$ENV_NAME"
+set -u
 
 for required_path in "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" "$PRETRAINED_CHECKPOINT" "$ERA5_NPZ"; do
   if [ ! -e "$required_path" ]; then
@@ -48,14 +53,40 @@ export CLIMAX_COMMIT
 CLIMAX_COMMIT="$(git -C "$CLIMAX_SOURCE" rev-parse HEAD)"
 export WORKFLOW_COMMIT
 WORKFLOW_COMMIT="$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
-RESUME_ARGS=()
+TRAIN_ARGS=(
+  --config "$CLIMAX_SOURCE/configs/global_forecast_climax.yaml"
+  --trainer.default_root_dir="$TRAIN_DIR"
+  --trainer.strategy=auto
+  --trainer.devices=1
+  --trainer.max_epochs=50
+  --trainer.precision=16
+  --data.root_dir="$ERA5_NPZ"
+  --data.predict_range=72
+  --data.batch_size=4
+  --data.num_workers=0
+  --model.pretrained_path="$PRETRAINED_CHECKPOINT"
+  --model.lr=5e-7
+  --model.beta_1=0.9
+  --model.beta_2=0.99
+  --model.weight_decay=1e-5
+)
+if [ -n "$FORECAST_VARIABLE" ]; then
+  if [ "$FORECAST_VARIABLE" != "geopotential_500" ]; then
+    echo "This reduced-data workflow supports FORECAST_VARIABLE=geopotential_500." >&2
+    exit 1
+  fi
+  TRAIN_ARGS+=(
+    "--data.variables=[\"$FORECAST_VARIABLE\"]"
+    "--data.out_variables=[\"$FORECAST_VARIABLE\"]"
+  )
+fi
 if [ "$#" -gt 0 ]; then
   RESUME_CHECKPOINT="$1"
   if [ ! -f "$RESUME_CHECKPOINT" ]; then
     echo "Resume checkpoint is missing: $RESUME_CHECKPOINT" >&2
     exit 1
   fi
-  RESUME_ARGS+=("--trainer.resume_from_checkpoint=$RESUME_CHECKPOINT")
+  TRAIN_ARGS+=("--trainer.resume_from_checkpoint=$RESUME_CHECKPOINT")
 fi
 
 echo "job_id=${SLURM_JOB_ID:-not-set}"
@@ -67,22 +98,6 @@ echo "era5_data=$ERA5_NPZ"
 echo "train_output=$TRAIN_DIR"
 nvidia-smi
 
-python "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" \
-  --config "$CLIMAX_SOURCE/configs/global_forecast_climax.yaml" \
-  --trainer.default_root_dir="$TRAIN_DIR" \
-  --trainer.strategy=auto \
-  --trainer.devices=1 \
-  --trainer.max_epochs=50 \
-  --trainer.precision=16 \
-  --data.root_dir="$ERA5_NPZ" \
-  --data.predict_range=72 \
-  --data.batch_size=4 \
-  --data.num_workers=0 \
-  --model.pretrained_path="$PRETRAINED_CHECKPOINT" \
-  --model.lr=5e-7 \
-  --model.beta_1=0.9 \
-  --model.beta_2=0.99 \
-  --model.weight_decay=1e-5 \
-  "${RESUME_ARGS[@]}"
+python "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" "${TRAIN_ARGS[@]}"
 
 nvidia-smi

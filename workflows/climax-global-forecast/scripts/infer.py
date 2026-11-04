@@ -10,7 +10,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -74,6 +74,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--split", choices=("train", "val", "test"), default="test")
+    parser.add_argument(
+        "--variables",
+        nargs="+",
+        help="Input variables to use; defaults to all variables in the forecast config",
+    )
+    parser.add_argument(
+        "--out-variables",
+        nargs="+",
+        help="Variables to forecast; defaults to all outputs in the forecast config",
+    )
     parser.add_argument("--shard", type=Path)
     parser.add_argument("--time-index", type=int, default=0)
     parser.add_argument("--lead-hours", type=int, default=6)
@@ -114,10 +124,18 @@ def main() -> None:
         config = yaml.safe_load(stream)
     model_config = config["model"]["net"]["init_args"]
     data_config = config["data"]
-    variables = list(data_config["variables"])
-    out_variables = list(data_config["out_variables"])
+    variables = list(args.variables or data_config["variables"])
+    out_variables = list(args.out_variables or data_config["out_variables"])
     if not variables or not out_variables:
         raise ValueError("The forecast config must define input and output variables")
+    if len(set(variables)) != len(variables) or len(set(out_variables)) != len(out_variables):
+        raise ValueError("Input and output variable lists must not contain duplicates")
+    model_variables = set(model_config["default_vars"])
+    unsupported = sorted((set(variables) | set(out_variables)) - model_variables)
+    if unsupported:
+        raise ValueError(
+            "Forecast variables are not supported by the configured model: {}".format(unsupported)
+        )
     missing_outputs = sorted(set(out_variables) - set(variables))
     if missing_outputs:
         raise ValueError("Output variables must also be model inputs: {}".format(missing_outputs))
@@ -306,7 +324,7 @@ def main() -> None:
     if not all(np.isfinite(array).all() for array in (prediction, target, persistence)):
         raise ValueError("Prediction, target, or persistence baseline contains non-finite values")
 
-    scores: Dict[str, Dict[str, float]] = {}
+    scores: Dict[str, Dict[str, Optional[float]]] = {}
     for index, variable in enumerate(out_variables):
         climax_rmse = weighted_rmse(prediction[:, index], target[:, index], lat)
         persistence_rmse = weighted_rmse(persistence[:, index], target[:, index], lat)

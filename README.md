@@ -1,8 +1,8 @@
 # ClimaX inference on PACE ICE
 
-This repository's primary workflow runs inference directly with Microsoft's public ClimaX pretrained weights. It extracts spatial and pooled representations from ERA5 geopotential at 500 hPa; it does **not** fine-tune ClimaX and does **not** claim to forecast weather. This narrower inference task avoids training and needs only one pressure-level input group plus static constants, rather than the full ERA5 input set.
+This repository supports two ClimaX workflows on ERA5 geopotential at 500 hPa: frozen pretrained embeddings and 72-hour single-variable forecast prediction. The embedding workflow does not forecast weather. The forecast workflow fine-tunes the pinned upstream GlobalForecast model on `geopotential_500`; it accepts either the pressure-level `geopotential_5.625deg` archive or the direct single-level `geopotential_500_5.625deg` archive.
 
-For detailed commands, troubleshooting, cleanup, and the optional forecast experiment, see the [workflow guide](workflows/climax-global-forecast/README.md).
+For detailed commands, troubleshooting, cleanup, and the optional full-variable forecast experiment, see the [workflow guide](workflows/climax-global-forecast/README.md).
 
 ## Reproduction target and provenance
 
@@ -40,9 +40,11 @@ If `conda` is missing, initialize Miniforge as above in the current shell. Do no
 Start an allocation using your assigned account and a currently available GPU partition:
 
 ```bash
-srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
+srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:v100:1 \
   --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
 ```
+
+The pinned PyTorch 1.12.1/CUDA 11.3.1 environment was verified on a V100. Request it explicitly: a generic GPU request may assign a newer architecture such as H200 that is incompatible with this stack. If V100 is unavailable to your account, ask PACE before changing the GPU type or software pins.
 
 Inside the allocation:
 
@@ -57,7 +59,7 @@ python --version
 python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
 ```
 
-Expected versions: Python `3.8.16`, PyTorch `1.12.1`, CUDA runtime `11.3.1`, and `CUDA available: True` inside the GPU allocation. The helper uses Mamba if available, pins pip 24.0 and MKL 2024.0, and records Conda/pip inventories under `workflows/climax-global-forecast/execution/`. Full pins are in [`environment.yml`](workflows/climax-global-forecast/environment.yml).
+Expected versions: Python `3.8.16`, PyTorch `1.12.1`, CUDA runtime `11.3.1`, and `CUDA available: True` inside the GPU allocation. The helper uses Mamba if available, pins pip 24.0 and MKL 2024.0, and records Conda/pip inventories under `workflows/climax-global-forecast/execution/`. Full pins are in [`environment.yml`](workflows/climax-global-forecast/environment.yml). To create the environment directly with Mamba instead of using the helper, follow the [Mamba alternative](workflows/climax-global-forecast/README.md#alternative-create-the-environment-directly-with-mamba) in the detailed guide.
 
 ### 3. Clone the pinned model source and retrieve pretrained weights
 
@@ -78,7 +80,7 @@ Continue only if the checksum reports `OK`.
 
 ### 4. Download and preprocess the reduced ERA5 input
 
-Download the `constants` and `geopotential` folders from the [TUM WeatherBench archive](https://dataserv.ub.tum.de/index.php/s/m1524895) directly to ICE scratch storage.
+Download source data from the [TUM WeatherBench archive](https://dataserv.ub.tum.de/index.php/s/m1524895) directly to ICE scratch storage. The embedding workflow needs `constants` plus the pressure-level `geopotential` archive. The geopotential-only forecast can use either the pressure-level `geopotential` archive or the direct `geopotential_500` archive; it does not need `constants`.
 
 The `geopotential` archive contains pressure-level data. The pinned ClimaX preprocessing script expects the parent `geopotential` group, rather than the separate `geopotential_500` archive. The TUM downloads may contain nested ZIP files, so extract each archive before staging its NetCDF files.
 
@@ -110,10 +112,18 @@ curl -fL --retry 3 \
   'https://dataserv.ub.tum.de/s/m1524895/download?path=%2F5.625deg%2Fgeopotential'
 ```
 
+For the geopotential-only forecast, you may use this direct 500 hPa archive instead of the pressure-level `geopotential` archive:
+
+```bash
+curl -fL --retry 3 \
+  -o geopotential_500.zip \
+  'https://dataserv.ub.tum.de/s/m1524895/download?path=%2F5.625deg%2Fgeopotential_500'
+```
+
 These commands save the archives to scratch storage. Before starting a large transfer, check available storage:
 
 ```bash
-du -h constants.zip geopotential.zip
+du -h *.zip
 df -h "$HOME/scratch"
 ```
 
@@ -122,19 +132,35 @@ If a download is interrupted, rerun the command to restart it. The commands abov
 #### 3. Verify the downloaded archives
 
 ```bash
-file constants.zip geopotential.zip
-unzip -t constants.zip
-unzip -t geopotential.zip
+if [ -f geopotential.zip ]; then
+  file geopotential.zip
+  unzip -t geopotential.zip
+elif [ -f geopotential_500.zip ]; then
+  file geopotential_500.zip
+  unzip -t geopotential_500.zip
+else
+  echo "Download either geopotential.zip or geopotential_500.zip first." >&2
+  exit 1
+fi
+
+if [ -f constants.zip ]; then
+  file constants.zip
+  unzip -t constants.zip
+fi
 ```
 
-Both archives should pass their ZIP integrity tests before extraction.
+Each downloaded archive should pass its ZIP integrity test. If using only `geopotential_500.zip`, test that archive and skip the following pressure-level staging steps; point `GEOPOTENTIAL_RAW_DIR` at its extracted contents in step 8.
 
-#### 4. Extract the outer archives
+#### 4. Extract the pressure-level outer archives (embedding route)
+
+If you are using only `geopotential_500.zip` for forecasting, skip this and the following pressure-level staging steps; use the direct single-level extraction commands in step 5 and set `GEOPOTENTIAL_RAW_DIR` in step 8.
 
 ```bash
 mkdir -p "$DOWNLOAD_DIR/constants" "$DOWNLOAD_DIR/geopotential"
 
-unzip -n constants.zip -d "$DOWNLOAD_DIR"
+if [ -f constants.zip ]; then
+  unzip -n constants.zip -d "$DOWNLOAD_DIR"
+fi
 unzip -n geopotential.zip -d "$DOWNLOAD_DIR"
 ```
 
@@ -157,9 +183,22 @@ find "$DOWNLOAD_DIR/geopotential" -maxdepth 3 -type f
 
 If the nested archive contains additional ZIP files rather than individual NetCDF files, inspect those archives before proceeding.
 
-#### 6. Stage the files in the expected directory structure
+For the direct single-level archive, validate and extract the outer and nested ZIPs:
 
-Copy the constants file to the canonical filename expected by the workflow:
+```bash
+unzip -t geopotential_500.zip
+unzip -n geopotential_500.zip -d "$DOWNLOAD_DIR"
+unzip -n \
+  "$DOWNLOAD_DIR/geopotential_500/geopotential_500_5.625deg.zip" \
+  -d "$DOWNLOAD_DIR/geopotential_500"
+find "$DOWNLOAD_DIR/geopotential_500" -maxdepth 3 -type f
+```
+
+Set `GEOPOTENTIAL_RAW_DIR="$DOWNLOAD_DIR/geopotential_500"` when using this source. For the pressure-level archive, use `"$DOWNLOAD_DIR/geopotential"`; the forecasting converter recursively finds its NetCDF files and extracts the 500 hPa slice.
+
+#### 6. Stage the pressure-level files for embeddings
+
+For the embedding workflow, copy the constants file to the canonical filename:
 
 ```bash
 CONSTANTS_FILE="$DOWNLOAD_DIR/constants/constants_5.625deg.nc"
@@ -181,7 +220,9 @@ find "$DOWNLOAD_DIR/geopotential" -type f -name '*.nc' \
 
 The `-n` flag prevents overwriting existing files.
 
-#### 7. Verify the staged dataset
+Forecast users can skip steps 6–7 and use `GEOPOTENTIAL_RAW_DIR` directly. If using the pressure-level files for forecasting, set it to `"$DOWNLOAD_DIR/geopotential"`; if using the single-level files, use `"$DOWNLOAD_DIR/geopotential_500"`.
+
+#### 7. Verify the staged embedding dataset
 
 ```bash
 find "$DATA_DIR" -maxdepth 2 -type f
@@ -200,11 +241,11 @@ $HOME/scratch/climax-reproduction/data/5.625deg/
 
 Verify the years and pressure levels represented in the NetCDF files before preprocessing. The archive's internal filenames and contents determine which years are available.
 
-#### 8. Preprocess the reduced input, if required
+#### 8. Preprocess the reduced input
 
-**Important:** The project now targets pretrained ClimaX representation extraction, not the original 72-hour forecasting benchmark. Do not assume the forecasting preprocessing script can produce a valid representation-extraction dataset from geopotential alone. First verify the selected model's expected input variables and the preprocessing script's requirements.
+Preprocessing is **required when starting from raw NetCDF files**. The embedding script and forecast script consume prepared `.npz` data, not NetCDF. The embedding path uses the pinned ClimaX converter with the `geopotential` pressure-level group and constants. The forecast path accepts either the pressure-level `geopotential_5.625deg` dataset or the direct single-level `geopotential_500_5.625deg` dataset; its dedicated converter extracts/normalizes the 500 hPa field and does not require constants or other variables.
 
-If the pinned preprocessing script supports the reduced dataset, request a CPU allocation consistent with PACE policy. For example:
+Run preprocessing on an ICE CPU allocation. For example:
 
 ```bash
 srun --account="<YOUR_PACE_ACCOUNT>" \
@@ -227,13 +268,24 @@ export CLIMAX_SOURCE="$HOME/scratch/climax-reproduction/ClimaX"
 export PYTHONPATH="$CLIMAX_SOURCE/src:$PYTHONPATH"
 ```
 
-Check the supported arguments before running preprocessing:
+For the forecast path, set `GEOPOTENTIAL_RAW_DIR` to the extracted contents of exactly one of the two geopotential datasets. Use a fresh output directory:
 
 ```bash
-python "$CLIMAX_SOURCE/src/data_preprocessing/nc2np_equally_era5.py" --help
+export GEOPOTENTIAL_RAW_DIR="$HOME/scratch/climax-reproduction/data/raw/geopotential_5.625deg"
+export FORECAST_DATA="$HOME/scratch/climax-reproduction/data/geopotential_forecast_npz"
+python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/prepare_geopotential.py" \
+  --input-dir "$GEOPOTENTIAL_RAW_DIR" \
+  --output-dir "$FORECAST_DATA" \
+  --train-start-year 2013 \
+  --val-start-year 2015 \
+  --test-start-year 2016 \
+  --end-year 2017 \
+  --num-shards 8
 ```
 
-Only if the script supports the selected variables and input layout, run:
+For the direct single-level archive, point `GEOPOTENTIAL_RAW_DIR` at its extracted folder instead, e.g. `$HOME/scratch/climax-reproduction/data/raw/geopotential_500_5.625deg`. The converter accepts pressure-level NetCDF fields containing the 500 hPa level and single-level `z`, `geopotential`, or `geopotential_500` fields. It writes one-variable shards, training normalization statistics, split climatologies, and coordinates. The 2013–2014 training, 2015 validation, 2016 test split is a pilot; choose years present in the downloaded source.
+
+For the embedding path, use the pinned upstream converter:
 
 ```bash
 python "$CLIMAX_SOURCE/src/data_preprocessing/nc2np_equally_era5.py" \
@@ -249,7 +301,7 @@ python "$CLIMAX_SOURCE/src/data_preprocessing/nc2np_equally_era5.py" \
 
 Here, `end_year` is exclusive: training uses 2013–2014, validation uses 2015, and the test split uses 2016. This matches the successful `2016_0.npz` test shard. A 2017 NetCDF file encountered an HDF read error during preparation; do not represent the run as covering 2017 or as a full-data benchmark.
 
-Before using the resulting dataset, verify that it contains the expected shards, normalization statistics, coordinate arrays, and required input variables for the selected representation-extraction implementation. Do not submit the original forecasting inference script unless its checkpoint and input requirements have also been satisfied.
+Before using the prepared dataset, verify that it contains the expected split shards, normalization statistics, coordinate arrays, and `geopotential_500` variable. Forecasting additionally requires a fine-tuned GlobalForecast Lightning checkpoint; the pretrained `5.625deg.ckpt` alone is not a forecast model.
 
 ### 5. Run frozen pretrained embedding inference
 
@@ -299,6 +351,33 @@ python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/
 
 This checks each numeric array for finite values, confirms the primary archive's SHA-256 and embedding dimensions against `metrics.json`, and compares all matching arrays using `rtol=1e-5` and `atol=1e-6`. The saved logs for jobs `6209971` ([log](workflows/climax-global-forecast/logs/climax-embed-6209971.out)) and `6209978` ([log](workflows/climax-global-forecast/logs/climax-embed-6209978.out)) record the same SHA-256 for their independently generated embedding archives (`7965fd2362e4471d1a5bc92f32da040ced27ee5e5f24ae910fe22c5adfcf2158`), establishing byte-for-byte agreement for those outputs.
 
+### 7. Fine-tune and run 72-hour geopotential forecasts
+
+The prepared one-variable dataset from step 4 can train the upstream ClimaX GlobalForecast model to predict `geopotential_500` 72 hours ahead. From the workflow directory, configure the prepared dataset and submit the fine-tuning job:
+
+```bash
+cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
+export ERA5_NPZ="$HOME/scratch/climax-reproduction/data/geopotential_forecast_npz"
+export TRAIN_DIR="$HOME/scratch/climax-reproduction/runs/geopotential-forecast"
+export FORECAST_VARIABLE=geopotential_500
+mkdir -p logs
+sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/finetune.sbatch
+squeue --me
+```
+
+The batch script starts from the pinned pretrained checkpoint and invokes the original ClimaX training code, overriding its input and target lists to the single geopotential field. Use the validation-selected `epoch_*.ckpt` from `"$TRAIN_DIR/checkpoints"` for inference. Alternatively, you may provide a fine-tuned Lightning checkpoint from the original ClimaX repository if it loads strictly with the pinned GlobalForecast architecture. Do not pass the pretrained `5.625deg.ckpt` as the fine-tuned forecast checkpoint.
+
+Submit prediction on the held-out test split:
+
+```bash
+export OUTPUT_DIR="$HOME/scratch/climax-reproduction/runs/geopotential-predictions"
+sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/infer.sbatch \
+  "$TRAIN_DIR/checkpoints/epoch_XXX.ckpt"
+squeue --me
+```
+
+The output NPZ contains 72-hour predictions, matching ERA5 targets, persistence and climatology baselines, and coordinates. `metrics.json` reports finite-value checks and latitude-weighted RMSE for the single output variable; expected prediction shape is `[32, 1, 32, 64]`. Compare against both baselines and report the observed result, not a presumed model improvement. The previously recorded PACE validation applies to the embedding workflow only; run these new preprocessing, training, and prediction commands on PACE and retain their logs and metrics before claiming the forecast path is empirically reproduced.
+
 ### Recorded PACE run
 
 The frozen-encoder workflow completed successfully as SLURM job `6209978` (`climax-embed`), state `COMPLETED`, exit code `0:0`, on the `ice-gpu` partition, account `coc`, cluster ICE. The job ran on node `atl1-1-02-009-32-0` with one Tesla V100-PCIE-16GB GPU and 4 CPUs. SLURM reported 32 GiB of host memory for this job. The full stdout evidence is [`climax-embed-6209978.out`](workflows/climax-global-forecast/logs/climax-embed-6209978.out).
@@ -307,10 +386,11 @@ Observed validation: strict checkpoint loading completed; spatial embedding shap
 
 ## Scope and limitations
 
-- This no-fine-tuning workflow extracts representations; it does not produce future weather fields.
+- The recorded no-fine-tuning run extracts representations; it does not produce future weather fields.
 - The input is intentionally reduced to `geopotential_500` and a short ERA5 period to reduce data and compute requirements.
 - Representation non-degeneracy and deterministic repeat checks are technical validation, not a downstream scientific skill metric.
-- The original 72-hour forecast workflow remains available in [`slurm/finetune.sbatch`](workflows/climax-global-forecast/slurm/finetune.sbatch) and [`slurm/infer.sbatch`](workflows/climax-global-forecast/slurm/infer.sbatch); it requires the full forecast input variables and task fine-tuning, and is separate from this primary workflow.
+- The reduced geopotential forecast workflow fine-tunes the upstream ClimaX forecaster on one input/target variable. The original five-output forecast experiment remains optional and requires the full forecast input variables.
+- The new forecast path has not yet been executed on PACE; the existing successful PACE log and metrics validate embeddings only.
 - Do not commit large data, checkpoints, or private PACE logs unless repository policy permits. Keep run evidence in an approved location.
 
 ## Supporting documentation

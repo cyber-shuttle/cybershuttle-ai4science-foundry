@@ -1,0 +1,57 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-08-2026 14:58:52
+Job ID:    6109847
+User ID:   wchen768
+Account:   coc
+Job name:  hyenadna-infer
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Job ID:  6109847
+Node:    atl1-1-02-011-31-0.pace.gatech.edu
+Started: Thu Oct  8 02:58:59 PM EDT 2026
+Env:     /home/hice1/wchen768/scratch/.conda/envs/hyenadna_env
+Thu Oct  8 14:58:59 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-16GB           On  |   00000000:3B:00.0 Off |                    0 |
+| N/A   45C    P0             27W /  250W |       0MiB /  16384MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+torch: 2.5.1+cu121
+transformers: 5.17.0
+CUDA available: True
+GPU: Tesla V100-PCIE-16GB
+Model: LongSafari/hyenadna-small-32k-seqlen-hf
+Model revision (commit SHA): 8fe770c78eb13fe33bf81501612faeddf4d6f331
+Input sequence: ACTGACTGACTGACTG
+Token IDs: [[7, 8, 10, 9, 7, 8, 10, 9, 7, 8, 10, 9, 7, 8, 10, 9, 1]]
+Logits shape: (1, 17, 16)
+Inference time (s): 6.1836
+Saved outputs/smoke_test_logits.pt and outputs/smoke_test_meta.json
+Finished: Thu Oct  8 03:01:48 PM EDT 2026
+---------------------------------------
+Begin Slurm Epilog: Oct-08-2026 15:01:48
+Job ID:        6109847
+User ID:       wchen768
+Account:       coc
+Job name:      hyenadna-infer
+Resources:     cpu=4,gres/gpu:v100=1,mem=32G,node=1
+Rsrc Used:     cput=00:11:44,vmem=0,walltime=00:02:56,mem=1115448K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-011-31-0
+---------------------------------------

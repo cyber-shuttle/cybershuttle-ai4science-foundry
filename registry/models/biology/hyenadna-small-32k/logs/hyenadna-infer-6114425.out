@@ -1,0 +1,81 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-08-2026 20:30:39
+Job ID:    6114425
+User ID:   wchen768
+Account:   coc
+Job name:  hyenadna-infer
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Job ID:  6114425
+Node:    atl1-1-03-004-25-0.pace.gatech.edu
+Started: Thu Oct  8 08:30:48 PM EDT 2026
+Env:     /home/hice1/wchen768/scratch/.conda/envs/hyenadna_env
+Thu Oct  8 20:30:48 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L40S                    On  |   00000000:1B:00.0 Off |                    0 |
+| N/A   37C    P8             35W /  350W |       0MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+torch: 2.5.1+cu121
+transformers: 5.17.0
+CUDA available: True
+GPU: NVIDIA L40S
+Model: LongSafari/hyenadna-small-32k-seqlen-hf
+Model revision (commit SHA): 8fe770c78eb13fe33bf81501612faeddf4d6f331
+Input sequence: ACTGACTGACTGACTG
+Token IDs: [[7, 8, 10, 9, 7, 8, 10, 9, 7, 8, 10, 9, 7, 8, 10, 9, 1]]
+Logits shape: (1, 17, 16)
+Inference time (s): 6.6686
+Saved outputs/smoke_test_logits.pt and outputs/smoke_test_meta.json
+A,C,G,T token IDs: [7, 8, 9, 10]
+chr1:100000000-100001000 hg38 (0-based, half-open): real=0.8263 shuffled=1.3550 (ACGT-only nats/base)
+chr2:50000000-50001000 hg38 (0-based, half-open): real=1.3119 shuffled=1.3921 (ACGT-only nats/base)
+chr3:120000000-120001000 hg38 (0-based, half-open): real=1.2005 shuffled=1.3823 (ACGT-only nats/base)
+chr5:80000000-80001000 hg38 (0-based, half-open): real=1.2966 shuffled=1.3941 (ACGT-only nats/base)
+chr7:100000000-100001000 hg38 (0-based, half-open): real=0.9571 shuffled=1.4360 (ACGT-only nats/base)
+chr9:100000000-100001000 hg38 (0-based, half-open): real=0.8279 shuffled=1.3639 (ACGT-only nats/base)
+chr12:80000000-80001000 hg38 (0-based, half-open): real=1.1832 shuffled=1.4008 (ACGT-only nats/base)
+chr16:60000000-60001000 hg38 (0-based, half-open): real=1.1514 shuffled=1.4026 (ACGT-only nats/base)
+{
+  "model": "LongSafari/hyenadna-small-32k-seqlen-hf",
+  "revision": "8fe770c78eb13fe33bf81501612faeddf4d6f331",
+  "n_regions": 8,
+  "shuffle_seed": 0,
+  "ln4_uniform_baseline": 1.3862943611198906,
+  "mean_real_acgt": 1.0943842604756355,
+  "mean_shuffled_acgt": 1.390848994255066,
+  "mean_real_full": 1.0944113433361053,
+  "mean_shuffled_full": 1.3908768892288208,
+  "regions_real_below_shuffled": 8
+}
+PASS  mean real loss below ln(4)
+PASS  mean real loss below mean shuffled loss
+PASS  real below shuffled in a majority of regions
+Finished: Thu Oct  8 08:33:40 PM EDT 2026
+---------------------------------------
+Begin Slurm Epilog: Oct-08-2026 20:33:40
+Job ID:        6114425
+User ID:       wchen768
+Account:       coc
+Job name:      hyenadna-infer
+Resources:     cpu=4,gres/gpu:l40s=1,mem=32G,node=1
+Rsrc Used:     cput=00:12:04,vmem=0,walltime=00:03:01,mem=1252156K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-004-25-0
+---------------------------------------

@@ -70,7 +70,7 @@ galproc = GalaxyImageDataset(
     modality_registry=model.modality_registry,
 )
 
-ds = (
+streaming_ds = (
     load_dataset(
         "Smith42/galaxies",
         split="test",
@@ -83,6 +83,11 @@ ds = (
     .with_format("torch")
     .take(NUM_EXAMPLES)
 )
+
+# Materialize the requested examples before GPU inference so the
+# Hugging Face streaming connection is fully consumed and closed.
+ds = list(streaming_ds)
+del streaming_ds
 
 loader = DataLoader(
     ds,

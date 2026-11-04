@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=climax-embed
 #SBATCH --partition=ice-gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:v100:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=01:00:00
@@ -22,7 +22,9 @@ cd "$WORKFLOW_DIR"
 mkdir -p logs "$OUTPUT_DIR"
 module purge
 module load miniforge
+set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
+set -u
 export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
 export PIP_CACHE_DIR="$HOME/scratch/.cache/pip"
 export TMPDIR="$HOME/scratch/tmp"
@@ -31,7 +33,9 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"
 export TORCH_HOME="$HOME/scratch/.cache/torch"
 export GIT_CONFIG_GLOBAL="$HOME/scratch/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
+set +u
 conda activate "$ENV_NAME"
+set -u
 CLIMAX_PYTHON="$(command -v python)"
 
 echo "job_id=${SLURM_JOB_ID:-not-set}"

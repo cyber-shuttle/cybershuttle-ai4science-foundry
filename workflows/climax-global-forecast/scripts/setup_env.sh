@@ -20,7 +20,9 @@ if ! command -v conda >/dev/null 2>&1; then
   exit 1
 fi
 
+set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
+set -u
 
 export CONDA_PKGS_DIRS="$SCRATCH_ROOT/.conda/pkgs"
 export PIP_CACHE_DIR="$SCRATCH_ROOT/.cache/pip"
@@ -55,7 +57,9 @@ else
 fi
 "$ENV_PREFIX/bin/python" -m pip install "pip==24.0"
 
+set +u
 conda activate "$ENV_PREFIX"
+set -u
 echo "Environment: $CONDA_PREFIX"
 python --version
 python -c 'import importlib.metadata as metadata; import jsonargparse, rich, tensorboard, timm, torch, torchdata, torchvision, pytorch_lightning; from pytorch_lightning.callbacks import RichProgressBar; from pytorch_lightning.loggers import TensorBoardLogger; print("PyTorch:", torch.__version__); print("torchvision:", metadata.version("torchvision")); print("PyTorch Lightning:", metadata.version("pytorch-lightning")); print("timm:", metadata.version("timm")); print("torchdata:", metadata.version("torchdata")); print("jsonargparse:", metadata.version("jsonargparse")); print("rich:", metadata.version("rich")); print("TensorBoard:", metadata.version("tensorboard")); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'

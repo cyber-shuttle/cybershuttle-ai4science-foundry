@@ -1,10 +1,10 @@
-# Reproducible ClimaX inference — assignment details
+# Reproducible ClimaX inference and forecasting — assignment details
 
-This file records the assignment scope, artifact provenance, executed PACE workflow, observed results, limitations, and rubric coverage. The primary workflow is **frozen pretrained-encoder inference**: it extracts ClimaX representations from ERA5 and does not fine-tune the model or produce weather forecasts.
+This file records the assignment scope, artifact provenance, executed PACE workflow, observed results, limitations, and rubric coverage. The recorded PACE workflow is frozen pretrained-encoder inference. The repository also provides a one-variable 72-hour forecast path for either the pressure-level `geopotential_5.625deg` source or the single-level `geopotential_500_5.625deg` source; that new path has not yet been executed on PACE.
 
 The [top-level README](../../README.md) is the student-facing setup-to-validation guide. The [detailed workflow README](README.md) provides full PACE instructions, troubleshooting, and cleanup. This file complements those guides with a concise evidence record.
 
-> **Scope clarification for reviewers:** The initial proposal and some optional files describe fine-tuning ClimaX for 72-hour weather forecasts. That experiment is not the successful reproduction reported here. The completed assignment path uses pretrained weights directly to extract embeddings, per the no-fine-tuning objective. Do not interpret these embeddings as forecasts or as evidence of forecast skill.
+> **Scope clarification for reviewers:** The successful run documented here uses pretrained weights directly to extract embeddings; those embeddings are not forecasts. A separate single-variable forecast workflow now uses the upstream GlobalForecast trainer and must be run on PACE before forecast results or skill claims are added to this record.
 
 ## 1. Project overview and reproduction target
 
@@ -40,9 +40,11 @@ From an ICE login, initialize Miniforge and request an interactive GPU shell for
 module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
-srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
+srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:v100:1 \
   --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
 ```
+
+The pinned PyTorch 1.12.1/CUDA 11.3.1 environment was verified on a V100; a generic GPU request may assign an incompatible newer architecture. If V100 is unavailable, check with PACE before changing the GPU type or software pins.
 
 Inside the allocation, follow [README steps 1–3](../../README.md) to clone the assignment branch, configure scratch storage, run `bash scripts/setup_env.sh`, and retrieve ClimaX and its checkpoint. Verify the environment with:
 
@@ -154,7 +156,7 @@ python scripts/validate_embeddings.py \
 
 ### Scientific interpretation and limit of the evidence
 
-The checks support that the pinned encoder accepted the documented ERA5 input and produced finite, non-degenerate, exactly repeatable representations for the sampled 2016 shard. This provides technical and computational reproducibility evidence. The workflow does **not** compute a forecast, compare predictions with targets, train a downstream probe, or establish that the embeddings improve a scientific prediction task. No forecast RMSE or published benchmark score is claimed. A downstream linear-probe experiment or forecast evaluation would be a separate extension, not an observed result of this assignment run.
+The checks support that the pinned encoder accepted the documented ERA5 input and produced finite, non-degenerate, exactly repeatable representations for the sampled 2016 shard. This provides technical and computational reproducibility evidence for embeddings. No forecast metrics or published benchmark scores are claimed: the added forecast workflow still needs a PACE end-to-end run.
 
 ## 7. Failures, troubleshooting, and deviations
 
@@ -180,9 +182,9 @@ After copying any evidence needed for evaluation, use the targeted cleanup comma
 |---|---|---|
 | Environment & Setup — 15 pts | Pinned `environment.yml`, setup helper, expected version/CUDA check, Conda and pip inventories | Documented and used for successful inference |
 | Model, Data & Artifact Traceability — 15 pts | ClimaX commit, checkpoint revision/hash, config hash, WeatherBench source, input shard/hash, normalization hashes, retrieval instructions | Traceable for the recorded 2016 input |
-| Inference Workflow & Job Scripts — 25 pts | `embed.py`, `embed.sbatch`, exact sample/variable settings, resource requests, expected outputs | Successful frozen-encoder workflow; not a fine-tuned forecast run |
+| Inference Workflow & Job Scripts — 25 pts | `embed.py`, `prepare_geopotential.py`, forecast scripts, exact sample/variable settings, resource requests, expected outputs | Embeddings were executed; new one-variable forecast path needs PACE validation |
 | Execution Evidence & Logs — 15 pts | Completed job record, sanitized SLURM log, committed metrics and NPZ, package inventories, earlier failure logs | Successful run is evidenced; original 2017 HDF traceback is unavailable |
-| Validation of Results — 20 pts | Shape/finite/nonconstant checks, deterministic inference, NPZ integrity/hash, byte-identical output hashes from two separate jobs | Strong technical reproducibility; no downstream scientific skill score |
+| Validation of Results — 20 pts | Shape/finite/nonconstant checks, deterministic inference, NPZ integrity/hash, byte-identical output hashes from two separate jobs | Strong embedding reproducibility; forecast validation remains outstanding |
 | Documentation & Reproducibility — 10 pts | Top-level guide, detailed PACE guide, this evidence record, troubleshooting and cleanup | Documents the successful pilot and limitations |
 
 Related tracking issue: [cybershuttle-ai4science-foundry issue #10](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/10).

@@ -1,6 +1,6 @@
-# Frozen ClimaX inference on Georgia Tech PACE ICE
+# ClimaX inference and forecasting on Georgia Tech PACE ICE
 
-This guide takes a student from an ICE login through environment setup, reduced ERA5 data preparation, frozen pretrained encoder inference, output verification, and cleanup. The primary task is representation extraction; it does not fine-tune ClimaX or make weather forecasts. The original full-data forecast experiment is retained later in this guide as an optional, separate workflow. See the [top-level reproduction guide](../../README.md) for the short path.
+This guide covers environment setup, reduced ERA5 data preparation, frozen pretrained encoder inference, a single-variable geopotential forecasting workflow, output verification, and cleanup. The embedding workflow does not fine-tune ClimaX or make weather forecasts; the forecasting workflow fine-tunes the pinned upstream GlobalForecast model for 72-hour `geopotential_500` prediction. A full-input, five-variable forecast experiment remains documented as a separate optional workflow. See the [top-level reproduction guide](../../README.md) for the short path.
 
 ## What this run reproduces
 
@@ -11,7 +11,7 @@ The primary workflow **uses ClimaX's pretrained encoder directly** to extract re
 3. Save 512 spatial tokens of 1024 dimensions per sample, plus pooled 1024-dimensional vectors.
 4. Validate finite/nonconstant output and deterministic repeat inference; retain hashes and PACE execution evidence.
 
-This uses a reduced year range (train 2013–2014, validation 2015, test 2016) and a single ERA5 pressure-level variable group plus constants. These embeddings are not forecast predictions or a claim of downstream forecast skill.
+This uses a reduced year range (train 2013–2014, validation 2015, test 2016) and a single ERA5 pressure-level variable group plus constants. These embeddings are not forecast predictions or a claim of downstream forecast skill. The single-variable forecasting workflow uses the same year range for supervised 72-hour predictions.
 
 ## 1. Provenance and fixed artifacts
 
@@ -34,11 +34,13 @@ Connect using the login host and authentication steps in the [PACE ICE documenta
 ```bash
 ssh "<your_GT_username>@login-ice.pace.gatech.edu"
 sacctmgr show associations user="$USER"
-srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
+srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:v100:1 \
   --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
 ```
 
 Replace placeholders with your PACE username and assigned account; confirm `ice-gpu` and the resource limits with current PACE guidance. This interactive request is intended for environment checks and pretrained embedding inference: one GPU, 4 CPUs, 16 GiB RAM, and a one-hour limit. The batch embedding job has its own resource request in `slurm/embed.sbatch`. CPU preprocessing has a separate suggested request below.
+
+The pinned PyTorch 1.12.1/CUDA 11.3.1 environment was verified on a V100. Request that GPU explicitly; a generic GPU request may assign a newer architecture such as H200, which is not compatible with this pinned stack. If V100 is unavailable to your account, check with PACE before changing the GPU type or software pins.
 
 Use PACE scratch for caches and large files. The commands use `$HOME/scratch`; confirm its availability/quota for your account. Conda/pip/temp/model caches and datasets/checkpoints are kept there rather than in the small home quota.
 
@@ -87,7 +89,7 @@ conda config --show envs_dirs
 Create the environment **inside a GPU allocation**, so CUDA visibility and GPU compatibility are checked before embedding inference. If you do not already have an interactive GPU allocation, request one as in section 2:
 
 ```bash
-srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:1 \
+srun --account="<YOUR_PACE_ACCOUNT>" --partition=ice-gpu --gres=gpu:v100:1 \
   --cpus-per-task=4 --mem=16G --time=01:00:00 --pty bash
 ```
 
@@ -100,6 +102,47 @@ conda activate climax-inference
 ```
 
 The setup helper prefers Mamba for faster dependency solving, falling back to Conda with an explicit slower-solver notice if Mamba is not available from the loaded Miniforge module. It creates/updates the environment at `$HOME/scratch/.conda/envs/climax-inference` and redirects Conda, pip, temporary, Hugging Face, and PyTorch caches to scratch. It pins pip 24.0 and MKL 2024.0, checks the Lightning CLI/logger imports, records explicit Conda and pip package lists in `execution/`, and runs a real CUDA tensor operation.
+
+#### Alternative: create the environment directly with Mamba
+
+If you prefer to create the environment yourself rather than use `scripts/setup_env.sh`, Mamba can read the same `environment.yml`. Run this inside the V100 allocation, from the workflow directory. The Miniforge module must provide the `mamba` command:
+
+```bash
+module purge
+module load miniforge
+if ! command -v mamba >/dev/null 2>&1; then
+  echo "mamba is unavailable from the loaded Miniforge module." >&2
+  echo "Use bash scripts/setup_env.sh, which falls back to Conda." >&2
+  exit 1
+fi
+
+set +u
+source "$(conda info --base)/etc/profile.d/conda.sh"
+set -u
+
+WORKFLOW_DIR="$HOME/scratch/climax-inference/workflows/climax-global-forecast"
+ENV_PREFIX="$HOME/scratch/.conda/envs/climax-inference"
+export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
+export PIP_CACHE_DIR="$HOME/scratch/.cache/pip"
+export TMPDIR="$HOME/scratch/tmp"
+export XDG_CACHE_HOME="$HOME/scratch/.cache"
+export HF_HOME="$HOME/scratch/.cache/huggingface"
+export TORCH_HOME="$HOME/scratch/.cache/torch"
+mkdir -p "$HOME/scratch/.conda/envs" "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" \
+  "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
+
+mamba env create --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"
+mamba install --prefix "$ENV_PREFIX" --channel conda-forge "mkl=2024.0"
+"$ENV_PREFIX/bin/python" -m pip install "pip==24.0"
+
+set +u
+conda activate "$ENV_PREFIX"
+set -u
+python --version
+python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
+```
+
+Use `mamba env create` only for a new environment. If the environment already exists, use `mamba env update --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"` instead, then reapply the MKL and pip pins above. This manual route does not write the package inventory files or perform the setup helper's full import/CUDA smoke checks; run `bash scripts/setup_env.sh` after creation if you want those checks and records. When Mamba is unavailable, use the setup helper's Conda fallback.
 
 There is no separate ClimaX CUDA-extension build step in this workflow. The pinned model runs with the prebuilt PyTorch/CUDA packages; do not apply unrelated GCC symlink, TensorRT, CUTLASS, or custom-extension instructions from other model guides.
 
@@ -169,9 +212,9 @@ Expected: `5.625deg.ckpt: OK` and exactly `432419871` bytes. If the digest diffe
 
 ### Obtain the raw files
 
-The primary inference run needs only the WeatherBench `5.625deg/geopotential` pressure-level group and `constants.nc`, rather than every ERA5 variable. This group contains `geopotential_500`; ClimaX's pinned preprocessing script expects the parent pressure-level group and extracts that level. The exact download size depends on TUM's current archive options; verify the selected path before starting a long transfer.
+The embedding run needs only the WeatherBench `5.625deg/geopotential` pressure-level group and `constants.nc`, rather than every ERA5 variable. This group contains `geopotential_500`; ClimaX's pinned preprocessing script expects the parent pressure-level group and extracts that level. The single-variable forecasting workflow accepts this pressure-level group or the separate `geopotential_500_5.625deg` archive. Its dedicated converter reads the 500 hPa slice or single-level field, so constants and unrelated weather variables are not required for that workflow. The exact download size depends on TUM's current archive options; verify the selected path before starting a long transfer.
 
-The WeatherBench README also offers a single-level `geopotential_500` ZIP, but that ZIP is not the input layout expected by the pinned ClimaX preprocessor. Do not rename its directory or assume it is directly compatible. The parent `geopotential` group is the supported reduced-data route.
+The WeatherBench archive also offers a single-level `geopotential_500_5.625deg` ZIP. The pinned upstream converter does not directly consume that layout; use `scripts/prepare_geopotential.py` for either archive format when preparing forecast data. The parent `geopotential` group remains the route for the embedding converter.
 
 Stage the archive files with their original names:
 
@@ -185,7 +228,7 @@ The successful reduced pilot uses 2013–2016. A 2017 NetCDF file encountered an
 
 ### Create the prepared data
 
-The upstream preprocessing computes training means/stds and validation/test climatologies, converts NetCDF to hourly `.npz` shards, and saves latitude/longitude. Run on an ICE compute allocation with enough CPU, memory, and scratch; this is a CPU preprocessing job, not an inference command. Use your permitted CPU partition/account and request according to the input data size. For an interactive CPU allocation, set `CPU_PARTITION` to a partition confirmed by `sinfo`/PACE:
+This preprocessing command is for the embedding dataset. Preprocessing is required when starting from raw NetCDF files: the embedding script consumes prepared `.npz` data, not NetCDF. The upstream preprocessing computes training means/stds and validation/test climatologies, converts NetCDF to hourly `.npz` shards, and saves latitude/longitude. For single-variable forecasting, use `scripts/prepare_geopotential.py` in the forecast section below; it does not require constants or the other variables. The full forecast variable set is needed only for the optional five-output forecast experiment. If you already have a prepared embedding dataset with the expected tree below, you can use it directly and skip this step. Run preprocessing on an ICE compute allocation with enough CPU, memory, and scratch; this is a CPU preprocessing job, not an inference command. Use your permitted CPU partition/account and request according to the input data size. For an interactive CPU allocation, set `CPU_PARTITION` to a partition confirmed by `sinfo`/PACE:
 
 ```bash
 srun --account="<YOUR_PACE_ACCOUNT>" --partition="<YOUR_CPU_PARTITION>" \
@@ -262,7 +305,7 @@ sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/embed.sbatch
 squeue --me
 ```
 
-The job requests one GPU, 4 CPUs, 32 GiB RAM, and one hour. It strictly loads the pinned pretrained checkpoint into ClimaX's upstream `PretrainModule`; no fine-tuned forecast checkpoint or training stage is involved. The script encodes 32 samples from the first sorted test shard of `geopotential_500`. Outputs are written to `$HOME/scratch/climax-reproduction/runs/embeddings-<job-id>/`.
+The job requests one V100 GPU, 4 CPUs, 32 GiB RAM, and one hour. It strictly loads the pinned pretrained checkpoint into ClimaX's upstream `PretrainModule`; no fine-tuned forecast checkpoint or training stage is involved. The script encodes 32 samples from the first sorted test shard of `geopotential_500`. Outputs are written to `$HOME/scratch/climax-reproduction/runs/embeddings-<job-id>/`.
 
 For an interactive GPU allocation, run the same command directly:
 
@@ -307,9 +350,71 @@ python scripts/validate_embeddings.py \
 
 The validator checks the saved metrics and output hash, expected embedding shapes, finite numeric arrays, and matching array names/shapes. Numeric arrays are compared using `rtol=1e-5` and `atol=1e-6`; non-numeric metadata must match exactly. Keep both output directories to perform this direct comparison.
 
-## Optional forecast extension (separate fine-tuning experiment)
+## Single-variable 72-hour geopotential forecast
 
-The remaining forecast procedure is **not required** for the primary frozen-encoder inference workflow. It predicts future ERA5 fields and requires the full forecast input set plus a fine-tuned checkpoint. Do not use this path if the goal is simply to extract pretrained representations.
+This workflow predicts only `geopotential_500`, using the pinned upstream GlobalForecast architecture. It accepts either the multi-level `geopotential_5.625deg` data or the single-level `geopotential_500_5.625deg` data. Use an extracted source directory containing only one of these datasets; do not combine duplicate pressure-level and single-level files.
+
+The embedding dataset created with the upstream `nc2np_equally_era5.py` script is compatible with inference if it contains `geopotential_500`, normalization files, coordinates, and split climatology. To build a dedicated one-variable dataset from raw NetCDF, run this CPU command from the workflow directory, with `GEOPOTENTIAL_RAW_DIR` pointing at the extracted contents of either archive:
+
+```bash
+module purge
+module load miniforge
+set +u
+source "$(conda info --base)/etc/profile.d/conda.sh"
+set -u
+conda activate climax-inference
+cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
+
+GEOPOTENTIAL_RAW_DIR="$HOME/scratch/climax-reproduction/data/raw/geopotential_5.625deg"
+FORECAST_DATA="$HOME/scratch/climax-reproduction/data/geopotential_forecast_npz"
+python scripts/prepare_geopotential.py \
+  --input-dir "$GEOPOTENTIAL_RAW_DIR" \
+  --output-dir "$FORECAST_DATA" \
+  --train-start-year 2013 \
+  --val-start-year 2015 \
+  --test-start-year 2016 \
+  --end-year 2017 \
+  --num-shards 8
+```
+
+For the single-level archive, point `GEOPOTENTIAL_RAW_DIR` at its extracted folder, e.g. `$HOME/scratch/climax-reproduction/data/raw/geopotential_500_5.625deg`. The converter accepts pressure-level NetCDF fields containing the 500 hPa level and single-level `z`, `geopotential`, or `geopotential_500` fields. It writes 365-day hourly shards, train-derived mean/std, split climatologies, and coordinates. It uses the first 8760 hourly values of each year to match the pinned ClimaX converter's 365-day convention. The reduced 2013–2014 training / 2015 validation / 2016 test split is a pilot; use only years present in the downloaded source and retain the preprocessing summary.
+
+### Fine-tune the upstream forecast model
+
+The model's pretrained checkpoint (`5.625deg.ckpt`) is encoder initialization, not a forecast checkpoint. The following command fine-tunes the original ClimaX GlobalForecast code from that initialization on the one-variable dataset. Request a GPU allocation as in section 2, then submit from the login shell:
+
+```bash
+cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
+export ERA5_NPZ="$HOME/scratch/climax-reproduction/data/geopotential_forecast_npz"
+export TRAIN_DIR="$HOME/scratch/climax-reproduction/runs/geopotential-forecast"
+export FORECAST_VARIABLE=geopotential_500
+mkdir -p logs
+sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/finetune.sbatch
+squeue --me
+```
+
+The script applies matching one-variable input and output overrides to the pinned upstream config while keeping its full `default_vars` model mapping intact for checkpoint compatibility. It retains the upstream trainer's train/validation/test behavior. Use the best validation-selected `epoch_*.ckpt` from `"$TRAIN_DIR/checkpoints"`; do not use `last.ckpt` unless resuming training, and do not pass the pretrained initialization checkpoint to forecast inference.
+
+You may instead use a fine-tuned Lightning checkpoint from the original ClimaX repository if its state dict loads strictly under the pinned GlobalForecast architecture. The original paper's checkpoint was trained with its own configured input variables; when testing it with only geopotential input, record this input-distribution change and do not assume the score will match the paper. Fine-tuning with the command above is the recommended single-variable path.
+
+### Run and validate a geopotential forecast
+
+Set `FORECAST_VARIABLE` to ensure inference reads and predicts just `geopotential_500`. Pass the selected fine-tuned checkpoint as the required positional argument:
+
+```bash
+export ERA5_NPZ="$HOME/scratch/climax-reproduction/data/geopotential_forecast_npz"
+export OUTPUT_DIR="$HOME/scratch/climax-reproduction/runs/geopotential-predictions"
+export FORECAST_VARIABLE=geopotential_500
+sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/infer.sbatch \
+  "$HOME/scratch/climax-reproduction/runs/geopotential-forecast/checkpoints/epoch_XXX.ckpt"
+squeue --me
+```
+
+The inference script strictly loads the fine-tuned Lightning checkpoint, predicts 72 hours ahead, and writes `climax-forecast.npz` and `metrics.json`. The expected forecast/target shape is `[32, 1, 32, 64]`; metrics contain finite-value checks and latitude-weighted RMSE against persistence and test climatology. Do not claim a forecast-skill improvement unless the observed per-variable metrics support it. The recorded PACE run in this repository validates embeddings only; these preprocessing/training/inference steps still need to be executed on PACE before claiming a reproduced geopotential forecast.
+
+## Optional full-variable forecast extension
+
+The separate five-output forecast experiment requires the full forecast input set plus a compatible fine-tuned checkpoint. Do not use this path if the goal is only the one-variable geopotential forecast or pretrained embeddings.
 
 For this separate experiment, the primary reduced `geopotential_npz` dataset is insufficient. Retrieve the full raw input set described by the pinned [`global_forecast_climax.yaml`](https://github.com/microsoft/ClimaX/blob/6d5d354ffb4b91bb684f430b98e8f6f8af7c7f7c/configs/global_forecast_climax.yaml): `constants.nc`, surface groups `2m_temperature`, `10m_u_component_of_wind`, `10m_v_component_of_wind`, and pressure-level groups `geopotential`, `u_component_of_wind`, `v_component_of_wind`, `temperature`, `relative_humidity`, and `specific_humidity`. Preprocess those full inputs into a separate `$HOME/scratch/climax-reproduction/data/5.625deg_npz` directory using train 1979–2015, validation 2016, test 2017–2018 (`--end_year 2019`) and all nine `--variables` flags. Keep the small embedding data separate from this optional forecast dataset.
 
@@ -412,7 +517,7 @@ cat "$HOME/scratch/climax-reproduction/runs/inference-$JOB_ID/metrics.json"
 ls -lh "$HOME/scratch/climax-reproduction/runs/inference-$JOB_ID"
 ```
 
-The JSON smoke test must report `status: "passed"`, exact output shape `[32, 5, 32, 64]`, and `true` for finite predictions and targets. The fine-tuned checkpoint must load strictly; the expected upstream initialization checkpoint hash must match; and the saved test shard, time indices, and 72-hour lead must be consistent. These checks catch broken loads, wrong output dimensions, NaNs/infinities, and invalid sample windows.
+For the optional five-output run, the JSON smoke test must report `status: "passed"` and output shape `[32, 5, 32, 64]`. For the single-variable geopotential run, the shape is `[32, 1, 32, 64]`. In either case, check `true` for finite predictions and targets. The fine-tuned checkpoint must load strictly; the expected upstream initialization checkpoint hash must match; and the saved test shard, time indices, and 72-hour lead must be consistent. These checks catch broken loads, wrong output dimensions, NaNs/infinities, and invalid sample windows.
 
 The substantive comparison is the per-variable **latitude-weighted RMSE** against the same ERA5 target. The script uses the upstream metric's convention: calculate a cosine-latitude-weighted spatial RMSE for each sample and average those sample RMSE values:
 
@@ -462,7 +567,7 @@ Copy this section for each completed, partial, or failed training/inference run:
 - Embedding finite, nonconstant, and deterministic-repeat checks:
 - Embedding diagnostics (mean token standard deviation / pooled-vector norm):
 - Forecast inference smoke test and output shape (optional experiment only):
-- Per-variable forecast RMSE (optional forecast experiment only):
+- Per-variable forecast RMSE (if forecast was run):
   - `geopotential_500`:
   - `temperature_850`:
   - `2m_temperature`:
@@ -498,7 +603,7 @@ If `git clone --branch climax-inference` fails, check with the assignment owner 
 
 ### Fresh shell cannot find an activated environment
 
-Conda activation is shell-local; a fresh login or SLURM batch shell must load Miniforge and source `conda.sh` before `conda activate climax-inference`. The job scripts do this themselves. If Conda says the environment name is unknown, check `conda config --show envs_dirs` and ensure `$HOME/scratch/.conda/envs` is listed before recreating the environment.
+Conda activation is shell-local; a fresh login or SLURM batch shell must load Miniforge and source `conda.sh` before `conda activate climax-inference`. The setup helper and job scripts temporarily disable Bash `nounset` (`set -u`) while sourcing Conda and activating the environment because Conda's hooks may reference unset shell variables; strict shell checking is restored immediately afterward. If Conda says the environment name is unknown, check `conda config --show envs_dirs` and ensure `$HOME/scratch/.conda/envs` is listed before recreating the environment.
 
 ### Conda solve/install failure or `No space left on device`
 
@@ -518,7 +623,7 @@ For the initial checkpoint, verify exact size and pinned SHA-256. For embedding 
 
 ### Missing input variables or shape mismatch
 
-For the primary embedding task, check the `geopotential` directory, requested years, `geopotential_500` key in a test shard, and `normalize_mean.npz`, `normalize_std.npz`, `lat.npy`, and `lon.npy`. For the optional forecast experiment, ensure all configured surface/pressure-level groups exist and match the full global-forecast config. Keep variable identifiers exactly as listed in the pinned configs.
+For embeddings, check the `geopotential` directory, requested years, `geopotential_500` key in a test shard, and `normalize_mean.npz`, `normalize_std.npz`, `lat.npy`, and `lon.npy`. For the single-variable forecast, confirm the converter output has the same required files and the `geopotential_500` key in every split shard and climatology. For the optional five-output forecast, ensure all configured surface/pressure-level groups exist and match the full global-forecast config. Keep variable identifiers exactly as listed in the pinned configs.
 
 ### Fine-tuning is out of memory or exceeds wall time
 
@@ -526,7 +631,7 @@ Record the allocated GPU model/memory, job ID, epoch/step, and failure log. Retr
 
 ### Metrics are unexpectedly poor or worse than baselines
 
-This primary workflow does not calculate forecast metrics. If reviewing the optional forecast experiment, confirm that a validation-selected fine-tuned checkpoint was used; the pretraining checkpoint alone is not an adequate forecaster. Check lead time (72 hours), variable order, normalization files, raw ERA5 units, grid resolution, training logs, and test shard. Report baseline comparisons and trainer test metrics without hiding worse-than-baseline results.
+The embedding workflow does not calculate forecast metrics. For the geopotential forecast, confirm a validation-selected one-variable fine-tuned checkpoint was used; the pretraining checkpoint alone is not an adequate forecaster. Check lead time (72 hours), normalization files, raw ERA5 units, grid resolution, training logs, and test shard. Report the `geopotential_500` score against both baselines without hiding worse-than-baseline results. Apply the corresponding full variable and baseline checks to the optional five-output experiment.
 
 ## 12. Cleanup
 

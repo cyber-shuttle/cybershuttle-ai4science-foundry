@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+trap 'status=$?; printf "ERROR: setup_env.sh failed at line %s while running: %s (exit %s).\n" "$LINENO" "$BASH_COMMAND" "$status" >&2; echo "For more command-level detail, retry with: bash -x scripts/setup_env.sh" >&2; exit "$status"' ERR
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKFLOW_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -57,15 +58,11 @@ else
 fi
 "$ENV_PREFIX/bin/python" -m pip install "pip==24.0"
 
-set +u
-conda activate "$ENV_PREFIX"
-set -u
-echo "Environment: $CONDA_PREFIX"
-python --version
-python -c 'import importlib.metadata as metadata; import jsonargparse, rich, tensorboard, timm, torch, torchdata, torchvision, pytorch_lightning; from pytorch_lightning.callbacks import RichProgressBar; from pytorch_lightning.loggers import TensorBoardLogger; print("PyTorch:", torch.__version__); print("torchvision:", metadata.version("torchvision")); print("PyTorch Lightning:", metadata.version("pytorch-lightning")); print("timm:", metadata.version("timm")); print("torchdata:", metadata.version("torchdata")); print("jsonargparse:", metadata.version("jsonargparse")); print("rich:", metadata.version("rich")); print("TensorBoard:", metadata.version("tensorboard")); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
-conda list --explicit > "$WORKFLOW_DIR/execution/conda-explicit.txt"
+echo "Environment prefix: $ENV_PREFIX"
+"$ENV_PREFIX/bin/python" "$SCRIPT_DIR/check_environment.py" \
+  --expected-prefix "$ENV_PREFIX" \
+  --require-cuda
+conda list --prefix "$ENV_PREFIX" --explicit > "$WORKFLOW_DIR/execution/conda-explicit.txt"
 "$ENV_PREFIX/bin/python" -m pip freeze > "$WORKFLOW_DIR/execution/pip-freeze.txt"
-if ! python -c 'import torch; x = torch.ones(1, device="cuda"); torch.cuda.synchronize(); print("CUDA device:", torch.cuda.get_device_name(0)); print("CUDA capability:", torch.cuda.get_device_capability(0))'; then
-  echo "CUDA smoke check failed; do not submit ClimaX GPU jobs from this environment." >&2
-  exit 1
-fi
+echo "Environment creation and GPU verification completed."
+echo "Activate it in this shell with: conda activate \"$ENV_PREFIX\""

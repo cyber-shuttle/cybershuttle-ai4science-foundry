@@ -98,10 +98,12 @@ If you already have an interactive GPU allocation, continue in that shell instea
 ```bash
 cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
 bash scripts/setup_env.sh
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 ```
 
 The setup helper prefers Mamba for faster dependency solving, falling back to Conda with an explicit slower-solver notice if Mamba is not available from the loaded Miniforge module. It creates/updates the environment at `$HOME/scratch/.conda/envs/climax-inference` and redirects Conda, pip, temporary, Hugging Face, and PyTorch caches to scratch. It pins pip 24.0 and MKL 2024.0, checks the Lightning CLI/logger imports, records explicit Conda and pip package lists in `execution/`, and runs a real CUDA tensor operation.
+
+The helper itself uses the environment's absolute Python path for these checks, so it does not depend on activation carrying over from its child shell. It prints the detected interpreter, package versions, CUDA availability, and GPU; on failure it reports the failing command and troubleshooting steps. If you need to repeat the checks after setup, run `"$HOME/scratch/.conda/envs/climax-inference/bin/python" scripts/check_environment.py --require-cuda`.
 
 #### Alternative: create the environment directly with Mamba
 
@@ -135,14 +137,12 @@ mamba env create --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"
 mamba install --prefix "$ENV_PREFIX" --channel conda-forge "mkl=2024.0"
 "$ENV_PREFIX/bin/python" -m pip install "pip==24.0"
 
-set +u
-conda activate "$ENV_PREFIX"
-set -u
-python --version
-python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
+"$ENV_PREFIX/bin/python" "$WORKFLOW_DIR/scripts/check_environment.py" \
+  --expected-prefix "$ENV_PREFIX" \
+  --require-cuda
 ```
 
-Use `mamba env create` only for a new environment. If the environment already exists, use `mamba env update --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"` instead, then reapply the MKL and pip pins above. This manual route does not write the package inventory files or perform the setup helper's full import/CUDA smoke checks; run `bash scripts/setup_env.sh` after creation if you want those checks and records. When Mamba is unavailable, use the setup helper's Conda fallback.
+Use `mamba env create` only for a new environment. If the environment already exists, use `mamba env update --prefix "$ENV_PREFIX" --file "$WORKFLOW_DIR/environment.yml"` instead, then reapply the MKL and pip pins above. The checker validates imports and CUDA; this manual route does not write the package inventory files. Run `bash scripts/setup_env.sh` to create/update the environment and capture those inventories. When Mamba is unavailable, use the setup helper's Conda fallback.
 
 There is no separate ClimaX CUDA-extension build step in this workflow. The pinned model runs with the prebuilt PyTorch/CUDA packages; do not apply unrelated GCC symlink, TensorRT, CUTLASS, or custom-extension instructions from other model guides.
 
@@ -174,12 +174,11 @@ Run `mamba env create` only the first time. When dependencies in `environment.ym
 Verify the versions and CUDA runtime/device from the allocated GPU shell:
 
 ```bash
-conda activate climax-inference
-python --version
-python -c 'import torch; print("PyTorch:", torch.__version__); print("CUDA runtime:", torch.version.cuda); print("CUDA available:", torch.cuda.is_available())'
+"$HOME/scratch/.conda/envs/climax-inference/bin/python" \
+  scripts/check_environment.py --require-cuda
 ```
 
-Expected check:
+Successful output includes the pinned versions and an allocated GPU, for example:
 
 ```text
 Python 3.8.16
@@ -241,7 +240,7 @@ In that shell:
 module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 
 python "$HOME/scratch/climax-reproduction/ClimaX/src/data_preprocessing/nc2np_equally_era5.py" \
   --root_dir "$HOME/scratch/climax-reproduction/data/5.625deg" \
@@ -362,7 +361,7 @@ module load miniforge
 set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
 set -u
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
 
 GEOPOTENTIAL_RAW_DIR="$HOME/scratch/climax-reproduction/data/raw/geopotential_5.625deg"
@@ -488,7 +487,7 @@ For an interactive GPU allocation, the equivalent command is:
 module purge
 module load miniforge
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate climax-inference
+conda activate "$HOME/scratch/.conda/envs/climax-inference"
 python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/infer.py" \
   --climax-source "$HOME/scratch/climax-reproduction/ClimaX" \
   --config "$HOME/scratch/climax-reproduction/ClimaX/configs/global_forecast_climax.yaml" \
@@ -601,9 +600,9 @@ Run `module purge`, `module load miniforge`, and then `source "$(conda info --ba
 
 If `git clone --branch climax-inference` fails, check with the assignment owner for the published branch URL; do not proceed from a different branch without recording the revision. If network downloads fail on a compute node, use a PACE-approved transfer/login route and keep the downloaded files under scratch. For a checkpoint SHA mismatch, treat the file as incomplete or incorrect: remove only the named checkpoint file, download it again, and require the documented SHA-256 to pass before inference.
 
-### Fresh shell cannot find an activated environment
+### `ModuleNotFoundError: No module named 'torch'` or a fresh shell cannot find the environment
 
-Conda activation is shell-local; a fresh login or SLURM batch shell must load Miniforge and source `conda.sh` before `conda activate climax-inference`. The setup helper and job scripts temporarily disable Bash `nounset` (`set -u`) while sourcing Conda and activating the environment because Conda's hooks may reference unset shell variables; strict shell checking is restored immediately afterward. If Conda says the environment name is unknown, check `conda config --show envs_dirs` and ensure `$HOME/scratch/.conda/envs` is listed before recreating the environment.
+Conda activation is shell-local: activation inside `setup_env.sh` cannot change the parent terminal. The helper avoids relying on activation for its own checks and uses the environment's full Python path. In the interactive terminal, activate the exact environment path with `conda activate "$HOME/scratch/.conda/envs/climax-inference"` rather than a potentially ambiguous environment name. To diagnose the interpreter and imports, run `"$HOME/scratch/.conda/envs/climax-inference/bin/python" scripts/check_environment.py --require-cuda`. If PyTorch is still missing, rerun `bash scripts/setup_env.sh`; preserve its complete error output or rerun as `bash -x scripts/setup_env.sh`. The setup helper and job scripts temporarily disable Bash `nounset` (`set -u`) while sourcing Conda and activating the environment because Conda's hooks may reference unset shell variables; strict shell checking is restored immediately afterward.
 
 ### Conda solve/install failure or `No space left on device`
 

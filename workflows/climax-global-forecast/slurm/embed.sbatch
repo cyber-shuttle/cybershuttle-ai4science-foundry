@@ -20,11 +20,10 @@ OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_DIR/runs/embeddings-${SLURM_JOB_ID:-manual}}"
 
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$OUTPUT_DIR"
+set +u
 module purge
 module load miniforge
-set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
-set -u
 export CONDA_PKGS_DIRS="$HOME/scratch/.conda/pkgs"
 export PIP_CACHE_DIR="$HOME/scratch/.cache/pip"
 export TMPDIR="$HOME/scratch/tmp"
@@ -33,7 +32,6 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"
 export TORCH_HOME="$HOME/scratch/.cache/torch"
 export GIT_CONFIG_GLOBAL="$HOME/scratch/.gitconfig"
 mkdir -p "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR" "$HF_HOME" "$TORCH_HOME"
-set +u
 conda activate "$ENV_NAME"
 set -u
 CLIMAX_PYTHON="$(command -v python)"

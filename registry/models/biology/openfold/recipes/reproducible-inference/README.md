@@ -21,9 +21,11 @@ All commands below assume a PACE/ICE shell. `$RECIPE` is this directory:
 export RECIPE=/path/to/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference
 ```
 
-## 1. Setup (login node)
+## 1. Setup
 
-### 1.1 Clone OpenFold at the pinned commit
+Clone on the login node (1.1), then build the environment on a compute node (1.2–1.3). This is done once: the environment stays in scratch, and later allocations only activate it (section 3).
+
+### 1.1 Clone OpenFold at the pinned commit (login node)
 
 ```bash
 cd ~/scratch
@@ -34,7 +36,13 @@ git checkout be2ec1841f16c966c65ae0e7599ebbadc725757d
 
 `~/scratch/openfold` is the default `OPENFOLD_DIR` used by `scripts/run_inference.sh`.
 
-### 1.2 Create the Conda environment under scratch
+### 1.2 Create the Conda environment under scratch (compute node)
+
+Get an interactive allocation first. Login nodes limit memory per user, and `mamba env create` there was killed with exit code 137 (out of memory) while solving the environment; the allocation's 32 GB is enough. Stay in this allocation through section 1.3, and set `RECIPE` again inside it.
+
+```bash
+salloc --account=coc --partition=coc-gpu --gres=gpu:a100:1 --cpus-per-task=8 --mem=32G --time=02:00:00
+```
 
 The environment is several GB. The PACE home quota is small, and creating it in `$HOME` failed for us with `OSError: [Errno 122] Disk quota exceeded`, so keep the Conda package cache, environments, and pip cache in scratch:
 
@@ -180,6 +188,7 @@ These are the failures we hit on PACE/ICE while building this recipe, and how ea
 
 | Symptom | Cause | Fix |
 |---|---|---|
+| `mamba env create` killed with exit code 137 | The login node's per-user memory limit is too low for the environment solver | Run section 1.2 inside a `salloc` allocation with `--mem=32G` |
 | `OSError: [Errno 122] Disk quota exceeded` during `conda env create` | Conda package cache and environment were written to `$HOME` | Set `CONDA_PKGS_DIRS`, `CONDA_ENVS_PATH`, `PIP_CACHE_DIR`, and `TMPDIR` to scratch (section 1.2) |
 | `Pip failed` at `flash-attn` ("Getting requirements to build wheel ... error") during `mamba env create` | `flash-attn` needs PyTorch at build time, which pip's isolated build does not see | Install it afterwards with `pip install flash-attn==2.8.3 --no-build-isolation` (section 1.3) |
 | `fatal error: cannot execute 'cc1plus'` and `nvcc fatal: Failed to preprocess host compiler properties` in `install_third_party_dependencies.sh` | The default PACE `gcc` module sets `GCC_ROOT`, which misdirects the Conda compiler | `unset GCC_ROOT` before running the script (section 1.3) |

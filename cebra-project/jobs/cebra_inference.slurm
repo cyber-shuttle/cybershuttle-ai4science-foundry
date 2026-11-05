@@ -2,6 +2,8 @@
 #SBATCH --job-name=cebra-hippocampus
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
+#SBATCH -p coc-gpu
+#SBATCH -q coc-ice
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
@@ -9,10 +11,7 @@
 #SBATCH --output=logs/cebra-%j.out
 #SBATCH --error=logs/cebra-%j.err
 
-# TODO: Confirm --gres=gpu:1 for the course allocation.
-# TODO: Add the confirmed account, partition and/or QoS directives above.
-# PENDING: 4 CPUs, 16G RAM and 30 minutes are provisional, not measured requirements.
-# TODO: Add any required module load commands before environment activation.
+# Tested resource configuration; environment and storage paths are configurable.
 
 set -euo pipefail
 trap 'status=$?; echo "Job exit status: ${status}; finished: $(date -u +%FT%TZ)"; exit "$status"' EXIT
@@ -25,8 +24,26 @@ if [[ ! -f run_inference.py || ! -d logs ]]; then
     exit 1
 fi
 
-: "${CEBRA_ENV:?Set CEBRA_ENV to the path of your CEBRA virtual environment before submitting.}"
-source "$CEBRA_ENV/bin/activate"
+export PYTHONNOUSERSITE=1
+: "${CEBRA_ENV:?Set CEBRA_ENV to the path of your CEBRA environment before submitting.}"
+if [[ -d "$CEBRA_ENV/conda-meta" ]]; then
+    : "${CONDA_EXE:?Initialize and activate Conda before submitting this job.}"
+    cebra_conda_hook=$("$CONDA_EXE" shell.bash hook)
+    eval "$cebra_conda_hook"
+    conda activate "$CEBRA_ENV"
+else
+    source "$CEBRA_ENV/bin/activate"
+fi
+python - <<'PY'
+import os
+from pathlib import Path
+import sys
+import pip
+
+expected = Path(os.environ["CEBRA_ENV"]).resolve()
+if Path(sys.prefix).resolve() != expected or not Path(pip.__file__).resolve().is_relative_to(expected):
+    raise SystemExit("Python and pip must come from CEBRA_ENV.")
+PY
 export PYTHONUNBUFFERED=1
 export PYTHONHASHSEED=42
 export MPLBACKEND=Agg
@@ -41,5 +58,5 @@ python -m pip check
 
 # Each job keeps its own checkpoint, embeddings and execution evidence.
 run_dir="results/job-${SLURM_JOB_ID}"
-python -u run_inference.py --seed 42 --data-dir data --output-dir "$run_dir"
+python -u run_inference.py --seed 42 --data-dir "${CEBRA_WORKDIR:-.}/data" --output-dir "$run_dir"
 python -u validation/validate_results.py --results-dir "$run_dir"

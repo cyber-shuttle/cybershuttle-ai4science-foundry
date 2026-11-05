@@ -58,6 +58,8 @@ https://cebra.fra1.digitaloceanspaces.com/data/rat_hippocampus/achilles.jl.gz
 ```
 
 The default decompressed location is `data/rat_hippocampus/achilles.jl`.
+The storage-aware commands below instead cache it under
+`$CEBRA_WORKDIR/data/rat_hippocampus/achilles.jl`.
 The workflow verifies the cached file against the loader's checksum and records
 its actual SHA-256, source URL and original DOI in run metadata. This identifies
 the processed artifact even without a separate dataset version label.
@@ -102,24 +104,87 @@ The following versions were verified during the successful PACE execution.
 | Matplotlib | 3.10.9 |
 | PyTorch | 2.14.1 |
 
-Activate your external environment on PACE, replacing the generic path below:
+Run the setup commands in Bash from the repository root. When home-directory
+quota is limited, choose writable scratch or project storage for the environment,
+package caches and downloaded data. Replace the generic storage path below;
+no particular scratch directory is assumed to exist. Keep the checkout in
+scratch or project storage too if generated `results/` and `logs/` should stay
+off home storage. Follow that storage location's retention policy when preserving
+execution evidence.
 
 ```bash
-export CEBRA_ENV="<path-to-your-PACE-environment>"
-source "$CEBRA_ENV/bin/activate"
-python --version
-python -m pip check
+set -e
+export PYTHONNOUSERSITE=1
+export CEBRA_WORKDIR=/path/to/scratch-or-project-storage/cebra
+export CEBRA_ENV="$CEBRA_WORKDIR/cebra-env"
+export CONDA_PKGS_DIRS="$CEBRA_WORKDIR/conda-pkgs"
+export PIP_CACHE_DIR="$CEBRA_WORKDIR/pip-cache"
+mkdir -p "$CEBRA_WORKDIR" "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$CEBRA_WORKDIR/data"
 ```
 
-For another student recreating the environment, select a PACE module or executable
-providing Python 3.10.13, then create an environment outside the repository.
-The exact module command is **TODO** because it was not included in the execution
-details provided here.
+Choose **one** creation option below, using an unused `CEBRA_ENV` outside the
+repository. For an existing environment, skip creation, set `CEBRA_ENV` to its
+location and use the matching activation command. Keep the exported variables
+in the same shell through installation and submission.
+
+**Option A: Python virtual environment.** Select a PACE module or executable
+providing Python 3.10.13. The exact site module command remains **TODO** because
+it was not supplied with the execution details.
 
 ```bash
-python3.10 -m venv "$HOME/venvs/cebra-env"
-source "$HOME/venvs/cebra-env/bin/activate"
-python -m pip install -r requirements.txt
+set -e
+export PYTHONNOUSERSITE=1
+test ! -e "$CEBRA_ENV"
+python3.10 -m venv "$CEBRA_ENV"
+source "$CEBRA_ENV/bin/activate"
+```
+
+**Option B: Conda with a private package cache.** This is an alternative when a
+shared Conda cache is corrupted or home-directory quota causes problems, rather
+than the only valid setup method. Load your site's Conda installation first.
+The cache directory must exist before creating the environment. A separate
+`CONDA_PKGS_DIRS` avoids reusing the corrupted shared cache; it does not repair it.
+See Conda's [custom storage locations](https://docs.conda.io/projects/conda/en/stable/user-guide/configuration/custom-env-and-pkg-locations.html)
+and [environment management](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html).
+
+```bash
+set -e
+export PYTHONNOUSERSITE=1
+export CONDA_PKGS_DIRS="$CEBRA_WORKDIR/conda-pkgs"
+mkdir -p "$CONDA_PKGS_DIRS"
+test ! -e "$CEBRA_ENV"
+cebra_conda_hook=$(conda shell.bash hook)
+eval "$cebra_conda_hook"
+conda create --yes --prefix "$CEBRA_ENV" python=3.10.13 pip
+conda activate "$CEBRA_ENV"
+```
+
+**Verify and install after either option.** Check the active Python prefix and
+pip module before installing anything. A failed creation, activation or check
+stops setup. `PYTHONNOUSERSITE=1` disables user-site imports; `--no-user` prevents
+pip from falling back to a user installation when the environment is unwritable.
+Do not use `pip install --user` as a workaround.
+
+```bash
+set -e
+export PYTHONNOUSERSITE=1
+: "${CEBRA_ENV:?Set CEBRA_ENV before installing.}"
+python - <<'PY'
+import os
+from pathlib import Path
+import sys
+import pip
+
+expected = Path(os.environ["CEBRA_ENV"]).resolve()
+if Path(sys.prefix).resolve() != expected or not Path(pip.__file__).resolve().is_relative_to(expected):
+    raise SystemExit("Python and pip must come from CEBRA_ENV.")
+if sys.version_info[:3] != (3, 10, 13):
+    raise SystemExit("Use Python 3.10.13 to reproduce the recorded environment.")
+print("Python executable:", sys.executable)
+print("pip module:", pip.__file__)
+PY
+python -m pip --version
+python -m pip install --no-user -r requirements.txt
 python -m pip check
 ```
 
@@ -132,6 +197,22 @@ environment, follow the
 for a compatible GPU build, preserve the verified version, and document the
 installation source. Use the
 [CEBRA installation guide](https://cebra.ai/docs/installation.html) as a reference.
+
+PACE GPU nodes may have different GPU architectures. The installed PyTorch
+build must support the allocated GPU architecture and be compatible with the
+node's CUDA/driver environment. On an allocated GPU compute node, after
+activation and before running the workflow, verify the device and build:
+
+```bash
+nvidia-smi
+python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('PyTorch CUDA:', torch.version.cuda); print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'None')"
+```
+
+These are device checks, not training or inference. CUDA availability alone does
+not establish support for every GPU architecture; investigate incompatible-build
+warnings before proceeding. Keep the recorded package versions unless an
+explicitly documented environment change is needed. The setup options and
+device checks above have not been executed as part of these documentation fixes.
 
 `requirements.txt` contains the project's required software dependencies and
 pinned versions used for this workflow. Do not copy private paths, credentials
@@ -242,8 +323,9 @@ On an allocated GPU node, after activation, run from the repository root:
 mkdir -p logs
 export PYTHONHASHSEED=42
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
+: "${CEBRA_WORKDIR:?Set CEBRA_WORKDIR to writable scratch or project storage.}"
 set -o pipefail
-python -u run_inference.py --seed 42 --data-dir data \
+python -u run_inference.py --seed 42 --data-dir "$CEBRA_WORKDIR/data" \
   --output-dir "results/job-${SLURM_JOB_ID:?Run on an allocated node}" \
   2>&1 | tee "logs/workflow-${SLURM_JOB_ID}.log"
 python -u validation/validate_results.py \
@@ -278,19 +360,32 @@ The successful job executed in a GPU partition using **one GPU, 4 CPU cores,
 `0`, SLURM walltime `1:05`, and approximately `2.57 GB` observed memory usage.
 These are tested requests and observations, not minimum resource requirements.
 
-Before submitting your own job, configure `jobs/cebra_inference.slurm` with your
-allocation's account, partition and/or QoS settings, any required modules, and
-your external environment activation path. Cluster-specific identifiers are
-omitted from this public documentation; placeholders in the script should be
-adapted to your allocation.
+The script now includes the tested partition `coc-gpu` (`#SBATCH -p coc-gpu`)
+and QoS `coc-ice` (`#SBATCH -q coc-ice`). These are the supplied course resource
+settings, not personal account identifiers. Use an allocation that permits these
+settings; students using another allocation should select its approved settings.
+Any required module loading must be completed before setup and submission.
 
-The script activates the supplied external environment, checks dependencies,
-runs the real workflow and then validates the output. Submit from the root:
+Export `CEBRA_ENV` and `CEBRA_WORKDIR` as shown in setup, activate the environment,
+and run the device checks inside an allocation before execution. The script
+supports virtual environments and Conda prefixes. For Conda, submit from the
+shell where `conda activate "$CEBRA_ENV"` has initialized and exported
+`CONDA_EXE`; the job uses that executable to initialize its Bash activation.
+It verifies Python/pip ownership and disables user-site imports before checking
+dependencies. Submit from the repository root in the same configured shell:
 
 ```bash
+: "${CEBRA_ENV:?Set and activate CEBRA_ENV before submitting.}"
+: "${CEBRA_WORKDIR:?Set CEBRA_WORKDIR to writable scratch or project storage.}"
 mkdir -p logs results
 sbatch jobs/cebra_inference.slurm
 ```
+
+Data is cached under `$CEBRA_WORKDIR/data`; if `CEBRA_WORKDIR` is unset, the job
+script retains its original `data/` default. Log destinations and result paths
+remain relative to the repository. Setup/activation changes have only been
+checked statically; the verified timings and results below are from the earlier
+successful PACE execution.
 
 SLURM must be able to find `logs/` before the script starts, because it opens its
 output files first. The script uses `SLURM_SUBMIT_DIR` as the project root.
@@ -437,11 +532,12 @@ After retaining the evidence needed for grading, optional cleanup from the
 repository root can remove only generated data or selected large artifacts:
 
 ```bash
-rm -ri data/
+rm -ri "${CEBRA_WORKDIR:?Set CEBRA_WORKDIR before cleanup.}/data"
 rm -i results/job-<actual-job-id>/model.pt results/job-<actual-job-id>/embeddings.npz
 ```
 
-These cleanup commands prompt before removal. Keep
+For runs that used the original repository-local data default, use `rm -ri data/`
+instead. These cleanup commands prompt before removal. Keep
 metadata, validation summaries, plots and selected actual logs. Retain a copy of
 the checkpoint elsewhere if checkpoint-only inference is needed;
 retraining from configuration is not guaranteed to recreate identical weights.

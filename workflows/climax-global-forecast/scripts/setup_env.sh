@@ -13,6 +13,7 @@ if ! command -v module >/dev/null 2>&1; then
   exit 1
 fi
 
+set +u
 module purge
 module load miniforge
 if ! command -v conda >/dev/null 2>&1; then
@@ -21,7 +22,6 @@ if ! command -v conda >/dev/null 2>&1; then
   exit 1
 fi
 
-set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
 set -u
 

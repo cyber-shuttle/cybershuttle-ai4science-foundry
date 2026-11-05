@@ -1,0 +1,169 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: satmae-inference-classification
+name: SatMAE — fMoW-Sentinel land-use classification inference
+model: satmae
+task: inference
+description: >
+  Load the upstream-released, already fine-tuned SatMAE multi-spectral
+  ViT-Base (group_c) checkpoint and classify Sentinel-2 images into the 62
+  fMoW categories. The run is scored against the fMoW-Sentinel validation
+  split. Verified end-to-end on PACE ICE: all 84,939 validation images gave
+  62.65% top-1, exactly matching the upstream-reported 62.65%. Inference
+  only; no training, fine-tuning, or export.
+
+variants_supported:
+  - satmae-vit-base-multispectral-group_c   # finetune-vit-base-e7.pth; the only verified variant
+
+input:
+  format: Sentinel-2 13-band GeoTIFF (.tif) plus an fMoW-Sentinel metadata CSV (val.csv)
+  preprocessing: >
+    scripts/satmae_prepare_csv.py rebuilds the CSV's image_path column to
+    fmow-sentinel/<split>/<category>/<category>_<location_id>/<category>_<location_id>_<image_id>.tif.
+    The raw val.csv paths do not match the on-disk layout.
+  bands: 13 in, bands 0/9/10 dropped, 10 used in groups [0,1,2,6] [3,4,5,7] [8,9]
+  image_size: 96x96, patch size 8
+
+output:
+  metrics:
+    format: JSON (metrics.json)
+    fields: n_images, top1_accuracy, top5_accuracy, per_class_accuracy, runtime_seconds, gpu_name, peak_gpu_memory_gb
+  confusion_matrix:
+    format: CSV (confusion_matrix.csv), 62x62, rows = true class, columns = predicted class
+
+environment:
+  conda_env: ~/scratch/envs/satmae (Python 3.9)
+  environment_file: scripts/satmae_environment.yml
+  pytorch: "1.12.1, CUDA 11.3 (cudatoolkit=11.3)"
+  timm: "0.3.2, patched by scripts/satmae_patch_timm.sh (torch._six.container_abcs -> collections.abc)"
+  upstream_code: https://github.com/sustainlab-group/SatMAE @ 0b210aceb37a14bbbd897110db5b104b3271d818
+  workdir: $SATMAE_WORKDIR (default ~/scratch/satmae) holds SatMAE/, data/, weights/, results/
+
+steps:
+  - name: build_environment
+    description: >
+      Clone upstream SatMAE at the pinned commit and create the conda env
+      under ~/scratch. Runs as a CPU batch job, because building on the
+      login node was killed by login-node limits.
+    script: scripts/satmae_build_env.sbatch
+    partition: coc-cpu
+
+  - name: patch_timm
+    description: >
+      One-time source patch to timm 0.3.2, which imports
+      torch._six.container_abcs. That import fails under torch 1.12.1.
+    script: scripts/satmae_patch_timm.sh
+    commands:
+      - conda activate ~/scratch/envs/satmae
+      - bash scripts/satmae_patch_timm.sh
+
+  - name: download_weights
+    description: Download finetune-vit-base-e7.pth from Zenodo (DOI 10.5281/zenodo.7338613) and record its SHA-256.
+    script: scripts/satmae_download_weights.sh
+
+  - name: download_data
+    description: >
+      Download fmow-sentinel.tar.gz (77,497,587,986 bytes) and val.csv from
+      the Stanford Digital Repository (DOI 10.25740/vg497cb6002, Version 1),
+      then extract only val/. Took ~5h13m at ~3.9 MB/s. Delete the archive
+      afterwards to stay within the 300 GB scratch quota.
+    script: scripts/satmae_download_data.sbatch
+    partition: coc-cpu
+
+  - name: prepare_csv
+    description: Rebuild image_path and write the CSV the evaluator reads. Optionally also write a class-stratified subset.
+    script: scripts/satmae_prepare_csv.py
+    args:
+      csv: $SATMAE_WORKDIR/data/val.csv
+      split: val
+      data-root: $SATMAE_WORKDIR/data
+      out: $SATMAE_WORKDIR/data/val_prepared.csv
+
+  - name: smoke_test
+    description: >
+      First 100 images only. Checks that the env, checkpoint (0 missing / 0
+      unexpected keys), and data paths work. Not an accuracy signal.
+    script: scripts/satmae_smoke_test.sbatch
+
+  - name: inference
+    description: Full fMoW-Sentinel validation split (84,939 images); the primary verified result.
+    script: scripts/satmae_eval_full.sbatch
+    args:
+      batch-size: 64
+      num-workers: 8
+
+resource_requirements:
+  satmae_vit_base_full_val:
+    gpu_count: 1
+    gpu_memory_gb: 1.84       # observed peak, full val, batch 64, fp16 autocast
+    host_ram_gb: 96           # 64G was OOM-killed (job 6114969); 96G passed (~84 GiB used, job 6115115)
+    cpus: 8
+    recommended_gpu: NVIDIA L40S (verified); A100 on the same partition is untested; never AMD MI210
+    observed_runtime: 271.7s eval / 278s wall for 84,939 images on 1x L40S
+  storage_gb: null  # TODO: not measured. The download step alone needs >=77.5 GB for the archive, plus the extracted val/ (size not recorded); fits in the 300 GB scratch quota
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/coc-gpu.yaml
+
+compatible_optimization_profiles: []  # none published yet for this model
+
+slurm_example: |
+  #!/bin/bash
+  #SBATCH --job-name=satmae-eval-full
+  #SBATCH -A coc
+  #SBATCH -p coc-gpu
+  #SBATCH --qos=coc-ice
+  #SBATCH --gres=gpu:l40s:1
+  #SBATCH --cpus-per-task=8
+  #SBATCH --mem=96G
+  #SBATCH --time=04:00:00
+  #SBATCH --output=logs/satmae_eval_full_%j.out
+
+  export SATMAE_WORKDIR="${SATMAE_WORKDIR:-$HOME/scratch/satmae}"
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  set +u; conda activate ~/scratch/envs/satmae; set -u
+
+  python scripts/satmae_evaluate.py \
+    --csv "${SATMAE_WORKDIR}/data/val_prepared.csv" \
+    --data-root "${SATMAE_WORKDIR}/data" \
+    --checkpoint "${SATMAE_WORKDIR}/weights/finetune-vit-base-e7.pth" \
+    --batch-size 64 --num-workers 8 \
+    --out-dir "${SATMAE_WORKDIR}/results"
+
+  # The full version of this job (nvidia-smi, version, wall-time and sacct
+  # capture) is scripts/satmae_eval_full.sbatch. Submit it from the repo root:
+  #   mkdir -p logs && sbatch scripts/satmae_eval_full.sbatch
+
+verification:
+  expected_top1: 62.65         # upstream README, ViT-Base (200 epochs)
+  tolerance_pct_points: 1.0    # pass band 61.65-63.65
+  observed:
+    job_id: 6115115
+    n_images: 84939
+    top1: 62.65
+    top5: 85.79
+    missing_keys: 0
+    unexpected_keys: 0
+    result: PASS
+
+notes: >
+  Reproducibility gotchas found while verifying this recipe on PACE ICE.
+  Each one is handled in the scripts:
+
+  1. timm 0.3.2 imports torch._six.container_abcs, which fails even under
+     the pinned torch 1.12.1. scripts/satmae_patch_timm.sh rewrites that
+     import to collections.abc.
+  2. Upstream util/misc.py imports torch._six.inf (removed in torch>=1.13).
+     scripts/satmae_evaluate.py imports only models_vit_group_channels.py and
+     util/datasets.py, so it avoids util/misc.py, torch.distributed.launch,
+     and the hard-coded wandb entity in main_finetune.py.
+  3. Full-val evaluation is host-RAM bound, not GPU bound: --mem=64G was
+     OOM-killed and --mem=96G passed.
+  4. Inside a Slurm job, ${BASH_SOURCE[0]} points at Slurm's spooled copy of
+     the script. The sbatch files resolve paths from $SLURM_SUBMIT_DIR, so
+     always submit from the repo root.
+  5. With set -u, conda's MKL activation hook fails on an unset
+     MKL_INTERFACE_LAYER. Activation is wrapped in set +u / set -u.
+
+  See registry/models/earth-science/satmae/README.md for full setup,
+  execution, verification, troubleshooting, and cleanup steps.

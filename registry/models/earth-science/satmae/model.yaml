@@ -1,0 +1,141 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: satmae
+name: SatMAE
+version: "1.0"
+
+description: >
+  SatMAE is a masked-autoencoder pretraining framework for Vision
+  Transformers on temporal and multi-spectral satellite imagery (NeurIPS
+  2022). This entry covers the multi-spectral ViT-Base `group_c` variant,
+  which encodes Sentinel-2 bands as separate spectral groups. It is
+  pretrained for 200 epochs and fine-tuned on fMoW-Sentinel for 62-class
+  land-use classification. The registered checkpoint is the upstream-released
+  fine-tuned `finetune-vit-base-e7.pth`.
+
+domain:
+  - earth-science
+  - remote-sensing
+
+model_family:
+  - vision-transformer
+  - masked-autoencoder
+  - foundation-model
+  - encoder
+
+tasks:
+  - inference
+  - evaluation
+  - fine-tuning   # upstream main_finetune.py; not verified here
+  - training      # upstream main_pretrain.py (MAE pretraining); not verified here
+
+upstream:
+  github: https://github.com/sustainlab-group/SatMAE
+  github_commit: 0b210aceb37a14bbbd897110db5b104b3271d818  # main, 2025-08-10
+  paper: https://arxiv.org/abs/2207.08051
+  paper_title: "SatMAE: Pre-training Transformers for Temporal and Multi-Spectral Satellite Imagery"
+  other:
+    - https://doi.org/10.5281/zenodo.7338613  # fMoW-Sentinel checkpoints, incl. finetune-vit-base-e7.pth
+  license: CC-BY-NC-4.0  # upstream code; non-commercial use only
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+    - fine-tuning
+    - training
+
+checkpoint:
+  file: finetune-vit-base-e7.pth
+  url: https://zenodo.org/record/7338613/files/finetune-vit-base-e7.pth
+  doi: 10.5281/zenodo.7338613
+  sha256: null  # TODO: copy from weights/finetune-vit-base-e7.pth.sha256 on ICE (never recorded in the project repo)
+
+input:
+  format: Sentinel-2 multi-spectral GeoTIFF (.tif), 13 bands
+  description: >
+    Bands 0, 9 and 10 are dropped, leaving 10 bands, which are grouped as
+    [0,1,2,6], [3,4,5,7], [8,9]. Images are resized to 96x96, patch size 8,
+    and normalized with the upstream SentinelIndividualImageDataset
+    mean/std.
+
+output:
+  inference:
+    format: logits over 62 fMoW categories
+    description: Single-label land-use classification; scripts/satmae_evaluate.py reports top-1/top-5, per-class accuracy, and a confusion matrix
+
+architecture:
+  type: ViT-Base encoder with grouped-channel patch embedding (models_vit_group_channels.vit_base_patch16, model_type group_c)
+  input_size: 96
+  patch_size: 8
+  in_channels: 10
+  channel_groups: [[0, 1, 2, 6], [3, 4, 5, 7], [8, 9]]
+  num_classes: 62
+  global_pool: true
+
+datasets:
+  recommended:
+    - fmow-sentinel
+  evaluation:
+    - id: fmow-sentinel
+      split: val (84,939 images listed in val.csv)
+      url: https://purl.stanford.edu/vg497cb6002
+      doi: 10.25740/vg497cb6002
+      version: "1"
+      size_approx: "77,497,587,986-byte archive (fmow-sentinel.tar.gz); only val/ is extracted"
+      license_note: fMoW and Copernicus/Sentinel-2 terms apply; do not redistribute imagery
+
+software:
+  python: "3.9"
+  frameworks:
+    - pytorch==1.12.1 (CUDA 11.3, cudatoolkit=11.3)
+    - torchvision==0.13.1
+    - timm==0.3.2 (requires scripts/satmae_patch_timm.sh for torch._six.container_abcs)
+    - rasterio==1.3.6
+    - pandas==1.5.3
+    - numpy==1.23.5
+  environment_file: scripts/satmae_environment.yml
+  container: null  # no validated container; conda env only
+
+resource_profiles:
+  recommended:
+    - resource-profiles/pace-ice/coc-gpu.yaml
+
+minimum_requirements:
+  gpu_memory_gb_observed_peak: 1.84  # full val, batch 64, fp16 autocast, L40S
+  host_ram_gb: 96                    # 64G OOM'd on full val with 8 DataLoader workers
+
+cybershuttle:
+  enabled: false  # no workflow template yet
+  workflow_templates: []
+
+readiness:
+  registry_status: containerized
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: candidate
+  last_updated: "2026-10-09"
+  notes: >
+    `containerized` here means a validated, reproducible conda environment,
+    not a container image; none exists yet. Inference was verified end-to-end
+    on PACE ICE (not Nexus). The upstream fine-tuned checkpoint loaded with 0
+    missing and 0 unexpected keys, and on all 84,939 fMoW-Sentinel validation
+    images it scored 62.65% top-1 / 85.79% top-5, exactly matching the
+    upstream-reported 62.65% (job 6115115, 1x NVIDIA L40S). Nexus
+    validation, fine-tuning, and pretraining remain untested.
+
+maintainers:
+  - name: "TODO: full name"
+    github: "@DevP1130"
+    affiliation: Georgia Institute of Technology  # TODO: confirm
+
+notes: >
+  Upstream also releases a ViT-Large fine-tuned checkpoint (63.84% top-1
+  reported) and fMoW non-temporal / temporal ViT-Large checkpoints; only ViT-Base
+  multi-spectral `finetune-vit-base-e7.pth` is verified here.
+
+  See recipes/satmae-inference-classification.yaml for the inference recipe
+  and registry/models/earth-science/satmae/README.md for setup, execution,
+  verification, troubleshooting, and cleanup. Full logs and results:
+  https://github.com/DevP1130/satmae-reproducible-inference

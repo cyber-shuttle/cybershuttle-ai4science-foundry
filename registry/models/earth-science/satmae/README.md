@@ -166,6 +166,14 @@ Two things are checked:
    The stratified subset reads ~3 points lower for distribution reasons, so
    it is not used as the pass criterion.
 
+**Assignment 4 verification (November 4, 2026): PASS.** The checkpoint-only test was successfully executed on a PACE ICE CPU compute node. The model loaded with zero missing and zero unexpected checkpoint keys, and the forward pass completed with the expected output shape of (1, 62).
+
+Verification log: `~/scratch/satmae/assignment4_verification.log`
+
+Checkpoint SHA-256: `3a65b5974f2afefba4aab6fa78b878188ad97b841781325b092981815b2f96e1`
+
+This checkpoint-only test verifies model loading and execution, not classification accuracy. The previously verified full-validation evaluation remains the accuracy evidence.
+
 ## Hardware and provenance
 
 - **Verified hardware:** PACE ICE, partition `coc-gpu`, account `coc`, QOS

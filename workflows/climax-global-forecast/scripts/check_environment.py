@@ -13,6 +13,8 @@ from pathlib import Path
 EXPECTED_TORCH_VERSION = "1.12.1"
 EXPECTED_CUDA_VERSION = "11.3"
 REQUIRED_IMPORTS = (
+    "numpy",
+    "xarray",
     "jsonargparse",
     "rich",
     "tensorboard",
@@ -83,6 +85,8 @@ def main():
         print(f"CUDA available: {torch.cuda.is_available()}")
 
         for distribution in (
+            "numpy",
+            "xarray",
             "torchvision",
             "pytorch-lightning",
             "timm",

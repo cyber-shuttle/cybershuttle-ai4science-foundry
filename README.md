@@ -380,7 +380,7 @@ cat "$BASELINE_DIR/metrics.json"
 ls -lh "$BASELINE_DIR"
 ```
 
-The output includes `baseline-forecast.npz`, `metrics.json`, and `baseline-forecast.svg`. The SVG shows the first input, observed 72-hour target, persistence forecast, and training climatology on one shared color scale. Open the SVG in a browser or copy it to your computer. The metrics aggregate 32 daily-spaced examples from the test shard. A lower latitude-weighted RMSE is better; compare each baseline to the same target period. This baseline path is the quick forecast demonstration and does not require the fine-tuning section later in the README.
+The output includes `baseline-forecast.npz`, `metrics.json`, and `baseline-forecast.svg`. The SVG shows the first input, observed 72-hour target, persistence forecast, and training climatology on one shared color scale. Open the SVG in a browser or copy it to your computer. The metrics aggregate 32 daily-spaced examples from the test shard. A lower latitude-weighted RMSE is better; compare each baseline to the same target period. This baseline path is the quicker forecast demonstration and does not require the fine-tuning section later in the README.
 
 ### 6. Run frozen pretrained embedding inference
 
@@ -433,6 +433,62 @@ python "$HOME/scratch/climax-inference/workflows/climax-global-forecast/scripts/
 ```
 
 Here, `$JOB_ID` is replaced by your new successful run's ID; `$REFERENCE_JOB_ID` remains `6209978`. Both output archives must exist on the filesystem where you run the validator. If the `6209978` results are no longer available on your scratch storage, either restore that archive from your retained copy or compare with another successful job by changing `REFERENCE_JOB_ID`. The validator checks each numeric array for finite values, confirms the new run's SHA-256 and dimensions against its metrics, and compares matching arrays using `rtol=1e-5` and `atol=1e-6`. Historical logs show jobs `6209971` and `6209978` produced the same output SHA-256.
+
+<!--
+#### Collect outputs for sharing
+
+After generating the embedding and baseline outputs (and optionally a fine-tuned forecast), collect them under `results/` in your cloned `climax-inference` checkout. Run this on PACE after the jobs complete; the source files stay in their scratch run directories, while copies are placed inside the repository checkout:
+
+```bash
+set -euo pipefail
+export REPO_DIR="$HOME/scratch/climax-inference"
+export PROJECT_DIR="$HOME/scratch/climax-reproduction"
+export JOB_ID="<your-successful-embedding-job-id>"
+export BASELINE_DIR="$PROJECT_DIR/runs/geopotential-baseline"
+export MODEL_OUTPUT_DIR="$PROJECT_DIR/runs/geopotential-forecast-quick-predictions"
+export ARTIFACT_DIR="$REPO_DIR/results/climax-pace-${JOB_ID}"
+
+mkdir -p "$ARTIFACT_DIR/embeddings" "$ARTIFACT_DIR/baseline" "$ARTIFACT_DIR/logs"
+cp -v "$PROJECT_DIR/runs/embeddings-$JOB_ID/climax-embeddings.npz" \
+  "$PROJECT_DIR/runs/embeddings-$JOB_ID/metrics.json" \
+  "$ARTIFACT_DIR/embeddings/"
+cp -v "$BASELINE_DIR/baseline-forecast.npz" \
+  "$BASELINE_DIR/metrics.json" \
+  "$BASELINE_DIR/baseline-forecast.svg" \
+  "$ARTIFACT_DIR/baseline/"
+
+for log in \
+  "$REPO_DIR/workflows/climax-global-forecast/logs/climax-embed-$JOB_ID.out" \
+  "$REPO_DIR/workflows/climax-global-forecast/logs/climax-embed-$JOB_ID.err"; do
+  if [ -f "$log" ]; then
+    cp -v "$log" "$ARTIFACT_DIR/logs/"
+  else
+    echo "Embedding log not found (skipped): $log" >&2
+  fi
+done
+
+if [ -f "$MODEL_OUTPUT_DIR/climax-forecast.npz" ]; then
+  mkdir -p "$ARTIFACT_DIR/forecast"
+  cp -v "$MODEL_OUTPUT_DIR/climax-forecast.npz" \
+    "$MODEL_OUTPUT_DIR/metrics.json" \
+    "$MODEL_OUTPUT_DIR/climax-forecast.svg" \
+    "$ARTIFACT_DIR/forecast/"
+fi
+
+du -sh "$ARTIFACT_DIR"
+find "$ARTIFACT_DIR" -maxdepth 2 -type f -print
+```
+
+Replace `JOB_ID` with the successful embedding job ID. Set `MODEL_OUTPUT_DIR` to the actual inference output directory if you ran optional model inference. This command deliberately does not copy raw NetCDF, all prepared ERA5 shards, or checkpoints: those are large inputs, are not needed to inspect these results, and are retrieved separately using the documented workflow. The metrics contain hashes and provenance for the exact input/checkpoint.
+
+After reviewing the files and sizes, stage this run bundle for your normal commit/push workflow:
+
+```bash
+cd "$REPO_DIR"
+git status --short -- "results/climax-pace-$JOB_ID"
+git add "results/climax-pace-$JOB_ID"
+git status --short
+``` -->
 
 ### 8. Optional: fine-tune ClimaX and generate model forecasts
 
@@ -593,6 +649,7 @@ Observed validation: strict checkpoint loading completed; spatial embedding shap
   ```
 
   If `grep` prints nothing, the PACE copy is still old. Once the lines appear, rerun the `sbatch --test-only` time check and submit a new job; do not recreate the environment or rerun preprocessing for this import-path error. The job output should print `ClimaX package:` with a path inside `"$PROJECT_DIR/ClimaX/src/climax"` before training starts.
+
 - **Fine-tuning fails with `KeyError: "'auto' not found in registry"`:** The job requested `--trainer.strategy=auto`, but the pinned PyTorch Lightning 1.8.0 registry shown in the traceback does not support that strategy. The updated `slurm/finetune.sbatch` uses the registered `single_device` strategy for this one-GPU job. Copy the updated script from your local computer using the instructions above, verify it contains `--trainer.strategy=single_device`, then resubmit. The Mamba initialization notice, Lightning deprecation warnings, and Lightning's warning that `srun` is not used are non-fatal messages; in the shown traceback, the strategy `KeyError` is what stopped training.
 - **`libxml2_deactivate.sh` reports `xml_catalog_files_libxml2: unbound variable`:** This means an old job script is running `module purge` or `module load miniforge` while Bash `nounset` is enabled. The fixed `finetune.sbatch` turns `nounset` off before those module commands and restores it after Conda activation. If the fix is only in your local checkout, copy the script using the local-computer `scp` instructions in the preceding troubleshooting item.
 

@@ -92,7 +92,7 @@ squeue --me
 
 The successful batch job's script requested one GPU, 4 CPUs, 32 GiB host memory, and a one-hour SLURM time limit. This differs from the smaller 16 GiB interactive request documented for environment setup; the two requests serve different purposes. The job used account `coc` and partition `ice-gpu`.
 
-To reproduce with a changed job ID, ensure the following inputs exist at the paths used by the batch script: the `climax-inference` checkout under scratch, the ClimaX source at the pinned commit, the checkpoint at the documented path, the preprocessed 2016 test split at `data/geopotential_npz_2016_test`, and an activated `climax-inference` environment. Full download, preprocessing, and output-inspection commands are in [README steps 3–6](../../README.md).
+To reproduce with a changed job ID, ensure the following inputs exist at the paths used by the batch script: the `climax-inference` checkout under scratch, the ClimaX source at the pinned commit, the checkpoint at the documented path, the preprocessed 2016 test split at `data/geopotential_npz_2016_test`, and an activated `climax-inference` environment. Full download, preprocessing, and output-inspection commands are in [README steps 3–7](../../README.md).
 
 ## 5. Output files and execution evidence
 

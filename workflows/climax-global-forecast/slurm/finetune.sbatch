@@ -18,6 +18,7 @@ PRETRAINED_CHECKPOINT="${PRETRAINED_CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625de
 ERA5_NPZ="${ERA5_NPZ:-$PROJECT_DIR/data/5.625deg_npz}"
 TRAIN_DIR="${TRAIN_DIR:-$PROJECT_DIR/runs/global-forecast}"
 FORECAST_VARIABLE="${FORECAST_VARIABLE:-}"
+QUICK_TUNE_STEPS="${QUICK_TUNE_STEPS:-0}"
 
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$TRAIN_DIR"
@@ -43,6 +44,8 @@ for required_path in "$CLIMAX_SOURCE/src/climax/global_forecast/train.py" "$PRET
     exit 1
   fi
 done
+export PYTHONPATH="$CLIMAX_SOURCE/src${PYTHONPATH:+:$PYTHONPATH}"
+python -c 'import climax; print("ClimaX package:", climax.__file__)'
 echo '6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43  '"$PRETRAINED_CHECKPOINT" \
   | sha256sum --check -
 
@@ -54,7 +57,7 @@ WORKFLOW_COMMIT="$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
 TRAIN_ARGS=(
   --config "$CLIMAX_SOURCE/configs/global_forecast_climax.yaml"
   --trainer.default_root_dir="$TRAIN_DIR"
-  --trainer.strategy=auto
+  --trainer.strategy=single_device
   --trainer.devices=1
   --trainer.max_epochs=50
   --trainer.precision=16
@@ -77,6 +80,25 @@ if [ -n "$FORECAST_VARIABLE" ]; then
     "--data.variables=[\"$FORECAST_VARIABLE\"]"
     "--data.out_variables=[\"$FORECAST_VARIABLE\"]"
   )
+fi
+if [ "$QUICK_TUNE_STEPS" != "0" ]; then
+  if ! [[ "$QUICK_TUNE_STEPS" =~ ^[0-9]+$ ]] || [ "$QUICK_TUNE_STEPS" -lt 25 ]; then
+    echo "QUICK_TUNE_STEPS must be 0 (full training) or an integer of at least 25." >&2
+    exit 1
+  fi
+  TRAIN_ARGS+=(
+    "--trainer.max_steps=$QUICK_TUNE_STEPS"
+    "--trainer.limit_train_batches=$QUICK_TUNE_STEPS"
+    --model.warmup_epochs=1
+    "--model.max_epochs=$QUICK_TUNE_STEPS"
+    --trainer.val_check_interval=1.0
+    --trainer.limit_val_batches=8
+    --trainer.limit_test_batches=8
+    --trainer.num_sanity_val_steps=0
+  )
+  echo "quick_tune_steps=$QUICK_TUNE_STEPS"
+  echo "quick_tune_validation_batches=8"
+  echo "quick_tune_test_batches=8"
 fi
 if [ "$#" -gt 0 ]; then
   RESUME_CHECKPOINT="$1"

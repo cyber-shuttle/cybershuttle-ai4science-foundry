@@ -16,6 +16,8 @@ import numpy as np
 import torch
 import yaml
 
+from forecast_visualization import write_forecast_svg
+
 
 EXPECTED_PRETRAINED_SHA256 = "6393876948b8244e65f8b341474a5a14e4242dd4ff4c1db811700935be347c43"
 PRETRAINED_REVISION = "6f9d4a5c0c2602965b2a381e60636fed7f12b8f4"
@@ -255,7 +257,7 @@ def main() -> None:
         ]
     )
 
-    climatology_path = args.data_dir / args.split / "climatology.npz"
+    climatology_path = args.data_dir / "train" / "climatology.npz"
     with np.load(climatology_path) as archive:
         missing = [name for name in out_variables if name not in archive.files]
         if missing:
@@ -362,6 +364,36 @@ def main() -> None:
         target_indices=target_indices.astype(np.int64),
     )
 
+    visual_variable = out_variables[0]
+    visual_input = raw_by_variable[visual_variable][input_indices[0], 0]
+    visual_index = out_variables.index(visual_variable)
+    figure_path = args.output_dir / "climax-forecast.svg"
+    write_forecast_svg(
+        figure_path,
+        [
+            ("Input at initialization", visual_input),
+            ("Observed target at +{} h".format(args.lead_hours), target[0, visual_index]),
+            (
+                "ClimaX prediction (weighted RMSE {:.4g})".format(
+                    scores[visual_variable]["climax_weighted_rmse"]
+                ),
+                prediction[0, visual_index],
+            ),
+            (
+                "Persistence (weighted RMSE {:.4g})".format(
+                    scores[visual_variable]["persistence_weighted_rmse"]
+                ),
+                persistence[0, visual_index],
+            ),
+            (
+                "Training climatology (weighted RMSE {:.4g})".format(
+                    scores[visual_variable]["climatology_weighted_rmse"]
+                ),
+                climatology[visual_index],
+            ),
+        ],
+    )
+
     gpu_name = torch.cuda.get_device_name(device) if device.type == "cuda" else None
     metrics: Dict[str, Any] = {
         "smoke_test": {
@@ -381,6 +413,7 @@ def main() -> None:
             "first_target_index": int(target_indices[0]),
             "last_target_index": int(target_indices[-1]),
             "variables": out_variables,
+            "climatology_source": "training split",
             "latitude_weighted_rmse": scores,
         },
         "run": {
@@ -405,6 +438,7 @@ def main() -> None:
             "cuda_runtime": torch.version.cuda,
             "output_file": str(result_path.resolve()),
             "output_sha256": sha256_file(result_path),
+            "visualization_file": str(figure_path.resolve()),
         },
     }
     metrics_path = args.output_dir / "metrics.json"

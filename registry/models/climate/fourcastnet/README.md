@@ -28,6 +28,7 @@ Setup builds the env in `~/scratch/fourcastnet-work` and checks out NVlabs at co
 ```bash
 source scripts/fourcastnet_config.env
 sbatch --job-name=fcn-smoke scripts/fourcastnet_forecast.sbatch 2   # smoke test, 12 h
+squeue -u $USER                                                    # wait until fcn-smoke is gone and its validation.txt is all PASS
 sbatch --job-name=fcn-full scripts/fourcastnet_forecast.sbatch      # 5-day forecast
 sacct -j <jobid> --format=JobID,JobName,Partition,AllocTRES%60,Elapsed,MaxRSS,State,ExitCode > $EVIDENCE_DIR/sacct-<jobid>.txt
 ```

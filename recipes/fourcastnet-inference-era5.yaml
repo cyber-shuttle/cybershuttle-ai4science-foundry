@@ -57,4 +57,5 @@ compatible_optimization_profiles: []
 slurm_example: |
   source scripts/fourcastnet_config.env
   sbatch --job-name=fcn-smoke scripts/fourcastnet_forecast.sbatch 2
+  # wait for fcn-smoke to finish with all PASS, then:
   sbatch --job-name=fcn-full scripts/fourcastnet_forecast.sbatch

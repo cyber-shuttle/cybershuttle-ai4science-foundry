@@ -34,11 +34,13 @@ For the benchmark I used the public Materials Project Trajectory dataset:
 
 The download manifest is saved in `docs/mptrj_source_manifest.json`.
 
-The full archive is too large to keep in Git. I kept the deterministic subset and its checksum:
+The full archive is too large to keep in Git. I saved the deterministic subset and its checksum locally; generated input and output files are ignored by Git. These identify my original subset:
 
 - Subset path: `inputs/mptrj_subset.json`
-- Subset SHA-256: `074b888bee51ee86e1a588ce4a87da43bbd0c91e77653858952abaf9f5769a87`
+- Original full-file subset SHA-256: `074b888bee51ee86e1a588ce4a87da43bbd0c91e77653858952abaf9f5769a87`
 - Selection: 24 structures, seed `42`, 2 to 64 atoms, one eligible frame per material ID
+
+The full-file checksum above is for my saved file. The subset JSON includes download time and local path, so regenerating it elsewhere changes that checksum even when the selected data is identical. README Step B shows how to compare just the records. My records checksum, using the JSON serialization shown there, is `ce20a0eec71937a6cfce6d1f0ca2cfdcfa389601653860e47b426bf70124ce80`.
 
 The subset selection is deterministic, but it is not the original CHGNet held-out test split. It should be treated as a small reproducible validation sample, not as the paper's test set.
 

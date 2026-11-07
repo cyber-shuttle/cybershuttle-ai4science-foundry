@@ -51,27 +51,52 @@ Before starting, connect to the GT VPN if necessary. Follow the campus's current
 ssh YOUR_GT_USERNAME@login-ice.pace.gatech.edu
 ```
 
-Clone this repository onto the cluster and run these from the repo root:
+Pick a scratch directory that you can use with your ICE account that is available on the compute nodes. Replace t he path below with yours, then clone the PR branch there:
+```bash
+export CHGNET_SCRATCH=/PATH/TO/YOUR/ALLOWED/SCRATCH/chgnet
+mkdir -p "$CHGNET_SCRATCH"
+cd "$CHGNET_SCRATCH"
+git clone --branch add-chgnet-ice-repro --single-branch \
+  https://github.com/SreeDan/cybershuttle-ai4science-foundry.git
+cd cybershuttle-ai4science-foundry/benchmarks/chgnet-ice-repro
+```
+
+Run the rest of the commands from `benchmarks/chgnet-ice-repro`, where `environment.yml`, `scripts/`, and `jobs/` are located. Check your storage and cluster settings first:
 
 ```bash
 pwd
 sinfo -o '%P %G %a %l'        # allowed partitions, GPU resources, wall limits
 pace-quota                     # check storage allocation
 module avail anaconda3        # verify installed environment module
+sacctmgr -n -P show assoc where user="$USER" format=Cluster,Account,Partition,QOS
 ```
 
-PACE ICE uses Slurm (`sbatch`, `squeue`, `sacct`). Your QoS may be `pace-ice`, `coc-ice`, or another value depending on your class/account. My successful run used `coc-ice`. If your account needs a partition or account flag, add the real one assigned to you.
+PACE ICE uses Slurm (`sbatch`, `squeue`, `sacct`). Check the QoS listed for your account before submitting. My run used `coc-ice`. `pace-ice` gave me an “Invalid qos specification” error. Your account may have a different value. If `sacctmgr` is unavailable, check your course/PACE instructions.
+
+Set the value allowed for your account.
+
+```bash
+export ICE_QOS=coc-ice  # replace this if your account uses a different QoS
+```
 
 `jobs/ice_gpu.sbatch` requests 1 GPU, 4 CPU cores, 16 GB RAM, and 1 hour. The actual GPU, runtime, and Slurm allocation are recorded in the result folders.
 
 ## 4. Create the environment (once)
 
-On a login node, use the installed module to create the small Python environment. Avoid running actual CHGNet inference on the login node.
+The environment takes about 5 GB of spacee. The package caches neeed additional space. Create the environment and caches on scratch. Keep room for the dataset if you plan to download it.
+
+On a login node:
 
 ```bash
 module load anaconda3
 # Most ICE shells support conda after loading the module:
 eval "$(conda shell.bash hook)"
+# Keep the environment, downloaded packages, and temporary files on scratch.
+export CONDA_ENVS_PATH="$CHGNET_SCRATCH/conda-envs"
+export CONDA_PKGS_DIRS="$CHGNET_SCRATCH/conda-pkgs"
+export PIP_CACHE_DIR="$CHGNET_SCRATCH/pip-cache"
+export TMPDIR="$CHGNET_SCRATCH/tmp"
+mkdir -p "$CONDA_ENVS_PATH" "$CONDA_PKGS_DIRS" "$PIP_CACHE_DIR" "$TMPDIR"
 conda env create -f environment.yml
 conda activate chgnet-repro
 
@@ -84,6 +109,8 @@ print("torch", torch.__version__, "chgnet", chgnet.__version__)
 PY
 ```
 
+Both batch scripts use `conda activate chgnet-repro`. Keep `CONDA_ENVS_PATH` exported
+
 Target: Python 3.11 and the packages listed in `environment.yml`. The environment file pins the direct dependencies. Each run also saves the full resolved package list in `pip_freeze.txt`.
 
 If a CUDA PyTorch wheel is not selected or compatible, consult [troubleshooting](docs/troubleshooting.md) and record the repair. Do not quietly change package versions without updating these files and documenting it.
@@ -94,14 +121,18 @@ First, create the Slurm stdout/stderr directory before submitting (Slurm must op
 
 ```bash
 mkdir -p logs results
-sbatch --qos=pace-ice jobs/ice_gpu.sbatch smoke
-# CoC accounts may instead require: sbatch --qos=coc-ice jobs/ice_gpu.sbatch smoke
+sbatch --qos="$ICE_QOS" jobs/ice_gpu.sbatch smoke
 ```
 
-Save the job ID returned by `sbatch` (denoted `JOBID` below). Monitor and inspect:
+Save the job ID returned by `sbatch` (denoted `JOBID` below). Replace `JOBID` in each command with that number. Start by checking the queue:
 
 ```bash
 squeue -u "$USER"
+```
+
+Wait for the job to finish before running the commands below. 
+
+```bash
 cat logs/chgnet-JOBID.out
 cat logs/chgnet-JOBID.err
 sacct -j JOBID \
@@ -110,7 +141,11 @@ sacct -j JOBID \
 python scripts/verify_artifacts.py --run results/slurm-JOBID --mode smoke
 ```
 
-Substitute the actual number for `JOBID`. The generated files are:
+Open `slurm_accounting.txt` and check that the job and its steps show `COMPLETED` with exit code `0:0`.
+
+If the accounting output is empty or still says `RUNNING`, wait a bit and run `sacct` again. 
+
+The saved files are:
 
 ```text
 results/slurm-JOBID/
@@ -132,48 +167,73 @@ The smoke job exits nonzero if one of the checks fails. This confirms the model 
 
 ## 6. Run the MPtrj benchmark
 
-This is the stronger validation step because it compares against archived DFT labels. The MPtrj archive is large, about 11.35 GB, so keep it on scratch/shared storage and do not download it inside every GPU job.
+This is the stronger validation step because it compares against archived DFT labels. The MPtrj archive is large, about 12.19 GB (11.35 GiB), so keep it on scratch/shared storage and do not download it inside every GPU job.
 
 Step A: Download exact archived version (once). On an appropriate data-transfer/login system with internet access:
 
 ```bash
 conda activate chgnet-repro
-mkdir -p /PATH/TO/YOUR/ALLOWED/SCRATCH/chgnet
+mkdir -p "$CHGNET_SCRATCH/data"
 python scripts/download_mptrj.py \
-  --output /PATH/TO/YOUR/ALLOWED/SCRATCH/chgnet/mptrj_source
+  --output "$CHGNET_SCRATCH/data/mptrj_source"
 ```
 
 The script downloads Figshare article 23713842 version 2, checks the byte count, and writes a manifest with the file ID, source URL, retrieval time, and SHA-256. If ICE cannot download it directly, download it from [Figshare](https://doi.org/10.6084/m9.figshare.23713842.v2), copy it to scratch, and keep the checksum.
 
-For my run, I used the provided CPU prep job, which does the download and subset selection together:
+For my original run, I used the CPU prep job, which does the download and subset selection together. If you use it instead of the manual commands in Steps A and B, first open `jobs/prepare_mptrj.sbatch` and replace each `$HOME/scratch/chgnet-mptrj` path with `$CHGNET_SCRATCH/data`. Keep `CHGNET_SCRATCH` and the environment variables from Section 4 exported, then submit:
 
 ```bash
 mkdir -p logs results
-sbatch --qos=coc-ice jobs/prepare_mptrj.sbatch
+sbatch --qos="$ICE_QOS" jobs/prepare_mptrj.sbatch
 ```
 
-That job stores the large source file in `$HOME/scratch/chgnet-mptrj/`, copies the manifest into `docs/mptrj_source_manifest.json`, writes `inputs/mptrj_subset.json`, and records `inputs/mptrj_subset.sha256`. If your scratch path or QoS is different, change only those site-specific parts and record it.
+The prep job copies its download manifest into `docs/mptrj_source_manifest.json`, writes `inputs/mptrj_subset.json`, and records `inputs/mptrj_subset.sha256`. Wait for it to complete successfully before Step C. If you use this job, skip the manual selection command in Step B, but still check the records checksum below.
 
 Step B: Create a deterministic, small subset. This uses a streaming JSON parser (`ijson`) to avoid loading the full dataset into system RAM:
 
 ```bash
 python scripts/make_subset.py \
-  --input /PATH/TO/YOUR/ALLOWED/SCRATCH/chgnet/mptrj_source \
+  --input "$CHGNET_SCRATCH/data/mptrj_source" \
   --output inputs/mptrj_subset.json \
   --count 24 --seed 42 --min-atoms 2 --max-atoms 64
-sha256sum inputs/mptrj_subset.json
+sha256sum inputs/mptrj_subset.json > inputs/mptrj_subset.sha256
+sha256sum -c inputs/mptrj_subset.sha256
 ```
 
 The selector chooses at most one frame per material ID. It ranks materials using SHA-256 of `42:material_id` and keeps the 24 lowest ranks. This avoids hand-picking examples. The subset JSON includes the source checksum, seed, selection method, and selected IDs.
+
+The subset file contains the download time and local source path, so its full-flile SHA-256 will differ on another machine.
+
+To check that you selected the same structures and DFT labels, hash just the `records` section:
+
+```bash
+python - <<'PYTHON'
+import hashlib
+import json
+from pathlib import Path
+
+subset = json.loads(Path("inputs/mptrj_subset.json").read_text())
+records = json.dumps(subset["records"], sort_keys=True, separators=(",", ":"), allow_nan=False)
+print(hashlib.sha256(records.encode("utf-8")).hexdigest())
+PYTHON
+```
+
+For the source version and selection settings above, my records checksum is:
+
+```text
+ce20a0eec71937a6cfce6d1f0ca2cfdcfa389601653860e47b426bf70124ce80
+```
+
+This covers the material/frame IDs, structures, and reference labels without the download metadata. Also check that `provenance.source_file_sha256` matches the source checksum in [docs/provenance.md](docs/provenance.md).
 
 Step C: Run benchmark inference on a GPU.
 
 ```bash
 mkdir -p logs results
-sbatch --qos=pace-ice jobs/ice_gpu.sbatch benchmark inputs/mptrj_subset.json
+sbatch --qos="$ICE_QOS" jobs/ice_gpu.sbatch benchmark inputs/mptrj_subset.json
 ```
 
-After completion:
+After the benchmark job finishes, replace `JOBID` with its job ID. Save accounting before running the verifier, just as for the smoke job:
 
 ```bash
 cat logs/chgnet-JOBID.out
@@ -196,14 +256,14 @@ sacct -j JOBID \
   > results/slurm-JOBID/slurm_accounting.txt
 ```
 
-Run that after the job finishes. For this submission I kept:
+Run that after the job finishes. Keep the real output from Slurm to satisfy the verifier. Check for `COMPLETED` and `0:0` for the job and its steps. For my original run I saved:
 
 - Real `logs/chgnet-JOBID.out` and `.err` (even an empty `.err` is useful).
 - Real `results/slurm-JOBID/` containing checksums, package versions, GPU info, predictions, scientific checks, and elapsed time.
 - Real `slurm_accounting.txt` with Slurm state, allocated resources and elapsed time.
 - Completed [run report](docs/run_report.md): observed metrics, resource details, reproducibility notes, validation conclusions, and genuine failures/troubleshooting.
 
-Never commit the full 11.35 GB archive. The small subset is included here for reproducibility. If redistribution rules change, regenerate it from the documented source and checksum instead.
+Never commit the full archive. The small subset is included here for reproducibility. If redistribution rules change, regenerate it from the documented source and checksum instead.
 
 ## 8. How I checked the results
 

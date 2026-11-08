@@ -1,0 +1,49 @@
+Run: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950   init times: 2   leads: 0-120 h
+
+PASS  2018-01-01T00: output shape (1, 21, 20, 720, 1440)
+PASS  2018-01-01T00: z500 finite, range 47526.7 to 58525.4 (expected 45000 to 60000)
+PASS  2018-01-01T00: t850 finite, range 235.5 to 307.2 (expected 220 to 320)
+PASS  2018-01-01T00: t2m finite, range 221.3 to 319.1 (expected 180 to 340)
+PASS  2018-01-01T00: u10 finite, range -24.6 to 23.9 (expected -80 to 80)
+PASS  2018-07-01T00: output shape (1, 21, 20, 720, 1440)
+PASS  2018-07-01T00: z500 finite, range 46080.3 to 58855.8 (expected 45000 to 60000)
+PASS  2018-07-01T00: t850 finite, range 221.0 to 311.2 (expected 220 to 320)
+PASS  2018-07-01T00: t2m finite, range 199.9 to 323.5 (expected 180 to 340)
+PASS  2018-07-01T00: u10 finite, range -26.3 to 23.0 (expected -80 to 80)
+PASS  z500: error grows with lead time (40.01 at 6 h -> 493.15 at 120 h)
+PASS  t850: error grows with lead time (0.56 at 6 h -> 2.27 at 120 h)
+PASS  t2m: error grows with lead time (0.77 at 6 h -> 1.86 at 120 h)
+PASS  u10: error grows with lead time (0.57 at 6 h -> 3.25 at 120 h)
+PASS  z500: FourCastNet beats persistence at every lead
+PASS  t850: FourCastNet beats persistence at every lead
+
+RMSE (lat-weighted, averaged over init times) and ACC:
+var     lead  FourCastNet  persistence     ACC
+z500      6h       40.015      216.653  0.9994
+z500     12h       55.433      338.660  0.9988
+z500     24h       85.027      543.553  0.9974
+z500     48h      160.573      754.986  0.9911
+z500     72h      248.693      890.909  0.9797
+z500     96h      366.478      948.324  0.9562
+z500    120h      493.154      958.487  0.9160
+t850      6h        0.555        1.474  0.9959
+t850     12h        0.717        2.221  0.9935
+t850     24h        0.871        2.915  0.9904
+t850     48h        1.165        3.735  0.9828
+t850     72h        1.493        4.058  0.9716
+t850     96h        1.838        4.287  0.9576
+t850    120h        2.269        4.489  0.9369
+t2m       6h        0.769        2.657  0.9941
+t2m      12h        0.869        3.746  0.9930
+t2m      24h        0.971        2.071  0.9892
+t2m      48h        1.164        2.687  0.9845
+t2m      72h        1.398        3.021  0.9785
+t2m      96h        1.620        3.191  0.9713
+t2m     120h        1.861        3.281  0.9635
+u10       6h        0.575        2.182  0.9903
+u10      12h        0.778        3.127  0.9819
+u10      24h        1.024        3.935  0.9690
+u10      48h        1.586        4.617  0.9288
+u10      72h        2.251        5.122  0.8714
+u10      96h        2.833        5.277  0.7854
+u10     120h        3.249        5.290  0.6798

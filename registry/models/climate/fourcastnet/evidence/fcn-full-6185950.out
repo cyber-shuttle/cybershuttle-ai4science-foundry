@@ -1,0 +1,297 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 15:08:46
+Job ID:    6185950
+User ID:   xyang654
+Account:   coc
+Job name:  fcn-full
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+date: 2026-10-11T15:08:51-04:00
+host: atl1-1-03-007-33-0.pace.gatech.edu
+job: 6185950  partition: coc-gpu  nsteps: 20  init times: 2018-01-01T00:00:00 2018-07-01T00:00:00
+repo commit: ed1f016670faa3a3dd51ae0f707d932f02f674cb
+FourCastNet commit: 93360c1720a9f97aabf970689f21c9fad8737788
+
+Currently Loaded Modules:
+  1) gmp/6.2.1   (H)   5) gcc/12.3.0              9) mvapich2/2.3.7-1
+  2) mpfr/4.2.0  (H)   6) libpciaccess/0.17 (H)  10) miniforge/24.3.0-0
+  3) mpc/1.3.1   (H)   7) pmix/4.2.6        (H)
+  4) zlib/1.2.13 (H)   8) slurm/23.11.1     (H)
+
+  Where:
+   H:  Hidden Module
+python 3.11.17 | torch 2.4.1+cu121 | numpy 1.26.4
+name, memory.total [MiB], driver_version
+NVIDIA A100-PCIE-40GB, 40960 MiB, 615.71.09
+2026-10-11 15:08:56,381 - root - INFO - --------------- Versions ---------------
+2026-10-11 15:08:56,391 - root - INFO - git branch: b'* (HEAD detached at 93360c1)\n  master'
+2026-10-11 15:08:56,396 - root - INFO - git hash: b'93360c1720a9f97aabf970689f21c9fad8737788'
+2026-10-11 15:08:56,396 - root - INFO - Torch: 2.4.1+cu121
+2026-10-11 15:08:56,396 - root - INFO - ----------------------------------------
+2026-10-11 15:08:56,396 - root - INFO - ------------------ Configuration ------------------
+2026-10-11 15:08:56,396 - root - INFO - Configuration file: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-01-01T00/config.yaml
+2026-10-11 15:08:56,396 - root - INFO - Configuration name: pace_inference
+2026-10-11 15:08:56,396 - root - INFO - inf_data_path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample
+2026-10-11 15:08:56,396 - root - INFO - global_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_means.npy
+2026-10-11 15:08:56,396 - root - INFO - global_stds_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_stds.npy
+2026-10-11 15:08:56,396 - root - INFO - time_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/time_means.npy
+2026-10-11 15:08:56,396 - root - INFO - prediction_length 21
+2026-10-11 15:08:56,396 - root - INFO - ics_type datetime
+2026-10-11 15:08:56,396 - root - INFO - date_strings ['2018-01-01 00:00:00']
+2026-10-11 15:08:56,396 - root - INFO - log_to_wandb False
+2026-10-11 15:08:56,396 - root - INFO - lr 0.0005
+2026-10-11 15:08:56,397 - root - INFO - batch_size 64
+2026-10-11 15:08:56,397 - root - INFO - max_epochs 150
+2026-10-11 15:08:56,397 - root - INFO - scheduler CosineAnnealingLR
+2026-10-11 15:08:56,397 - root - INFO - in_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:08:56,397 - root - INFO - out_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:08:56,397 - root - INFO - orography False
+2026-10-11 15:08:56,397 - root - INFO - orography_path None
+2026-10-11 15:08:56,397 - root - INFO - exp_dir /pscratch/sd/s/shas1693/results/era5_wind
+2026-10-11 15:08:56,397 - root - INFO - train_data_path /pscratch/sd/s/shas1693/data/era5/train
+2026-10-11 15:08:56,397 - root - INFO - valid_data_path /pscratch/sd/s/shas1693/data/era5/test
+2026-10-11 15:08:56,397 - root - INFO - loss l2
+2026-10-11 15:08:56,397 - root - INFO - num_data_workers 4
+2026-10-11 15:08:56,397 - root - INFO - dt 1
+2026-10-11 15:08:56,397 - root - INFO - n_history 0
+2026-10-11 15:08:56,397 - root - INFO - prediction_type iterative
+2026-10-11 15:08:56,397 - root - INFO - n_initial_conditions 5
+2026-10-11 15:08:56,397 - root - INFO - save_raw_forecasts True
+2026-10-11 15:08:56,397 - root - INFO - save_channel False
+2026-10-11 15:08:56,397 - root - INFO - masked_acc False
+2026-10-11 15:08:56,397 - root - INFO - maskpath None
+2026-10-11 15:08:56,397 - root - INFO - perturb False
+2026-10-11 15:08:56,397 - root - INFO - add_grid False
+2026-10-11 15:08:56,397 - root - INFO - N_grid_channels 0
+2026-10-11 15:08:56,397 - root - INFO - gridtype sinusoidal
+2026-10-11 15:08:56,397 - root - INFO - roll False
+2026-10-11 15:08:56,397 - root - INFO - num_blocks 8
+2026-10-11 15:08:56,397 - root - INFO - nettype afno
+2026-10-11 15:08:56,397 - root - INFO - patch_size 8
+2026-10-11 15:08:56,398 - root - INFO - width 56
+2026-10-11 15:08:56,398 - root - INFO - modes 32
+2026-10-11 15:08:56,398 - root - INFO - target default
+2026-10-11 15:08:56,398 - root - INFO - normalization zscore
+2026-10-11 15:08:56,398 - root - INFO - log_to_screen True
+2026-10-11 15:08:56,398 - root - INFO - save_checkpoint True
+2026-10-11 15:08:56,398 - root - INFO - enable_nhwc False
+2026-10-11 15:08:56,398 - root - INFO - optimizer_type FusedAdam
+2026-10-11 15:08:56,398 - root - INFO - crop_size_x None
+2026-10-11 15:08:56,398 - root - INFO - crop_size_y None
+2026-10-11 15:08:56,398 - root - INFO - two_step_training False
+2026-10-11 15:08:56,398 - root - INFO - plot_animations False
+2026-10-11 15:08:56,398 - root - INFO - add_noise False
+2026-10-11 15:08:56,398 - root - INFO - noise_std 0
+2026-10-11 15:08:56,398 - root - INFO - world_size 1
+2026-10-11 15:08:56,398 - root - INFO - interp 0
+2026-10-11 15:08:56,398 - root - INFO - use_daily_climatology False
+2026-10-11 15:08:56,398 - root - INFO - global_batch_size 64
+2026-10-11 15:08:56,398 - root - INFO - experiment_dir /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-01-01T00
+2026-10-11 15:08:56,398 - root - INFO - best_checkpoint_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+2026-10-11 15:08:56,398 - root - INFO - resuming False
+2026-10-11 15:08:56,398 - root - INFO - local_rank 0
+2026-10-11 15:08:56,398 - root - INFO - ---------------------------------------------------
+2026-10-11 15:08:56,400 - root - INFO - Inference for 1 initial conditions
+2026-10-11 15:08:56,401 - root - INFO - Getting file stats from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:08:56,402 - root - INFO - Number of samples per year: 1460
+2026-10-11 15:08:56,402 - root - INFO - Found data at path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample. Number of examples: 1460. Image Shape: 720 x 1440 x 20
+2026-10-11 15:08:56,402 - root - INFO - Delta t: 6 hours
+2026-10-11 15:08:56,402 - root - INFO - Including 0 hours of past history in training at a frequency of 6 hours
+2026-10-11 15:08:56,402 - root - INFO - Loading trained model checkpoint from /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+/storage/ice1/5/3/xyang654/fourcastnet-work/FourCastNet/inference/inference.py:90: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_fname)
+2026-10-11 15:08:57,503 - root - INFO - Loading inference data
+2026-10-11 15:08:57,503 - root - INFO - Inference data from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:08:57,504 - root - INFO - Initial condition 1 of 1
+2026-10-11 15:09:00,061 - root - INFO - Begin autoregressive inference
+2026-10-11 15:09:00,444 - root - INFO - Predicted timestep 0 of 21. z500 RMS Error: 0.0, ACC: 1.0
+2026-10-11 15:09:01,282 - root - INFO - Predicted timestep 1 of 21. z500 RMS Error: 37.890865325927734, ACC: 0.9995751976966858
+2026-10-11 15:09:01,438 - root - INFO - Predicted timestep 2 of 21. z500 RMS Error: 51.94194793701172, ACC: 0.9992228746414185
+2026-10-11 15:09:01,596 - root - INFO - Predicted timestep 3 of 21. z500 RMS Error: 67.6563720703125, ACC: 0.998702883720398
+2026-10-11 15:09:01,754 - root - INFO - Predicted timestep 4 of 21. z500 RMS Error: 85.37420654296875, ACC: 0.9979488253593445
+2026-10-11 15:09:01,912 - root - INFO - Predicted timestep 5 of 21. z500 RMS Error: 98.97013092041016, ACC: 0.9972975254058838
+2026-10-11 15:09:02,071 - root - INFO - Predicted timestep 6 of 21. z500 RMS Error: 115.4055404663086, ACC: 0.9963760375976562
+2026-10-11 15:09:02,230 - root - INFO - Predicted timestep 7 of 21. z500 RMS Error: 130.19212341308594, ACC: 0.9954617619514465
+2026-10-11 15:09:02,389 - root - INFO - Predicted timestep 8 of 21. z500 RMS Error: 150.48190307617188, ACC: 0.9940758347511292
+2026-10-11 15:09:02,548 - root - INFO - Predicted timestep 9 of 21. z500 RMS Error: 172.38955688476562, ACC: 0.9923508763313293
+2026-10-11 15:09:02,706 - root - INFO - Predicted timestep 10 of 21. z500 RMS Error: 191.18313598632812, ACC: 0.9905726909637451
+2026-10-11 15:09:02,865 - root - INFO - Predicted timestep 11 of 21. z500 RMS Error: 207.41673278808594, ACC: 0.9888007044792175
+2026-10-11 15:09:03,024 - root - INFO - Predicted timestep 12 of 21. z500 RMS Error: 228.44326782226562, ACC: 0.9864930510520935
+2026-10-11 15:09:03,183 - root - INFO - Predicted timestep 13 of 21. z500 RMS Error: 253.87721252441406, ACC: 0.9832143783569336
+2026-10-11 15:09:03,342 - root - INFO - Predicted timestep 14 of 21. z500 RMS Error: 284.6341857910156, ACC: 0.97865229845047
+2026-10-11 15:09:03,501 - root - INFO - Predicted timestep 15 of 21. z500 RMS Error: 315.3914489746094, ACC: 0.9739781022071838
+2026-10-11 15:09:03,659 - root - INFO - Predicted timestep 16 of 21. z500 RMS Error: 350.02044677734375, ACC: 0.9683552980422974
+2026-10-11 15:09:03,818 - root - INFO - Predicted timestep 17 of 21. z500 RMS Error: 379.47247314453125, ACC: 0.9630684852600098
+2026-10-11 15:09:03,978 - root - INFO - Predicted timestep 18 of 21. z500 RMS Error: 407.47882080078125, ACC: 0.9577706456184387
+2026-10-11 15:09:04,136 - root - INFO - Predicted timestep 19 of 21. z500 RMS Error: 432.5279541015625, ACC: 0.952832043170929
+2026-10-11 15:09:04,295 - root - INFO - Predicted timestep 20 of 21. z500 RMS Error: 456.4192199707031, ACC: 0.9475380778312683
+2026-10-11 15:09:04,769 - root - INFO - Saving files at /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-01-01T00/autoregressive_predictions_z500_vis.h5
+2026-10-11 15:09:10,928 - root - INFO - --------------- Versions ---------------
+2026-10-11 15:09:10,938 - root - INFO - git branch: b'* (HEAD detached at 93360c1)\n  master'
+2026-10-11 15:09:10,942 - root - INFO - git hash: b'93360c1720a9f97aabf970689f21c9fad8737788'
+2026-10-11 15:09:10,942 - root - INFO - Torch: 2.4.1+cu121
+2026-10-11 15:09:10,942 - root - INFO - ----------------------------------------
+2026-10-11 15:09:10,942 - root - INFO - ------------------ Configuration ------------------
+2026-10-11 15:09:10,942 - root - INFO - Configuration file: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-07-01T00/config.yaml
+2026-10-11 15:09:10,942 - root - INFO - Configuration name: pace_inference
+2026-10-11 15:09:10,942 - root - INFO - inf_data_path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample
+2026-10-11 15:09:10,942 - root - INFO - global_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_means.npy
+2026-10-11 15:09:10,943 - root - INFO - global_stds_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_stds.npy
+2026-10-11 15:09:10,943 - root - INFO - time_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/time_means.npy
+2026-10-11 15:09:10,943 - root - INFO - prediction_length 21
+2026-10-11 15:09:10,943 - root - INFO - ics_type datetime
+2026-10-11 15:09:10,943 - root - INFO - date_strings ['2018-07-01 00:00:00']
+2026-10-11 15:09:10,943 - root - INFO - log_to_wandb False
+2026-10-11 15:09:10,943 - root - INFO - lr 0.0005
+2026-10-11 15:09:10,943 - root - INFO - batch_size 64
+2026-10-11 15:09:10,943 - root - INFO - max_epochs 150
+2026-10-11 15:09:10,943 - root - INFO - scheduler CosineAnnealingLR
+2026-10-11 15:09:10,943 - root - INFO - in_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:09:10,943 - root - INFO - out_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:09:10,943 - root - INFO - orography False
+2026-10-11 15:09:10,943 - root - INFO - orography_path None
+2026-10-11 15:09:10,943 - root - INFO - exp_dir /pscratch/sd/s/shas1693/results/era5_wind
+2026-10-11 15:09:10,943 - root - INFO - train_data_path /pscratch/sd/s/shas1693/data/era5/train
+2026-10-11 15:09:10,943 - root - INFO - valid_data_path /pscratch/sd/s/shas1693/data/era5/test
+2026-10-11 15:09:10,943 - root - INFO - loss l2
+2026-10-11 15:09:10,943 - root - INFO - num_data_workers 4
+2026-10-11 15:09:10,943 - root - INFO - dt 1
+2026-10-11 15:09:10,943 - root - INFO - n_history 0
+2026-10-11 15:09:10,943 - root - INFO - prediction_type iterative
+2026-10-11 15:09:10,943 - root - INFO - n_initial_conditions 5
+2026-10-11 15:09:10,943 - root - INFO - save_raw_forecasts True
+2026-10-11 15:09:10,943 - root - INFO - save_channel False
+2026-10-11 15:09:10,944 - root - INFO - masked_acc False
+2026-10-11 15:09:10,944 - root - INFO - maskpath None
+2026-10-11 15:09:10,944 - root - INFO - perturb False
+2026-10-11 15:09:10,944 - root - INFO - add_grid False
+2026-10-11 15:09:10,944 - root - INFO - N_grid_channels 0
+2026-10-11 15:09:10,944 - root - INFO - gridtype sinusoidal
+2026-10-11 15:09:10,944 - root - INFO - roll False
+2026-10-11 15:09:10,944 - root - INFO - num_blocks 8
+2026-10-11 15:09:10,944 - root - INFO - nettype afno
+2026-10-11 15:09:10,944 - root - INFO - patch_size 8
+2026-10-11 15:09:10,944 - root - INFO - width 56
+2026-10-11 15:09:10,944 - root - INFO - modes 32
+2026-10-11 15:09:10,944 - root - INFO - target default
+2026-10-11 15:09:10,944 - root - INFO - normalization zscore
+2026-10-11 15:09:10,944 - root - INFO - log_to_screen True
+2026-10-11 15:09:10,944 - root - INFO - save_checkpoint True
+2026-10-11 15:09:10,944 - root - INFO - enable_nhwc False
+2026-10-11 15:09:10,944 - root - INFO - optimizer_type FusedAdam
+2026-10-11 15:09:10,944 - root - INFO - crop_size_x None
+2026-10-11 15:09:10,944 - root - INFO - crop_size_y None
+2026-10-11 15:09:10,944 - root - INFO - two_step_training False
+2026-10-11 15:09:10,944 - root - INFO - plot_animations False
+2026-10-11 15:09:10,944 - root - INFO - add_noise False
+2026-10-11 15:09:10,944 - root - INFO - noise_std 0
+2026-10-11 15:09:10,944 - root - INFO - world_size 1
+2026-10-11 15:09:10,944 - root - INFO - interp 0
+2026-10-11 15:09:10,944 - root - INFO - use_daily_climatology False
+2026-10-11 15:09:10,944 - root - INFO - global_batch_size 64
+2026-10-11 15:09:10,944 - root - INFO - experiment_dir /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-07-01T00
+2026-10-11 15:09:10,944 - root - INFO - best_checkpoint_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+2026-10-11 15:09:10,945 - root - INFO - resuming False
+2026-10-11 15:09:10,945 - root - INFO - local_rank 0
+2026-10-11 15:09:10,945 - root - INFO - ---------------------------------------------------
+2026-10-11 15:09:10,946 - root - INFO - Inference for 1 initial conditions
+2026-10-11 15:09:10,947 - root - INFO - Getting file stats from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:09:10,948 - root - INFO - Number of samples per year: 1460
+2026-10-11 15:09:10,948 - root - INFO - Found data at path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample. Number of examples: 1460. Image Shape: 720 x 1440 x 20
+2026-10-11 15:09:10,948 - root - INFO - Delta t: 6 hours
+2026-10-11 15:09:10,948 - root - INFO - Including 0 hours of past history in training at a frequency of 6 hours
+2026-10-11 15:09:10,948 - root - INFO - Loading trained model checkpoint from /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+/storage/ice1/5/3/xyang654/fourcastnet-work/FourCastNet/inference/inference.py:90: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_fname)
+2026-10-11 15:09:12,035 - root - INFO - Loading inference data
+2026-10-11 15:09:12,035 - root - INFO - Inference data from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:09:12,036 - root - INFO - Initial condition 1 of 1
+2026-10-11 15:09:14,602 - root - INFO - Begin autoregressive inference
+2026-10-11 15:09:15,005 - root - INFO - Predicted timestep 0 of 21. z500 RMS Error: 0.0, ACC: 1.0
+2026-10-11 15:09:15,840 - root - INFO - Predicted timestep 1 of 21. z500 RMS Error: 42.138885498046875, ACC: 0.9991489052772522
+2026-10-11 15:09:15,995 - root - INFO - Predicted timestep 2 of 21. z500 RMS Error: 58.92353439331055, ACC: 0.9984182715415955
+2026-10-11 15:09:16,153 - root - INFO - Predicted timestep 3 of 21. z500 RMS Error: 71.07740020751953, ACC: 0.997715175151825
+2026-10-11 15:09:16,312 - root - INFO - Predicted timestep 4 of 21. z500 RMS Error: 84.67999267578125, ACC: 0.9968406558036804
+2026-10-11 15:09:16,471 - root - INFO - Predicted timestep 5 of 21. z500 RMS Error: 103.74757385253906, ACC: 0.9953017234802246
+2026-10-11 15:09:16,629 - root - INFO - Predicted timestep 6 of 21. z500 RMS Error: 125.65086364746094, ACC: 0.9932583570480347
+2026-10-11 15:09:16,788 - root - INFO - Predicted timestep 7 of 21. z500 RMS Error: 145.2275848388672, ACC: 0.9910928606987
+2026-10-11 15:09:16,948 - root - INFO - Predicted timestep 8 of 21. z500 RMS Error: 170.6643524169922, ACC: 0.9881816506385803
+2026-10-11 15:09:17,107 - root - INFO - Predicted timestep 9 of 21. z500 RMS Error: 193.16275024414062, ACC: 0.9851072430610657
+2026-10-11 15:09:17,266 - root - INFO - Predicted timestep 10 of 21. z500 RMS Error: 221.6628875732422, ACC: 0.9808276891708374
+2026-10-11 15:09:17,425 - root - INFO - Predicted timestep 11 of 21. z500 RMS Error: 246.64256286621094, ACC: 0.9768003821372986
+2026-10-11 15:09:17,583 - root - INFO - Predicted timestep 12 of 21. z500 RMS Error: 268.9423522949219, ACC: 0.9729313254356384
+2026-10-11 15:09:17,742 - root - INFO - Predicted timestep 13 of 21. z500 RMS Error: 294.1730041503906, ACC: 0.9673243761062622
+2026-10-11 15:09:17,903 - root - INFO - Predicted timestep 14 of 21. z500 RMS Error: 323.2639465332031, ACC: 0.9609453678131104
+2026-10-11 15:09:18,062 - root - INFO - Predicted timestep 15 of 21. z500 RMS Error: 348.90899658203125, ACC: 0.9538396596908569
+2026-10-11 15:09:18,221 - root - INFO - Predicted timestep 16 of 21. z500 RMS Error: 382.9352722167969, ACC: 0.944003701210022
+2026-10-11 15:09:18,379 - root - INFO - Predicted timestep 17 of 21. z500 RMS Error: 419.105224609375, ACC: 0.9311634302139282
+2026-10-11 15:09:18,538 - root - INFO - Predicted timestep 18 of 21. z500 RMS Error: 465.2168884277344, ACC: 0.9146373271942139
+2026-10-11 15:09:18,697 - root - INFO - Predicted timestep 19 of 21. z500 RMS Error: 500.73846435546875, ACC: 0.8985310196876526
+2026-10-11 15:09:18,857 - root - INFO - Predicted timestep 20 of 21. z500 RMS Error: 529.88818359375, ACC: 0.8843746781349182
+2026-10-11 15:09:19,342 - root - INFO - Saving files at /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950/2018-07-01T00/autoregressive_predictions_z500_vis.h5
+forecast time: 30s
+Run: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185950   init times: 2   leads: 0-120 h
+
+PASS  2018-01-01T00: output shape (1, 21, 20, 720, 1440)
+PASS  2018-01-01T00: z500 finite, range 47526.7 to 58525.4 (expected 45000 to 60000)
+PASS  2018-01-01T00: t850 finite, range 235.5 to 307.2 (expected 220 to 320)
+PASS  2018-01-01T00: t2m finite, range 221.3 to 319.1 (expected 180 to 340)
+PASS  2018-01-01T00: u10 finite, range -24.6 to 23.9 (expected -80 to 80)
+PASS  2018-07-01T00: output shape (1, 21, 20, 720, 1440)
+PASS  2018-07-01T00: z500 finite, range 46080.3 to 58855.8 (expected 45000 to 60000)
+PASS  2018-07-01T00: t850 finite, range 221.0 to 311.2 (expected 220 to 320)
+PASS  2018-07-01T00: t2m finite, range 199.9 to 323.5 (expected 180 to 340)
+PASS  2018-07-01T00: u10 finite, range -26.3 to 23.0 (expected -80 to 80)
+PASS  z500: error grows with lead time (40.01 at 6 h -> 493.15 at 120 h)
+PASS  t850: error grows with lead time (0.56 at 6 h -> 2.27 at 120 h)
+PASS  t2m: error grows with lead time (0.77 at 6 h -> 1.86 at 120 h)
+PASS  u10: error grows with lead time (0.57 at 6 h -> 3.25 at 120 h)
+PASS  z500: FourCastNet beats persistence at every lead
+PASS  t850: FourCastNet beats persistence at every lead
+
+RMSE (lat-weighted, averaged over init times) and ACC:
+var     lead  FourCastNet  persistence     ACC
+z500      6h       40.015      216.653  0.9994
+z500     12h       55.433      338.660  0.9988
+z500     24h       85.027      543.553  0.9974
+z500     48h      160.573      754.986  0.9911
+z500     72h      248.693      890.909  0.9797
+z500     96h      366.478      948.324  0.9562
+z500    120h      493.154      958.487  0.9160
+t850      6h        0.555        1.474  0.9959
+t850     12h        0.717        2.221  0.9935
+t850     24h        0.871        2.915  0.9904
+t850     48h        1.165        3.735  0.9828
+t850     72h        1.493        4.058  0.9716
+t850     96h        1.838        4.287  0.9576
+t850    120h        2.269        4.489  0.9369
+t2m       6h        0.769        2.657  0.9941
+t2m      12h        0.869        3.746  0.9930
+t2m      24h        0.971        2.071  0.9892
+t2m      48h        1.164        2.687  0.9845
+t2m      72h        1.398        3.021  0.9785
+t2m      96h        1.620        3.191  0.9713
+t2m     120h        1.861        3.281  0.9635
+u10       6h        0.575        2.182  0.9903
+u10      12h        0.778        3.127  0.9819
+u10      24h        1.024        3.935  0.9690
+u10      48h        1.586        4.617  0.9288
+u10      72h        2.251        5.122  0.8714
+u10      96h        2.833        5.277  0.7854
+u10     120h        3.249        5.290  0.6798
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 15:09:24
+Job ID:        6185950
+User ID:       xyang654
+Account:       coc
+Job name:      fcn-full
+Resources:     cpu=4,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=00:02:32,vmem=0,walltime=00:00:38,mem=15685504K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-007-33-0
+---------------------------------------

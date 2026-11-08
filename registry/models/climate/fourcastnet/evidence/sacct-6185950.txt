@@ -1,0 +1,5 @@
+JobID           JobName  Partition                                                    AllocTRES    Elapsed     MaxRSS      State ExitCode 
+------------ ---------- ---------- ------------------------------------------------------------ ---------- ---------- ---------- -------- 
+6185950        fcn-full    coc-gpu    billing=4,cpu=4,gres/gpu:a100=1,gres/gpu=1,mem=32G,node=1   00:00:38             COMPLETED      0:0 
+6185950.bat+      batch                         cpu=4,gres/gpu:a100=1,gres/gpu=1,mem=32G,node=1   00:00:38  15685504K  COMPLETED      0:0 
+6185950.ext+     extern               billing=4,cpu=4,gres/gpu:a100=1,gres/gpu=1,mem=32G,node=1   00:00:38             COMPLETED      0:0 

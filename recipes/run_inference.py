@@ -6,22 +6,22 @@ import torch
 import numpy as np
 from neuralop.models import FNO
 
+
 def run_fno_inference():
     print("=" * 65)
     print("  AI Makerspace: Reproducible FNO-2D Inference Pipeline")
     print("=" * 65)
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"[Device Selection] Running inference on: {device}")
     if torch.cuda.is_available():
         print(f"[GPU Hardware] {torch.cuda.get_device_name(0)}")
         print(f"[CUDA Version] {torch.version.cuda}")
 
-    data_path = "data/darcy_test_sample.pt"
-    model_path = "models/fno_darcy_checkpoint.pt"
+    data_path = "data/darcy_test_sample.pt" if os.path.exists("data/darcy_test_sample.pt") else "darcy_test_sample.pt"
+    model_path = "models/fno_darcy_checkpoint.pt" if os.path.exists("models/fno_darcy_checkpoint.pt") else "fno_darcy_checkpoint.pt"
 
     if not os.path.exists(data_path) or not os.path.exists(model_path):
-        print("Error: Missing artifacts. Run scripts/prepare_data.py and export_model_checkpoint.py first.")
+        print("Error: Missing artifacts. Run prepare_data.py and export_model_checkpoint.py first.")
         sys.exit(1)
 
     # 1. Load Checkpoint and Metadata
@@ -29,7 +29,6 @@ def run_fno_inference():
     checkpoint = torch.load(model_path, map_location=device, weights_only=False)
     n_modes = tuple(checkpoint['n_modes'])
     hidden_channels = checkpoint['hidden_channels']
-
     model = FNO(
         n_modes=n_modes,
         in_channels=checkpoint['in_channels'],
@@ -54,7 +53,6 @@ def run_fno_inference():
         smoke_sample = x_test[:1]
         smoke_pred = model(smoke_sample)
     smoke_latency_ms = (time.perf_counter() - t0) * 1000.0
-
     assert smoke_pred.shape == y_true[:1].shape, f"Shape mismatch: {smoke_pred.shape} vs {y_true[:1].shape}"
     print(f"[Smoke Test] PASSED | Single-sample output shape: {list(smoke_pred.shape)} | Latency: {smoke_latency_ms:.2f} ms")
 
@@ -66,14 +64,12 @@ def run_fno_inference():
         norm_true = torch.norm(y_true.reshape(num_samples, -1), 2, dim=1)
         rel_l2_errors = (diff / norm_true).cpu().numpy()
     batch_latency_s = time.perf_counter() - t_start
-
     mean_rel_l2 = float(np.mean(rel_l2_errors))
     std_rel_l2 = float(np.std(rel_l2_errors))
     mse_val = float(torch.nn.functional.mse_loss(y_pred, y_true).item())
 
     # Scientific threshold: error norm < 0.20 for coarse 16x16 resolution
     validation_passed = mean_rel_l2 < 0.20
-
     print(f"[Substantive Check] Batch Latency: {batch_latency_s:.4f} s ({num_samples} samples)")
     print(f"[Substantive Check] Mean Relative L2 Error: {mean_rel_l2:.4f} (Std: {std_rel_l2:.4f})")
     print(f"[Substantive Check] Mean Squared Error (MSE): {mse_val:.6f}")
@@ -100,12 +96,12 @@ def run_fno_inference():
             "status": "PASSED" if validation_passed else "FAILED"
         }
     }
-
     out_file = "outputs/smoke_test_output.json"
     with open(out_file, "w") as f:
         json.dump(results, f, indent=2)
     print(f"[Artifact Export] Written validation metrics to {out_file}")
     print("=" * 65)
+
 
 if __name__ == "__main__":
     run_fno_inference()

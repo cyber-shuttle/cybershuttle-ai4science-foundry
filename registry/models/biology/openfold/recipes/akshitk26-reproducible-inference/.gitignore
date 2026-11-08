@@ -1,0 +1,28 @@
+.DS_Store
+.env
+.snakemake/
+
+# Downloaded artifacts live in $OPENFOLD_WORK (scratch), recorded in inputs/MANIFEST.md.
+artifacts/
+data/
+# New runs write results/run-<job id>/; run-001 is the committed reference run.
+results/*
+!results/run-001/
+!results/run-001/timings.json
+!results/run-001/predictions/
+!results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb
+# OpenFold writes a temporary copy of the input FASTA next to its outputs.
+results/**/tmp_*.fasta
+evidence/*
+!evidence/*.log
+!evidence/*.txt
+!evidence/*.json
+!evidence/*.csv
+!evidence/*.out
+!evidence/*.err
+
+# Local environments and Python files.
+.conda/
+.venv/
+__pycache__/
+*.py[cod]

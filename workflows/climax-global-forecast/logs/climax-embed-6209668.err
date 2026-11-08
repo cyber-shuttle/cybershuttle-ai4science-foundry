@@ -1,0 +1,9 @@
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+Traceback (most recent call last):
+  File "scripts/embed.py", line 288, in <module>
+    main()
+  File "scripts/embed.py", line 98, in main
+    raise FileNotFoundError("No .npz shards found under {}".format(args.data_dir / args.split))
+FileNotFoundError: No .npz shards found under /home/hice1/pkathalkar3/scratch/climax-reproduction/data/geopotential_npz/test

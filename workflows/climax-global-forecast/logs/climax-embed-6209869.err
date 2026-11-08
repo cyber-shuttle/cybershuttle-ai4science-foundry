@@ -1,0 +1,13 @@
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+Traceback (most recent call last):
+  File "scripts/embed.py", line 288, in <module>
+    main()
+  File "scripts/embed.py", line 172, in main
+    module.load_state_dict(checkpoint["state_dict"], strict=True)
+  File "/home/hice1/pkathalkar3/scratch/.conda/envs/climax-inference/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1604, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for PretrainModule:
+	Missing key(s) in state_dict: "net.var_embed", "net.var_query", "net.var_agg.in_proj_weight", "net.var_agg.in_proj_bias", "net.var_agg.out_proj.weight", "net.var_agg.out_proj.bias". 
+	Unexpected key(s) in state_dict: "net.channel_embed", "net.channel_query", "net.channel_agg.in_proj_weight", "net.channel_agg.in_proj_bias", "net.channel_agg.out_proj.weight", "net.channel_agg.out_proj.bias". 

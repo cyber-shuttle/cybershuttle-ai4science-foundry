@@ -1,6 +1,6 @@
 # ClimaX inference on PACE ICE
 
-This repository supports frozen pretrained embeddings, quick 72-hour baseline forecasts, and optional fine-tuning of the ClimaX GlobalForecast model on ERA5 geopotential at 500 hPa. Embeddings are representations, not weather predictions. Persistence and training-climatology baselines provide a fast forecast-pipeline check without model training. The optional model forecast uses a fine-tuned GlobalForecast checkpoint and accepts either the pressure-level `geopotential_5.625deg` archive or the direct single-level `geopotential_500_5.625deg` archive.
+This repository supports frozen pretrained embeddings, quick 72-hour baseline forecasts, and optional fine-tuning of the ClimaX Global Forecast model on ERA5 geopotential at 500 hPa. Embeddings are representations, not weather predictions. Persistence and training-climatology baselines provide a fast forecast-pipeline check without model training. The optional model forecast uses a fine-tuned GlobalForecast checkpoint and accepts either the pressure-level `geopotential_5.625deg` archive or the direct single-level `geopotential_500_5.625deg` archive.
 
 **Use this README as the single step-by-step runbook** for setup, downloads, preprocessing, embedding extraction, baseline forecasts, and optional model fine-tuning. The baseline forecast needs no GPU or training and is the quick route for checking prediction generation. The full data download and preprocessing may take longer than an hour. The [supplementary workflow reference](workflows/climax-global-forecast/README.md) contains technical background, historical run evidence, and optional material; you do not need to switch to it to complete the standard workflow.
 
@@ -492,7 +492,7 @@ git status --short
 
 ### 8. Optional: fine-tune ClimaX and generate model forecasts
 
-The prepared one-variable dataset from step 4 can train the upstream ClimaX GlobalForecast model to predict `geopotential_500` 72 hours ahead. This section is optional: step 5 already produces forecast predictions and plots without model training.
+The prepared one-variable dataset from step 4 can train the upstream ClimaX Global Forecast model to predict `geopotential_500` 72 hours ahead. This section is optional: step 5 already produces forecast predictions and plots without model training.
 
 #### Optional quick adaptation
 
@@ -660,7 +660,7 @@ Observed validation: strict checkpoint loading completed; spatial embedding shap
   sed -n '20,42p' slurm/finetune.sbatch
   ```
 
-  Then rerun the `sbatch --test-only` time-limit check and submit the fine-tuning job. No environment, checkpoint, or dataset recreation is needed. Do not edit the installed PACE Miniforge scripts.
+  Then rerun the `sbatch --test-only` time-limit check and submit the fine-tuning job. No environment, checkpoint, or dataset recreation is needed. Do not edit the installed PACE Miniforge scripts. The same shell initialization safeguard is applied in setup_env.sh and slurm/embed.sbatch to prevent Conda’s module scripts from failing when Bash nounset is enabled.
 
 - **CUDA is unavailable or unsupported:** Run the checker inside the requested GPU allocation, confirm the node with `nvidia-smi`, and use the documented V100-compatible environment. Do not treat CPU fallback as successful GPU inference.
 

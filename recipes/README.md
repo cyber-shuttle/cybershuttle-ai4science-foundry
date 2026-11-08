@@ -24,7 +24,7 @@ To avoid PACE home directory quota limits, clone the repository and build the Co
 ```bash
 # 1. Navigate to scratch space and clone the repository
 mkdir -p ~/scratch && cd ~/scratch
-git clone [https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git)
+git clone [https://github.com/VisheshJ2007/cybershuttle-ai4science-foundry.git](https://github.com/VisheshJ2007/cybershuttle-ai4science-foundry.git)
 cd cybershuttle-ai4science-foundry
 git checkout fno-inference-workflow
 cd recipes
@@ -36,3 +36,41 @@ source "${CONDA_BASE}/etc/profile.d/conda.sh"
 
 conda env create -f environment.yml -p ~/scratch/conda-envs/fno-inference
 conda activate ~/scratch/conda-envs/fno-inference
+```
+
+*(If you prefer a standard named environment and have home quota available, run `conda env create -f environment.yml && conda activate fno-inference`).*
+
+---
+
+## 4. Execution Workflow
+
+### Option A: GPU Batch Submission via Slurm (Recommended)
+From inside the `recipes/` directory:
+```bash
+sbatch submit_inference.sbatch
+```
+Monitor job progress with `squeue -u $USER`. Once complete, inspect `slurm_fno_inference_<JOB_ID>.out` and `outputs/smoke_test_output.json`.
+
+### Option B: Interactive / Standalone Execution (GPU or CPU)
+From inside the `recipes/` directory with the Conda environment activated:
+```bash
+python run_inference.py
+```
+
+---
+
+## 5. Validation Gates & Expected Outputs
+`run_inference.py` automatically runs two verification checks and writes results to `outputs/smoke_test_output.json`:
+
+1. **Smoke Test (Single Forward Pass):**
+   - Output Tensor Dimension: `[1, 1, 16, 16]` (Matches ground truth)
+   - Single-sample Latency: `190.39 ms`
+   - Status: `PASSED`
+2. **Substantive Scientific Validation:**
+   - Metric: Relative L2 Error Norm (`||u_pred - u_true||_2 / ||u_true||_2`)
+   - Expected Mean Relative L2 Error: `0.0777` (Std: `0.0183`, threshold `< 0.20`)
+   - Expected Mean Squared Error (MSE): `0.001452`
+   - Status: `PASSED`
+3. **Hardware Acceleration Comparison:**
+   - CPU Batch Latency (16 samples): `~3.50 s`
+   - NVIDIA A40 GPU Batch Latency (16 samples): `0.0682 s` (>50x speedup)

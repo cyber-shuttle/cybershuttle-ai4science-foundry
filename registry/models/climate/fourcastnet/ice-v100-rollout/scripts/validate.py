@@ -19,12 +19,17 @@ ordering used by inference.py):
   3. ACC at 24 h >= 0.6, the conventional NWP "useful forecast" threshold.
   4. Skill degrades with lead time: ACC(24 h) > ACC(last step) and
      RMSE(last step) > RMSE(24 h).
+  5. (optional, --reference-csv) Z500 ACC and RMSE match a saved reference run at
+     every lead time, within --acc-tol and --rmse-tol. The defaults (0.01 and 10) are
+     about three times the largest V100 vs H100 differences seen so far; see
+     docs/VALIDATION.md.
 
 The array layout written by inference.py is not assumed: the channel axis is
 found as the axis of size 20 and the other (non-singleton) axis is lead time.
 The detected layout is printed so it lands in the job log.
 """
 import argparse
+import csv
 import os
 import sys
 
@@ -60,6 +65,18 @@ def to_channel_by_lead(arr, name):
                      f"with shape {np.asarray(arr).shape}")
 
 
+def load_reference_csv(path):
+    """Return (lead_hours, acc, rmse) from a z500_skill CSV, or None if unreadable."""
+    try:
+        with open(path) as fh:
+            rows = list(csv.DictReader(fh))
+        return ([int(float(r["lead_hours"])) for r in rows],
+                np.array([float(r["z500_acc"]) for r in rows]),
+                np.array([float(r["z500_rmse"]) for r in rows]))
+    except (OSError, KeyError, ValueError):
+        return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True)
@@ -67,6 +84,12 @@ def main():
     ap.add_argument("--plot-out", default=None)
     ap.add_argument("--csv-out", default=None,
                     help="Write Z500 lead-time/ACC/RMSE to this small CSV (committed as evidence)")
+    ap.add_argument("--reference-csv", default=None,
+                    help="Compare Z500 ACC/RMSE with this reference CSV (e.g. outputs/z500_skill_6205007.csv)")
+    ap.add_argument("--acc-tol", type=float, default=0.01,
+                    help="Max allowed |ACC difference| from the reference at any lead time")
+    ap.add_argument("--rmse-tol", type=float, default=10.0,
+                    help="Max allowed |RMSE difference| from the reference at any lead time")
     args = ap.parse_args()
 
     # ---- smoke test ----
@@ -159,6 +182,26 @@ def main():
               f"  Z500 ACC is already below {ACC_USEFUL} at the first step")
     else:
         print(f"  Z500 ACC stays above {ACC_USEFUL} for the whole {lead_hours[-1]} h run")
+
+    if args.reference_csv:
+        ref = load_reference_csv(args.reference_csv)
+        if ref is None:
+            check(False, "", f"cannot read reference CSV {args.reference_csv}")
+        else:
+            ref_hours, ref_acc, ref_rmse = ref
+            same_grid = ref_hours == lead_hours
+            check(same_grid,
+                  f"lead times match the reference ({len(ref_hours)} states, {ref_hours[0]} h to {ref_hours[-1]} h)",
+                  f"lead times differ from the reference (run has {n} states, reference has {len(ref_hours)})")
+            if same_grid:
+                d_acc = float(np.max(np.abs(acc - ref_acc)))
+                d_rmse = float(np.max(np.abs(rmse - ref_rmse)))
+                check(d_acc <= args.acc_tol,
+                      f"max |ACC difference| from reference = {d_acc:.6f} (tolerance {args.acc_tol})",
+                      f"max |ACC difference| from reference = {d_acc:.6f} exceeds tolerance {args.acc_tol}")
+                check(d_rmse <= args.rmse_tol,
+                      f"max |RMSE difference| from reference = {d_rmse:.4f} (tolerance {args.rmse_tol})",
+                      f"max |RMSE difference| from reference = {d_rmse:.4f} exceeds tolerance {args.rmse_tol}")
 
     if args.csv_out:
         with open(args.csv_out, "w") as fh:

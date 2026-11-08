@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=fcn-inference
 #SBATCH --partition=ice-gpu
-#SBATCH --account=coc                                  # find yours: sacctmgr show associations user=$USER
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
@@ -11,12 +10,14 @@
 
 # ---------------------------------------------------------------------------
 # Single-GPU FourCastNet backbone inference + validation.
-# SUBMIT FROM THE REPO ROOT:   cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout && sbatch slurm/run_inference.sbatch
+# SUBMIT FROM THE REPO ROOT:   cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout && sbatch --account=<acct> slurm/run_inference.sbatch
+# (find your account with: sacctmgr show associations user=$USER format=account,qos,partition)
 # (Slurm copies this script to a spool dir, so paths are built from
 #  $SLURM_SUBMIT_DIR, never from $0; --output paths are relative to the submit dir.)
 #
 # What runs: one rollout starting at index 0 of the 2018 out-of-sample file
-# (--vis makes inference.py use a single initial condition), 40 six-hour states.
+# (--vis makes inference.py use a single initial condition), 40 saved states:
+# the initial condition (lead 0 h) plus 39 six-hour steps, ending at lead 234 h.
 # Note: no `set -u`, because conda's activate scripts reference unset variables.
 # ---------------------------------------------------------------------------
 
@@ -27,6 +28,15 @@ FOURCASTNET_REPO="${FOURCASTNET_REPO:-$HOME/FourCastNet}"
 ARTIFACT_ROOT="${ARTIFACT_ROOT:-$HOME/scratch/fcn-artifacts}"
 OUTPUT_DIR="$HOME/scratch/fcn-run-$SLURM_JOB_ID"
 mkdir -p "$OUTPUT_DIR" "$REPO/logs" "$REPO/outputs"
+
+# Stop early if the FourCastNet checkout is not the commit this workflow was validated on.
+PINNED_COMMIT=93360c1720a9f97aabf970689f21c9fad8737788
+ACTUAL_COMMIT="$(git -C "$FOURCASTNET_REPO" rev-parse HEAD 2>/dev/null || echo missing)"
+if [ "$ACTUAL_COMMIT" != "$PINNED_COMMIT" ]; then
+  echo "ERROR: $FOURCASTNET_REPO is at $ACTUAL_COMMIT but this workflow expects $PINNED_COMMIT." >&2
+  echo "Fix: git -C $FOURCASTNET_REPO checkout $PINNED_COMMIT" >&2
+  exit 1
+fi
 
 module purge
 module load miniforge
@@ -76,7 +86,8 @@ ls -la "$OUTPUT_DIR"
 echo "=== Validation ==="
 set +e
 python "$REPO/scripts/validate.py" --run-dir "$OUTPUT_DIR" --plot-out "$REPO/outputs/skill_vs_leadtime.png" \
-  --csv-out "$REPO/outputs/z500_skill_$SLURM_JOB_ID.csv"
+  --csv-out "$REPO/outputs/z500_skill_$SLURM_JOB_ID.csv" \
+  --reference-csv "$REPO/outputs/z500_skill_6205007.csv"
 RC=$?
 set -e
 

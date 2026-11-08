@@ -20,7 +20,7 @@ The bundle comes from https://portal.nersc.gov/project/m4134/ccai_demo.tar, a gz
 
 - `model_weights/FCN_weights_v0/backbone.ckpt` (896,430,597 bytes). The bundle also holds `precip.ckpt`, which I leave unused.
 - `additional/stats_v0/global_means.npy`, `global_stds.npy` and `time_means.npy`. These come from the same release as the checkpoint, so I use them as shipped and never recompute them.
-- `data/FCN_ERA5_data_v0/out_of_sample/2018.h5` with dataset `fields` of shape (40, 21, 721, 1440) in float32. That is 40 six-hour steps and about 3.5 GB. The model reads the first 20 channels and the first 720 latitude rows.
+- `data/FCN_ERA5_data_v0/out_of_sample/2018.h5` with dataset `fields` of shape (40, 21, 721, 1440) in float32. That is 40 six-hour states and about 3.5 GB. The model reads the first 20 channels and the first 720 latitude rows.
 
 The underlying data is ERA5 reanalysis from ECMWF and Copernicus. The file is the authors' preprocessed out-of-sample subset, and I downloaded no raw ERA5. The year 2018 falls outside the 1979 to 2015 training years, so the evaluation is out-of-sample. I haven't verified the calendar dates of the 40 steps.
 

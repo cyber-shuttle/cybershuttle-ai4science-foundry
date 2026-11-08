@@ -2,14 +2,15 @@
 # yaml-language-server: $schema=../schemas/execution_recipe.schema.json
 
 id: fourcastnet-inference-ice-rollout
-name: FourCastNet 10-day Z500 rollout on PACE-ICE (V100)
+name: FourCastNet 234-hour Z500 rollout on PACE-ICE (V100)
 model: fourcastnet
 task: inference
 description: >
   Single-GPU autoregressive rollout of the pretrained FourCastNet AFNO
   backbone on PACE-ICE. Starts from the first state of the released 2018
-  out-of-sample ERA5 file and runs 40 six-hour steps (10 days), then scores
-  the output against ERA5 with RMSE and ACC. Z500 is the headline variable.
+  out-of-sample ERA5 file and runs 39 six-hour steps, which gives 40 saved
+  states from lead 0 h to lead 234 h, then scores the output against ERA5
+  with RMSE and ACC. Z500 is the headline variable.
   Two runs on the same GPU gave identical numbers.
 
 reference_implementation: https://github.com/srir1607/fourcastnet-reproducible-inference
@@ -36,6 +37,7 @@ steps:
     description: Build the conda environment on scratch (torch 2.2.2+cu121, numpy<2)
     commands:
       - git clone https://github.com/NVlabs/FourCastNet.git ~/FourCastNet
+      - git -C ~/FourCastNet checkout 93360c1720a9f97aabf970689f21c9fad8737788
       - git clone -b recipe-fourcastnet-ice-rollout https://github.com/srir1607/cybershuttle-ai4science-foundry.git ~/scratch/foundry
       - cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout
       - mamba env create -f environment/environment.yml -p ~/scratch/.conda/envs/fourcastnet-inference
@@ -78,7 +80,9 @@ validation:
   variable: Z500
   acc_24h: 0.995
   acc_48h: 0.981
-  acc_crosses_0_6_at_hours: 170
+  acc_first_below_0_6_at_hours: 174
+  reference_csv: registry/models/climate/fourcastnet/ice-v100-rollout/outputs/z500_skill_6205007.csv
+  tolerances: "ACC 0.01 and RMSE 10 at every lead time"
   comparison: >
     Matches Figure 7(a) of the paper through about 2 days. Beyond about 4
     days the curve falls below the paper's average. One initialization is
@@ -89,7 +93,7 @@ slurm_example: |
   #!/bin/bash
   #SBATCH --job-name=fcn-inference
   #SBATCH --partition=ice-gpu
-  #SBATCH --account=coc
+  #SBATCH --account=<acct>   # or pass --account=<acct> to sbatch
   #SBATCH --gres=gpu:1
   #SBATCH --cpus-per-task=8
   #SBATCH --mem=64G

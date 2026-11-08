@@ -1,10 +1,10 @@
 # FourCastNet reproducible inference on PACE-ICE
 
-**Completed V100 run:** job **6205007**, finished October 12, 2026 at 1:58 AM EDT (05:58 UTC). FourCastNet ran a 10-day rollout on a Tesla V100-PCIE-16GB on PACE-ICE, the cluster my course calls AI Makerspace, under account `coc`, partition `ice-gpu` and QOS `coc-ice`. All smoke tests and substantive checks passed. A second job (6205661) on the same node gave identical numbers. Raw evidence is in `logs/` and `outputs/`.
+**Completed V100 run:** job **6205007**, finished October 12, 2026 at 1:58 AM EDT (05:58 UTC). FourCastNet ran a 234-hour rollout (40 saved states: the initial condition plus 39 six-hour steps) on a Tesla V100-PCIE-16GB on PACE-ICE, the cluster my course calls AI Makerspace, under account `coc`, partition `ice-gpu` and QOS `coc-ice`. All smoke tests and substantive checks passed. A second job (6205661) on the same node gave identical numbers. Raw evidence is in `logs/` and `outputs/`.
 
 The job used 1 GPU, 8 CPU cores and 64 GB of requested RAM, of which 21.7 GB was used. It took **95 seconds** of wall time, 77 of them in inference. Peak GPU memory was **11,292 MiB**, sampled twice a second in `logs/gpu_usage_6205007.csv`.
 
-This workflow loads the pretrained FourCastNet AFNO backbone (`backbone.ckpt` from the NVIDIA demo bundle) and rolls it forward 40 six-hour steps from the first state of the released 2018 out-of-sample ERA5 file. It scores 20 channels against ERA5 with RMSE and ACC, and Z500 (channel 14) is the headline variable. Z500 ACC is **0.9952 at 24 hours**, **0.9813 at 48 hours**, and it crosses 0.6 at about **170 hours**. Training, the precipitation model and the 26-channel HuggingFace release are out of scope.
+This workflow loads the pretrained FourCastNet AFNO backbone (`backbone.ckpt` from the NVIDIA demo bundle) and rolls it forward 39 six-hour steps from the first state of the released 2018 out-of-sample ERA5 file. That gives 40 saved states, from lead 0 h (the initial condition) to lead 234 h. It scores 20 channels against ERA5 with RMSE and ACC, and Z500 (channel 14) is the headline variable. My model-selection issue also proposed T850, but `inference.py` only scores Z500, so T850 is not covered by this workflow. Z500 ACC is **0.9952 at 24 hours**, **0.9813 at 48 hours**, and it first falls below 0.6 at **174 hours**. Training, the precipitation model and the 26-channel HuggingFace release are out of scope.
 
 Model-selection tracking issue: https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/24
 
@@ -28,7 +28,7 @@ Software is Python 3.10, torch 2.2.2+cu121 and numpy 1.26.4, installed from `env
 
 Everything below runs on PACE-ICE. Connect to the GT VPN, then `ssh <gt-username>@login-ice.pace.gatech.edu`.
 
-Find your Slurm account, then put it in the `--account=` line of `slurm/run_inference.sbatch`. I used `coc`.
+Find your Slurm account. You pass it on the command line when you submit, so no file needs editing. I used `coc`.
 
 ```bash
 sacctmgr show associations user=$USER format=account,qos,partition
@@ -76,11 +76,11 @@ exit
 Submit from this folder, because the job script builds its paths from the submit directory.
 
 ```bash
-sbatch slurm/run_inference.sbatch
+sbatch --account=<acct> slurm/run_inference.sbatch
 squeue -u $USER
 ```
 
-The job patches `config/AFNO.yaml` and saves the diff to `logs/config_patch.diff`. It samples GPU memory into `logs/gpu_usage_<jobid>.csv`, runs `inference/inference.py --config=afno_backbone --run_num=0 --vis` for one initial condition, and then runs `scripts/validate.py`. The evaluation file holds 40 time steps and the default config expects 41, so `scripts/configure_paths.py` sets `prediction_length` from the file shape. It uses the shipped `backbone.ckpt` checkpoint as is, and no training or fine-tuning happens. The 6.6 GB prediction file goes to `~/scratch/fcn-run-<jobid>`, and the job exits with a non-zero code if validation fails.
+The job patches `config/AFNO.yaml` and saves the diff to `logs/config_patch.diff`. It samples GPU memory into `logs/gpu_usage_<jobid>.csv`, runs `inference/inference.py --config=afno_backbone --run_num=0 --vis` for one initial condition, and then runs `scripts/validate.py`. The evaluation file holds 40 time steps and the default config expects 41, so `scripts/configure_paths.py` sets `prediction_length` from the file shape. The 40 saved states are the initial condition at lead 0 h plus 39 forecast steps, so the last one is at lead 234 h. The job stops at the start with an error if `~/FourCastNet` is not at the pinned commit `93360c1720a9f97aabf970689f21c9fad8737788`. It uses the shipped `backbone.ckpt` checkpoint as is, and no training or fine-tuning happens. The 6.6 GB prediction file goes to `~/scratch/fcn-run-<jobid>`, and the job exits with a non-zero code if validation fails.
 
 ## 4. Validate
 
@@ -93,12 +93,24 @@ The job patches `config/AFNO.yaml` and saves the diff to `logs/config_patch.diff
 | ACC at lead 0 | about 1 | 1.0000 |
 | Z500 ACC at 24 h | at least 0.6 | 0.9952 |
 | ACC falls and RMSE rises with lead time | steady trend | ACC 0.9952 to 0.2874, RMSE 79.61 to 1069.85 (24 h to 234 h) |
+| Z500 ACC and RMSE match the reference run `outputs/z500_skill_6205007.csv` | ACC within 0.01 and RMSE within 10 at every lead time | job 6205661 differs by 0 on the same GPU, and an independent H100 run by 0.002741 (ACC) and 3.566 (RMSE) |
 
-The 0.6 threshold is the usual convention for a useful forecast, and the FourCastNet paper does not define it. Passing it at 24 hours is easy for a working model, so the lead time where ACC first drops below 0.6 says more. Mine crosses at about 170 hours.
+These are the Z500 values from job 6205007 that a rerun should reproduce. A correct run lands within the reference tolerances described below (ACC within 0.01 and RMSE within 10) at every lead time.
+
+| Lead time | Z500 ACC | Z500 RMSE |
+|---|---|---|
+| 24 h | 0.9952 | 79.61 |
+| 48 h | 0.9813 | 156.09 |
+| 72 h | 0.9437 | 271.82 |
+| 120 h | 0.8252 | 478.35 |
+
+The 0.6 threshold is the usual convention for a useful forecast, and the FourCastNet paper does not define it. Passing it at 24 hours is easy for a working model, so the lead time where ACC first drops below 0.6 says more. Mine first falls below it at 174 hours, and so did the independent H100 rerun.
+
+The reference comparison runs automatically at the end of the job through `--reference-csv outputs/z500_skill_6205007.csv` in `slurm/run_inference.sbatch`. The tolerances are 0.01 for ACC and 10 for RMSE at every lead time. I set them at roughly three times the largest differences seen when a classmate reran the workflow on an H100 (0.002741 for ACC and 3.566 for RMSE), because a different GPU or cuFFT version changes the last digits of a 40-state autoregressive rollout. Two GPU types is too little data to call these tolerances tight, so treat them as a starting point and widen them only after finding the cause of a failure.
 
 I compared the curve with Figure 7(a) of Pathak et al. (2022), reading the paper's values off the figure by eye. The two agree through about 2 days, with ACC near 0.99 at 24 to 48 hours. After about 4 days my curve falls below the paper's average. At 192 hours my ACC is 0.443 against roughly 0.71, and at 234 hours it is 0.287 against roughly 0.61. The paper averages many forecasts and I ran one initial condition. The demo bundle holds a single 10-day window, so I could not test whether that explains the gap. I treat the shortfall beyond about 4 days as an open discrepancy.
 
-To check repeatability, run the job twice and compare the CSVs with `python scripts/compare_runs.py outputs/z500_skill_<jobidA>.csv outputs/z500_skill_<jobidB>.csv`. Jobs 6205007 and 6205661 differed by 0 on every ACC and RMSE value. Both used the same node and GPU, so this says nothing about drift between GPU types or cuFFT versions.
+To check repeatability, run the job twice and compare the CSVs with `python scripts/compare_runs.py outputs/z500_skill_<jobidA>.csv outputs/z500_skill_<jobidB>.csv`. Jobs 6205007 and 6205661 differed by 0 on every ACC and RMSE value. Both used the same node and GPU, so this says nothing about drift between GPU types or cuFFT versions. A classmate (prathampatel21) later reran the workflow on an H100 from a fresh environment and download. Z500 ACC was 0.995214 at 24 hours and 0.981347 at 48 hours against my saved 0.995209 and 0.981325. The largest difference over all 40 states was 0.002741 in ACC and 3.566 in RMSE, and both runs first fell below 0.6 at 174 hours.
 
 ## 5. Preserve execution evidence
 

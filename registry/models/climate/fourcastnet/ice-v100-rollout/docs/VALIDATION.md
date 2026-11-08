@@ -43,3 +43,11 @@ I ran a second job (6205661) on the same node and GPU and compared it with job 6
 ## Verdict
 
 The pipeline ran from checksummed artifacts to scored output twice with identical results, and the output looks physically sensible. It starts from the correct initial state, skill decays smoothly, and the curve agrees with the paper's Figure 7(a) through about 2 days. Beyond about 4 days my skill is clearly below the paper's average curve, and this run can't tell me whether that comes from single-initialization variance or a real discrepancy. It supports the claim that the workflow works and produces a sensible forecast. It leaves the paper's long-lead skill unconfirmed. To settle it, I would evaluate many independent initial conditions (that needs the full 2018 file, since the demo bundle holds a 40-step window), confirm the calendar dates of these 40 steps, and repeat the run on a different GPU type.
+
+## Independent reproduction and reference tolerances
+
+A classmate (prathampatel21) reran the workflow on an H100 from a fresh environment and a fresh artifact download. Checksums, the smoke test, inference and validation all passed. Z500 ACC was 0.995214 at 24 hours and 0.981347 at 48 hours, against my saved 0.995209 and 0.981325. The largest difference over all 40 states was 0.002741 in ACC and 3.566 in RMSE, and both runs first fell below an ACC of 0.6 at 174 hours. The comparison is in his comment on the pull request.
+
+Following his suggestion, `scripts/validate.py` now compares each run with `outputs/z500_skill_6205007.csv` at every lead time and fails if ACC differs by more than 0.01 or RMSE by more than 10. I chose those tolerances at roughly three times the largest differences from the H100 rerun. They rest on two GPU types, so I treat them as a starting point and would widen them only after finding the cause of a failure.
+
+The 40 saved states are the initial condition at lead 0 h plus 39 six-hour forecast steps, so the last state is at lead 234 h.

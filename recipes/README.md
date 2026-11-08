@@ -1,74 +1,38 @@
 # Reproducible FNO-2D Inference on Georgia Tech PACE ICE Cluster
 
-This repository contains the complete reproducible inference and validation pipeline for a 2D Fourier Neural Operator (FNO-2D) surrogate model applied to Darcy Flow steady-state pressure field benchmarks on the Georgia Tech AI Makerspace / PACE ICE cluster
+This recipe provides a self-contained, reproducible inference and validation pipeline for a 2D Fourier Neural Operator (FNO-2D) surrogate model evaluated on steady-state Darcy Flow pressure field benchmarks on Georgia Tech's AI Makerspace / PACE ICE cluster.
 
 ---
 
 ## 1. System & Hardware Provenance
-- **Compute Cluster:** Georgia Tech PACE ICE (login-ice.pace.gatech.edu)
-- **Compute Node:** atl1-1-01-005-9-0.pace.gatech.edu
-- **GPU Hardware:** NVIDIA A40 (46,068 MiB VRAM, Driver 615.71.09, CUDA 13.0)
-- **Slurm Job ID:** 6157714 / 6157931 (Partition: coc-gpu, QOS: coc-ice, Account: ece)
+- **Compute Cluster:** Georgia Tech PACE ICE (`login-ice.pace.gatech.edu`)
+- **Validated GPU Hardware:** NVIDIA A40 (48 GB VRAM) / NVIDIA A100 (`coc-gpu` / `ice-gpu` partitions), also supports CPU fallback
+- **Software Stack:** Python 3.10, PyTorch (>=2.2.0), `neuraloperator==0.3.0`, `torch-harmonics==0.9.2`
 
 ---
 
-## 2. Model & Data Artifacts
-- **Model Checkpoint:** models/fno_darcy_checkpoint.pt
-  * Architecture: FNO-2D (n_modes=(8, 8), hidden_channels=32, in_channels=1, out_channels=1)
-  * Parameters: Truncated low-frequency Fourier spectral modes capturing fluid pressure gradients.
-- **Evaluation Dataset:** data/darcy_test_sample.pt
-  * 16 evaluation instances at 16x16 resolution extracted from Darcy Flow small benchmarks.
-  * Inputs (x): Permeability field tensor [16, 1, 16, 16].
-  * Ground Truth (y): Classical numerical solver pressure field tensor [16, 1, 16, 16].
+## 2. Bundled Model & Data Artifacts
+All required evaluation tensors and model weights are bundled directly in this directory for turnkey execution without external database downloads:
+- **Model Checkpoint (`fno_darcy_checkpoint.pt`):** Pretrained FNO-2D state dictionary (`n_modes=(8, 8)`, `hidden_channels=32`, `in_channels=1`, `out_channels=1`).
+- **Evaluation Dataset (`darcy_test_sample.pt`):** 16 evaluation instances at `16x16` spatial resolution from the standard Darcy Flow benchmark (`x`: permeability input field `[16, 1, 16, 16]`, `y`: reference PDE solver pressure field `[16, 1, 16, 16]`).
 
 ---
 
-## 3. Environment Setup & Reproduction
-
-To reproduce this environment from source:
+## 3. Environment Setup & Reproduction (Using Scratch Storage)
+To avoid PACE home directory quota limits, clone the repository and build the Conda environment inside your `~/scratch` directory:
 
 ```bash
-# Clone the repository
-git clone https://github.com/VisheshJ2007/fno-reproducible-inference.git
-cd fno-reproducible-inference
+# 1. Navigate to scratch space and clone the repository
+mkdir -p ~/scratch && cd ~/scratch
+git clone [https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git)
+cd cybershuttle-ai4science-foundry
+git checkout fno-inference-workflow
+cd recipes
 
-# Recreate Conda environment
-conda env create -f environment.yml
-conda activate fno-inference
-```
+# 2. Load Anaconda and create the environment in scratch storage
+module load anaconda3
+CONDA_BASE="$(conda info --base)"
+source "${CONDA_BASE}/etc/profile.d/conda.sh"
 
----
-
-## 4. Execution Workflow
-
-### GPU Batch Submission via SLURM
-```bash
-sbatch scripts/submit_inference.sbatch
-```
-
-### Standalone Inference Verification
-```bash
-python scripts/run_inference.py
-```
-
----
-
-## 5. Validation Gates & Results
-
-The pipeline enforces two verification gates documented in outputs/smoke_test_output.json:
-,
-1. Smoke Test (Single Forward Pass):
-  * Output Tensor Dimension: [1, 1, 16, 16] (Matches ground truth)
-  * Single-sample Latency: 190.39 ms
-  * Status: PASSED
-
-2. Substantive Scientific Validation:
-  * Metric: Relative L2 Error Norm (||u_pred - u_true||_2 / ||u_true||_2)
-  * Mean Relative L2 Error: 0.07770 (Std: 0.01828)
-  * Mean Squared Error (MSE): 0.001452
-  * Threshold Criterion: Relative L2 < 0.20
-  * Status: PASSED
-
-3. Hardware Acceleration Comparison:
-  * CPU Batch Latency: 3.50 s
-  * NVIDIA A40 GPU Batch Latency: 0.0682 s (>50x hardware acceleration)
+conda env create -f environment.yml -p ~/scratch/conda-envs/fno-inference
+conda activate ~/scratch/conda-envs/fno-inference

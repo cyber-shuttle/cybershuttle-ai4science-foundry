@@ -9,7 +9,7 @@ artifact source, version, checksum, and local location
 | query fasta | `6KWC_1` | openfold `examples/monomer/fasta_dir/6kwc.fasta` | sha-256 in `evidence/input-sha256.txt` | `inputs/6KWC_1.fasta` |
 | precomputed MSA files | `6KWC_1` | openfold `examples/monomer/alignments` | `mgnify_hits.sto`, `uniref90_hits.sto` | `$ALIGNMENT_DIR/6KWC_1` |
 | template-hit file | `hhsearch_output.hhr` | openfold example alignment directory | excluded from template-free alignment copy | not used |
-| checkpoint | `finetuning_no_templ_ptm_1.pt` | `s3://openfold/openfold_params/finetuning_no_templ_ptm_1.pt` | 373259620 bytes; sha-256 in `evidence/checkpoint-sha256.txt` | `$CHECKPOINT_PATH` |
+| checkpoint | `finetuning_no_templ_ptm_1.pt` | https://openfold.s3.amazonaws.com/openfold_params/finetuning_no_templ_ptm_1.pt | 373259620 bytes; sha-256 in `evidence/checkpoint-sha256.txt` | `$CHECKPOINT_PATH` |
 | template mmcif files | `1h1a`, `1te1`, `2dfb`, `3akq` | https://files.rcsb.org/download/ | sha-256 in `evidence/template-mmcif-sha256.txt` | `$TEMPLATE_MMCIF_DIR` |
 | reference structure | `6KWC` chain `A` | https://files.rcsb.org/download/6KWC.pdb | sha-256 in `evidence/reference-sha256.txt` | `inputs/reference/6kwc.pdb` |
 

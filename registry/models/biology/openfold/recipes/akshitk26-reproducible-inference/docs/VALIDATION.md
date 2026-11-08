@@ -12,10 +12,10 @@
 
 | item | expected | observed | evidence |
 |---|---|---|---|
-| pdb file | non-empty `.pdb` file | 120528 bytes | `evidence/validation.log` |
-| atom records | one or more | 1482 | `evidence/validation.log` |
-| residue count | fasta length | 191 / 191 | `evidence/validation.log` |
-| mean predicted confidence | 0 to 100 | 96.66 | `evidence/validation.log` |
+| pdb file | non-empty `.pdb` file | 120528 bytes | `evidence/validation-6190401.log` |
+| atom records | one or more | 1482 | `evidence/validation-6190401.log` |
+| residue count | fasta length | 191 / 191 | `evidence/validation-6190401.log` |
+| mean predicted confidence | 0 to 100 | 96.66 | `evidence/validation-6190401.log` |
 
 ## scientific check
 

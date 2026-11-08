@@ -20,3 +20,5 @@
 | `6189984` | failed during batch setup | `set -u` stopped conda activation; `evidence/slurm-6189984.err` |
 | `6190271` | failed during batch setup | scheduler spool path blocked evidence writes; `evidence/slurm-6190271.err` |
 | `6190401` | completed | `evidence/slurm-6190401.out` |
+
+The reference run used an earlier layout of this recipe, with the project and env in the home directory (paths in the logs show `$HOME/openfold-reproducible-inference` and `~/.conda/envs/openfold-repro`). The current scripts use the same OpenFold commit, modules, checkpoint, inputs, and inference command, but put large files in `$HOME/scratch/openfold-6kwc` and write new runs to `results/run-<job id>/`.

@@ -20,7 +20,7 @@
 |---|---|---|
 | configuration preset | `model_3_ptm` | `scripts/run_inference.sh` |
 | checkpoint file | `finetuning_no_templ_ptm_1.pt` | openfold parameters |
-| download url | `s3://openfold/openfold_params/finetuning_no_templ_ptm_1.pt` | openfold parameter bucket |
+| download url | https://openfold.s3.amazonaws.com/openfold_params/finetuning_no_templ_ptm_1.pt (same object as `s3://openfold/openfold_params/finetuning_no_templ_ptm_1.pt`) | openfold parameter bucket |
 | sha-256 | `evidence/checkpoint-sha256.txt` | ICE download record |
 | license | CC BY 4.0 | openfold documentation |
 
@@ -40,6 +40,8 @@
 | item | value |
 |---|---|
 | environment file | `environment.yml` |
-| checkpoint command | `aws s3 cp --no-sign-request --region us-east-1 s3://openfold/openfold_params/finetuning_no_templ_ptm_1.pt artifacts/params/finetuning_no_templ_ptm_1.pt` |
+| original checkpoint command | `aws s3 cp --no-sign-request --region us-east-1 s3://openfold/openfold_params/finetuning_no_templ_ptm_1.pt artifacts/params/finetuning_no_templ_ptm_1.pt` |
+| current checkpoint command | `bash scripts/download_artifacts.sh` (HTTPS download with sha-256 check; no AWS CLI needed) |
+| install command | `bash scripts/install_environment.sh` |
 | batch command | `sbatch jobs/openfold_inference.sbatch` |
 | inference command | `bash scripts/run_inference.sh` |

@@ -4,7 +4,7 @@ I trained CEBRA-Behavior from scratch on `rat-hippocampus-single-achilles` and d
 
 ## Sources
 
-CEBRA 0.6.1`: https://github.com/AdaptiveMotorControlLab/CEBRA
+CEBRA 0.6.1: https://github.com/AdaptiveMotorControlLab/CEBRA
 
 Paper: https://doi.org/10.1038/s41586-023-06031-6
 
@@ -20,29 +20,37 @@ The loader downloads `achilles.jl.gz`, checks the MD5, and writes `data/rat_hipp
 
 ## Setup
 
-Copy this folder to scratch, connect to GlobalProtect, then ssh in. The login node is Python 3.9. CEBRA 0.6.1 needs 3.10+, so load `python/3.12.5`.
+Do these in order. Step 1 runs on your machine. Step 2 and 3 run on ICE. The recipe is on the `cebra-model` branch of the fork, not on `main`.
 
-From the repo root:
+### 1. Clone the fork and check out the branch
+
+```bash
+git clone https://github.com/kr45732/cybershuttle-ai4science-foundry.git
+cd cybershuttle-ai4science-foundry
+git checkout cebra-model
+```
+
+### 2. Copy the recipe to ICE and install dependencies
 
 ```bash
 rsync -av registry/models/biology/cebra/ GT_USERNAME@login-ice.pace.gatech.edu:scratch/cebra-achilles/
 ssh GT_USERNAME@login-ice.pace.gatech.edu
 module load python/3.12.5
 cd ~/scratch/cebra-achilles
-python3 -m venv ~/scratch/cebra-venv
-source ~/scratch/cebra-venv/bin/activate
+python3 -m venv ../cebra-venv
+source ../cebra-venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-The venv is on scratch because the torch wheel is large. `requirements.txt` pins cebra 0.6.1, pandas 3.0.6, and PyYAML 6.0.3. `requirements-freeze.txt` is the freeze from job 6166173, including `torch==2.14.1`.
+`../cebra-venv` is `~/scratch/cebra-venv` when the recipe is at `~/scratch/cebra-achilles`. `scripts/ice_job.sbatch` uses that same relative location, based on the directory you submit from. If your scratch directory is not `~/scratch`, rsync the recipe into your scratch path, `cd` into that copy, and still create `cebra-venv` in its parent directory. To use an environment somewhere else: `sbatch --export=ALL,CEBRA_VENV=/path/to/venv scripts/ice_job.sbatch`
 
 ## Run
 
-From `~/scratch/cebra-achilles`:
+### 3. Run inference
 
 ```bash
 sbatch scripts/ice_job.sbatch
-squeue -u $USER
+squeue -u "$USER"
 ```
 
 The job requests account `coc`, qos `coc-ice`, partition `ice-gpu`, one L40S, 8 cpus, 32G, and 2 hours. It runs `scripts/smoke_test.py` for 5 iterations, then `scripts/run_hippocampus.py` for 5000 iterations and a second fit with the training labels shuffled. Output goes in `results/`.
@@ -63,7 +71,7 @@ A V100 job, 6166048, failed the smoke test with `no kernel image is available fo
 
 If the Achilles dataset is `not found in options`, pandas is missing. CEBRA imports Allen before hippocampus, and Allen needs pandas.
 
-If the job cannot find `~/scratch/cebra-venv`, create it on the login node before `sbatch`.
+If the job prints `CEBRA virtual environment was not found`, the activate script was not at `../cebra-venv`, or not at the path in `CEBRA_VENV`. Create the environment on the login node before `sbatch`.
 
 ## Cleanup
 

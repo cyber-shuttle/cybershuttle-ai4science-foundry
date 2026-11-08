@@ -1,0 +1,32 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-06-2026 21:02:08
+Job ID:    6852415
+User ID:   ylee3055
+Account:   coc
+Job name:  openfold-msa
+Partition: coc-cpu
+QOS:       coc-ice
+---------------------------------------
+Date: 2026-11-06T21:02:11-05:00  Job: 6852415  Node: atl1-1-03-004-5-1.pace.gatech.edu  Target: 8P5S_A
+Started thread 0...
+total 139468
+drwxr-xr-x. 2 ylee3055 gtperson     4096 Nov  7 02:50 .
+drwxr-xr-x. 7 ylee3055 gtperson     4096 Nov  6 21:03 ..
+-rw-r--r--. 1 ylee3055 gtperson  9376229 Nov  7 02:50 bfd_uniref_hits.a3m
+-rw-r--r--. 1 ylee3055 gtperson   688064 Nov  6 21:17 hhsearch_output.hhr
+-rw-r--r--. 1 ylee3055 gtperson 40871782 Nov  6 21:35 mgnify_hits.sto
+-rw-r--r--. 1 ylee3055 gtperson 92851094 Nov  6 21:14 uniref90_hits.sto
+Finished: 2026-11-07T02:51:19-05:00
+---------------------------------------
+Begin Slurm Epilog: Nov-07-2026 02:51:19
+Job ID:        6852415
+Array Job ID:  6852413_0
+User ID:       ylee3055
+Account:       coc
+Job name:      openfold-msa
+Resources:     cpu=8,mem=64G,node=1
+Rsrc Used:     cput=1-22:33:28,vmem=0,walltime=05:49:11,mem=39676124K,energy_used=0
+Partition:     coc-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-004-5-1
+---------------------------------------

@@ -1,0 +1,4 @@
+# Unpacked from the committed .tar.gz files (README step 6.1).
+length-series/alignments/*/
+# Slurm job logs written to the submit directory.
+/openfold-msa-*.out

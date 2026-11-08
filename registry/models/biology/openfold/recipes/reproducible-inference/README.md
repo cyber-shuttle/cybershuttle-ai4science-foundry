@@ -165,6 +165,70 @@ pymol -cq scripts/visualize_structure.pml
 - `6KWC_1_openfold_plddt.png`: prediction colored by pLDDT.
 - `6KWC_1_openfold_vs_experimental.png`: prediction (blue) on experimental 6KWC chain A (gray).
 
+## 6. Proteins of different lengths
+
+`length-series/` adds five proteins from 159 to 1,125 residues, to measure how inference time, GPU memory, and accuracy change with protein size. They are listed in `length-series/targets.tsv`:
+
+| PDB chain | Residues | Released | Resolution | Protein |
+|---|---|---|---|---|
+| 9OUF_A | 159 | 2025-07-30 | 1.39 Å | ADP-ribosyl hydrolase |
+| 9Q5U_A | 325 | 2025-09-24 | 2.50 Å | Carbohydrate-binding module of an RTX protein |
+| 9NXH_A | 500 | 2025-08-20 | 1.75 Å | Alpha-L-arabinofuranosidase |
+| 9LB7_A | 777 | 2025-07-30 | 2.35 Å | Trehalose-6-phosphate phosphorylase |
+| 8P5S_A | 1125 | 2023-08-16 | 2.46 Å | 2-oxoglutarate dehydrogenase |
+
+They were chosen from the PDB copy on the PACE shared filesystem (snapshot of 2025-09-30), one near each of 150, 300, 500, 800, and 1,100 residues, with these criteria:
+
+- one protein chain per entry, no unknown residues;
+- X-ray structure at 2.5 Å or better, with at least 90% of residues resolved;
+- released in 2023 or later, and no 20-residue stretch shared with any PDB entry from before 2018, so the protein is new to OpenFold, whose parameters were trained on structures released before May 2018.
+
+The inputs, experimental structures, and alignments for these proteins are already in the repository, so only step 6.1 is needed. Steps 6.2 and 6.3 show how they were made and can be used to regenerate them.
+
+### 6.1 Unpack the alignments
+
+```bash
+cd "$RECIPE/length-series/alignments"
+for f in *.tar.gz; do tar -xzf "$f"; done
+```
+
+Each protein gets `length-series/alignments/<ID>_A/` with the same four files as `alignments/6KWC_1/`. The alignments are stored compressed (35 MB in total) because they are large as plain text: 288 MB in total, and 138 MB for 8P5S alone, more than the 100 MB per-file limit on GitHub.
+
+### 6.2 Regenerate inputs (optional, login node)
+
+```bash
+cd "$RECIPE"
+python scripts/prepare_length_series.py
+```
+
+This writes `length-series/inputs/<ID>_A.fasta` (the chain's full sequence) and copies the experimental structure to `length-series/reference/<ID>.cif`, both from the PACE PDB copy. Nothing is downloaded.
+
+### 6.3 Recompute alignments (optional, CPU nodes, about 6 hours)
+
+```bash
+cd "$RECIPE"
+sbatch slurm/compute_alignments.slurm
+```
+
+This runs OpenFold's `scripts/precompute_alignments.py` once per protein, as a 5-task job array on `coc-cpu` (8 CPUs and 64 GB each), against the AlphaFold databases on PACE: UniRef90 and MGnify (JackHMMER), BFD and UniRef30 (HHblits), and PDB70 (HHsearch, template hits). It writes the same `length-series/alignments/<ID>_A/` folders as step 6.1. A protein whose folder already exists is skipped, so delete a folder to recompute it. To pack the results again:
+
+```bash
+cd "$RECIPE/length-series/alignments"
+for d in */; do d=${d%/}; tar --sort=name --owner=0 --group=0 --numeric-owner --mtime='2026-11-07 00:00Z' -cf - "$d" | gzip -n > "$d.tar.gz"; done
+```
+
+The committed alignments come from job 6852413 (2026-11-06, logs in `logs/length-series-alignments/`), which ran all five tasks in parallel and finished `COMPLETED` in under 6 hours:
+
+| Protein | Wall time | Peak memory | Alignments | Compressed |
+|---|---|---|---|---|
+| 8P5S_A | 5 h 49 min | 38 GB | 138 MB | 15 MB |
+| 9LB7_A | 1 h 49 min | 41 GB | 91 MB | 13 MB |
+| 9NXH_A | 2 h 43 min | 41 GB | 56 MB | 6.3 MB |
+| 9OUF_A | 2 h 42 min | 37 GB | 0.8 MB | 0.2 MB |
+| 9Q5U_A | 2 h 40 min | 38 GB | 2.0 MB | 0.3 MB |
+
+Wall time depends on the shared file system as much as on length. Peak memory stays near 40 GB for every protein, so keep `--mem=64G`. 9OUF and 9Q5U find few related sequences (small folders), which makes them useful low-MSA test cases. A rerun can find slightly different hits if the PACE databases are updated.
+
 ## What was tested
 
 Everything below was run on PACE/ICE on 2026-10-11 with one NVIDIA A100-PCIE-40GB (`coc-gpu`).
@@ -194,6 +258,7 @@ These are the failures we hit on PACE/ICE while building this recipe, and how ea
 | `fatal error: cannot execute 'cc1plus'` and `nvcc fatal: Failed to preprocess host compiler properties` in `install_third_party_dependencies.sh` | The default PACE `gcc` module sets `GCC_ROOT`, which misdirects the Conda compiler | `unset GCC_ROOT` before running the script (section 1.3) |
 | `ModuleNotFoundError: No module named 'attn_core_inplace_cuda'` | The previous step failed, so OpenFold's CUDA kernel was not built | Fix the compiler error above and rerun the install script |
 | `EnvironmentNameNotFound: openfold-env` | `CONDA_ENVS_PATH` is not set in the current shell | `export CONDA_ENVS_PATH="$HOME/scratch/.conda/envs"` |
+| `jackhmmer: error while loading shared libraries: libopenblas.so.0` in the alignment job | An environment created before `libopenblas` was added to `environment.yml` | On a compute node: `mamba install -n openfold-env --freeze-installed -c conda-forge libopenblas` |
 | `run_inference.sh` stops with `ERROR: No CUDA GPU visible` | Running on a login node | Run inside a GPU allocation (section 3) |
 
 Warnings about `libaio`, `torch.cuda.amp` deprecation, and the Triton cache directory appear in successful runs and can be ignored.
@@ -220,5 +285,9 @@ rm -rf ~/scratch/openfold                             # the OpenFold checkout
 | `scripts/run_inference.sh` | Inference command with preflight checks |
 | `scripts/validate_structure.py` | Sequence, pLDDT, and RMSD validation |
 | `slurm/openfold_inference.slurm` | PACE/ICE batch script |
+| `scripts/prepare_length_series.py` | Writes length-series inputs and reference structures |
+| `slurm/compute_alignments.slurm` | Computes length-series alignments on CPU nodes |
+| `length-series/` | Five proteins of different lengths: list, inputs, compressed alignments, experimental structures |
+| `logs/length-series-alignments/` | Logs of the alignment job (6852413) |
 | `logs/` | Environment, GPU, inference, and validation logs |
 | `results/`, `reference/`, `visualizations/` | Reference prediction, experimental structure, images |

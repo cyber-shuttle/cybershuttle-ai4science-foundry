@@ -5,7 +5,7 @@ channels:
   - pytorch
   - nvidia
 dependencies:
-  - cuda
+  - cuda=12.4.1
   - gcc=12.4
   - python=3.10
   - setuptools=59.5.0
@@ -13,7 +13,7 @@ dependencies:
   - openmm
   - pdbfixer
   - pytorch-lightning
-  - numpy
+  - numpy=2.2.6
   - biopython
   - pandas
   - PyYAML

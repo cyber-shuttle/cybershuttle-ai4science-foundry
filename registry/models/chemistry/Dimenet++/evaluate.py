@@ -13,6 +13,11 @@ def main():
     parser.add_argument('--target', type=int, default=7, help="QM9 target index (7 is U0 internal energy)")
     args = parser.parse_args()
 
+    # Enforce deterministic initialization for identical forward-pass validation
+    torch.manual_seed(42)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(42)
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Executing on device: {device}")
 
@@ -41,7 +46,7 @@ def main():
         for batch in tqdm(test_loader, desc="Evaluating Batches"):
             batch = batch.to(device)
             
-            # Forward pass: model requires atomic numbers (z), coordinates (pos), and batch indices
+            # Forward pass: atomic numbers (z), coordinates (pos), and batch indices
             predictions = model(batch.z, batch.pos, batch.batch)
             targets = batch.y[:, args.target].view(-1, 1)
 

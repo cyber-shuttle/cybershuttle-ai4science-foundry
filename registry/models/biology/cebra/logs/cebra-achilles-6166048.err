@@ -1,0 +1,43 @@
+/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU0 Tesla V100-PCIE-16GB which is of compute capability (CC) 7.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+SMOKE FAIL: CUDA error: no kernel image is available for execution on the device
+Search for `cudaErrorNoKernelImageForDevice' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+
+Traceback (most recent call last):
+  File "/storage/ice1/8/3/kranjan7/cebra-achilles/scripts/smoke_test.py", line 121, in <module>
+    main()
+  File "/storage/ice1/8/3/kranjan7/cebra-achilles/scripts/smoke_test.py", line 106, in main
+    model.fit(neural_train, labels[:split_idx])
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/cebra.py", line 1224, in fit
+    self.partial_fit(X,
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/cebra.py", line 1129, in partial_fit
+    self.state_ = self._prepare_fit(X, *y)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/cebra.py", line 916, in _prepare_fit
+    dataset, is_multisession = self._prepare_data(X, y)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/cebra.py", line 711, in _prepare_data
+    dataset = _get_dataset(X, y)
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/cebra.py", line 653, in _get_dataset
+    return cebra_sklearn_dataset.SklearnDataset(X,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/dataset.py", line 87, in __init__
+    self._parse_data(X)
+  File "/home/hice1/kranjan7/scratch/cebra-venv/lib/python3.12/site-packages/cebra/integrations/sklearn/dataset.py", line 138, in _parse_data
+    self.neural = torch.from_numpy(X).float().to(self.device)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: no kernel image is available for execution on the device
+Search for `cudaErrorNoKernelImageForDevice' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+

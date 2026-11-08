@@ -1,0 +1,35 @@
+dataset:
+  name: rat-hippocampus-single-achilles
+  data_dir: data
+
+split:
+  test_ratio: 0.2
+
+seed:
+  value: 0
+
+model:
+  model_architecture: offset10-model
+  batch_size: 512
+  learning_rate: 0.0003
+  temperature: 1
+  output_dimension: 3
+  max_iterations: 5000
+  distance: cosine
+  conditional: time_delta
+  device: cuda_if_available
+  time_offsets: 10
+  verbose: true
+
+smoke:
+  max_iterations: 5
+
+decoder:
+  n_neighbors: 36
+  metric: cosine
+  position_column: 0
+  direction_column: 1
+  position_to_cm_scale: 100
+
+shuffle_control:
+  enabled: true

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: cebra
+name: CEBRA
+
+domain:
+  - biology
+  - neuroscience
+
+model_family:
+  - contrastive-learning
+  - embedding
+  - neural-behavior
+
+tasks:
+  - training
+  - inference
+  - evaluation
+
+upstream:
+  github: https://github.com/AdaptiveMotorControlLab/CEBRA
+  paper: https://doi.org/10.1038/s41586-023-06031-6
+  other:
+    - https://cebra.ai/docs/demo_notebooks/Demo_hippocampus.html
+    - https://cebra.ai/docs/demo_notebooks/Demo_decoding.html
+    - https://cebra.ai/docs/cebra-figures/figures/Figure2.html
+    - http://dx.doi.org/10.6080/K0862DC5
+
+lifecycle:
+  supported_stages:
+    - training
+    - inference
+    - evaluation

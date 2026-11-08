@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Submit from the recipe directory:
+#   sbatch jobs/openfold_inference.sbatch
+# If your charge account is not "coc", override it on the command line:
+#   sbatch --account=<your-account> jobs/openfold_inference.sbatch
+# (list yours with: sacctmgr -nP show assoc where user=$USER format=account)
 #SBATCH --job-name=openfold-6KWC1
 #SBATCH --account=coc
 #SBATCH --partition=ice-gpu
@@ -14,16 +19,12 @@
 set -eo pipefail
 
 cd "${SLURM_SUBMIT_DIR:?}"
+[[ -f scripts/common.sh ]] || { echo "submit this job from the recipe directory" >&2; exit 1; }
+source scripts/common.sh
+load_modules
+activate_env
 
-module purge
-module load gcc/12.3.0
-module load cuda/12.1.1
-module load anaconda3
-
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate openfold-repro
-set -u
-export LD_LIBRARY_PATH="$CONDA_PREFIX/lib/python3.10/site-packages/torch/lib:$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+pred="$OUTPUT_DIR/predictions/6KWC_1_${CONFIG_PRESET}_unrelaxed.pdb"
 
 mkdir -p evidence
 {
@@ -41,8 +42,10 @@ trap 'kill "$monitor_pid" 2>/dev/null || true' EXIT
 
 bash scripts/setup_check.sh
 { /usr/bin/time -v bash scripts/run_inference.sh; } 2>&1 | tee "evidence/inference-${SLURM_JOB_ID}.log"
-python scripts/validate_output.py \
-  results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb \
-  | tee "evidence/validation-${SLURM_JOB_ID}.log"
 
+python scripts/validate_output.py "$pred" | tee "evidence/validation-${SLURM_JOB_ID}.log"
+python scripts/compare_ca_rmsd.py "$pred" A inputs/reference/6kwc.pdb A \
+  | tee "evidence/structure-comparison-${SLURM_JOB_ID}.log"
+
+echo "prediction: $pred"
 date

@@ -1,21 +1,16 @@
 #!/usr/bin/env bash
+# Checks that the env, inputs, and GPU are ready. Works with or without a .env
+# file and does not require you to activate conda yourself.
 set -euo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
-if [[ ! -f .env ]]; then
-  echo "missing .env"
-  exit 1
+if [[ -z "${CONDA_PREFIX:-}" || "$CONDA_PREFIX" != "$OPENFOLD_ENV" ]]; then
+  load_modules
+  activate_env
 fi
 
-# shellcheck disable=SC1091
-source .env
-
-export LD_LIBRARY_PATH="$CONDA_PREFIX/lib/python3.10/site-packages/torch/lib:$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
-
-for required_path in "$OPENFOLD_DIR" "$FASTA_DIR" "$ALIGNMENT_DIR" "$TEMPLATE_MMCIF_DIR" "$CHECKPOINT_PATH"; do
-  if [[ ! -e "$required_path" ]]; then
-    echo "missing path: $required_path"
-    exit 1
-  fi
+for required_path in "$OPENFOLD_DIR" "$FASTA_DIR/6KWC_1.fasta" "$ALIGNMENT_DIR/6KWC_1" "$TEMPLATE_MMCIF_DIR" "$CHECKPOINT_PATH"; do
+  [[ -e "$required_path" ]] || die "missing path: $required_path (see README steps 3 and 4)"
 done
 
 python - <<'PY'
@@ -25,7 +20,7 @@ import openfold
 print(f"PyTorch: {torch.__version__}")
 print(f"CUDA available: {torch.cuda.is_available()}")
 if not torch.cuda.is_available():
-    raise SystemExit("cuda unavailable")
+    raise SystemExit("cuda unavailable: run this on a GPU node (salloc or sbatch)")
 print(f"GPU: {torch.cuda.get_device_name(0)}")
 print(f"openfold module: {openfold.__file__}")
 PY

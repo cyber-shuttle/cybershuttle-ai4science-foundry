@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
+# Runs OpenFold monomer inference for 6KWC_1. Writes to $OUTPUT_DIR
+# (default: results/run-<slurm job id>/).
 set -euo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
-if [[ ! -f .env ]]; then
-  echo "missing .env"
-  exit 1
+if [[ -z "${CONDA_PREFIX:-}" || "$CONDA_PREFIX" != "$OPENFOLD_ENV" ]]; then
+  load_modules
+  activate_env
 fi
 
-# shellcheck disable=SC1091
-source .env
-
-export LD_LIBRARY_PATH="$CONDA_PREFIX/lib/python3.10/site-packages/torch/lib:$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
-
 mkdir -p "$OUTPUT_DIR"
+echo "output directory: $OUTPUT_DIR"
 
 cd "$OPENFOLD_DIR"
 

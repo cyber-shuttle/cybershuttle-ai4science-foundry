@@ -1,0 +1,53 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-10-2026 20:03:51
+Job ID:    6157604
+User ID:   vjain344
+Account:   ece
+Job name:  fno_infer
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+==========================================================
+SLURM Job ID: 6157604
+Compute Node: atl1-1-01-005-9-0.pace.gatech.edu
+Submit Time:  Sat Oct 10 20:03:51 EDT 2026
+==========================================================
+Allocated GPU Hardware:
+NVIDIA A40, 46068 MiB, 615.71.09
+/usr/local/pace-apps/lmod/lmod/init/bash: line 135: conda: command not found
+/home/hice1/vjain344/.conda/envs/fno-inference/lib/python3.10/site-packages/tltorch/factorized_tensors/factorized_tensors.py:66: UserWarning: Using a non-tuple sequence for multidimensional indexing is deprecated and will be changed in pytorch 2.9; use x[tuple(seq)] instead of x[seq]. In pytorch 2.9 this will be interpreted as tensor index, x[torch.tensor(seq)], which will result either in an error or a different result (Triggered internally at /pytorch/torch/csrc/autograd/python_variable_indexing.cpp:347.)
+  return self.__class__(self.tensor[indices])
+/home/hice1/vjain344/.conda/envs/fno-inference/lib/python3.10/site-packages/neuralop/layers/spectral_convolution.py:459: UserWarning: Using a non-tuple sequence for multidimensional indexing is deprecated and will be changed in pytorch 2.9; use x[tuple(seq)] instead of x[seq]. In pytorch 2.9 this will be interpreted as tensor index, x[torch.tensor(seq)], which will result either in an error or a different result (Triggered internally at /pytorch/torch/csrc/autograd/python_variable_indexing.cpp:347.)
+  out_fft[slices_x] = self._contract(x[slices_x], weight, separable=False)
+=================================================================
+  AI Makerspace: Reproducible FNO-2D Inference Pipeline
+=================================================================
+[Device Selection] Running inference on: cuda
+[GPU Hardware] NVIDIA A40
+[CUDA Version] 13.0
+[Model Provenance] Loading checkpoint from: models/fno_darcy_checkpoint.pt
+[Model Init] FNO architecture loaded (modes=(8, 8), hidden=32)
+[Data Provenance] Ingesting test evaluation batch from: data/darcy_test_sample.pt
+[Data Dimensions] Input batch: [16, 1, 16, 16], Target batch: [16, 1, 16, 16]
+[Smoke Test] PASSED | Single-sample output shape: [1, 1, 16, 16] | Latency: 1463.92 ms
+[Substantive Check] Batch Latency: 0.1637 s (16 samples)
+[Substantive Check] Mean Relative L2 Error: 0.0777 (Std: 0.0183)
+[Substantive Check] Mean Squared Error (MSE): 0.001452
+[Validation Status] Relative L2 < 0.20 Threshold: PASSED
+[Artifact Export] Written validation metrics to outputs/smoke_test_output.json
+=================================================================
+==========================================================
+Job Completion Time: Sat Oct 10 20:04:22 EDT 2026
+==========================================================
+---------------------------------------
+Begin Slurm Epilog: Oct-10-2026 20:04:22
+Job ID:        6157604
+User ID:       vjain344
+Account:       ece
+Job name:      fno_infer
+Resources:     cpu=4,gres/gpu:a40=1,mem=16G,node=1
+Rsrc Used:     cput=00:02:08,vmem=0,walltime=00:00:32,mem=1725964K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-9-0
+---------------------------------------

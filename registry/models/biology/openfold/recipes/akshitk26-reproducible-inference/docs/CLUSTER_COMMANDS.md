@@ -41,6 +41,7 @@ conda env config vars set CUTLASS_PATH="$OPENFOLD_DIR/cutlass" KMP_AFFINITY=none
 
 export CC="$MODULE_CC" CXX="$MODULE_CXX" CUDAHOSTCXX="$MODULE_CXX"
 export CUTLASS_PATH="$OPENFOLD_DIR/cutlass"
+export TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6;8.9;9.0"   # all NVIDIA GPU types on ICE
 export LIBRARY_PATH="$CONDA_PREFIX/lib:${LIBRARY_PATH:-}"
 MAX_JOBS=4 python setup.py install
 ```
@@ -118,6 +119,7 @@ sha256sum "$TEMPLATE_MMCIF_DIR"/*.cif > evidence/template-mmcif-sha256.txt
 | `the 'module' command is not available` | you are not on a PACE ICE node; log in to `login-ice.pace.gatech.edu` |
 | `conda env not found` | run `bash scripts/install_environment.sh` first |
 | `missing path: ...` | run `bash scripts/download_artifacts.sh` |
+| job fails in seconds with `nvidia-smi: command not found` (exit 127) | the job got an AMD GPU (`mi210` or `r9700`); request an NVIDIA type, e.g. `--gpus=rtx_6000:1` |
 | `cuda unavailable` | you are on a login node; use `salloc` (README step 2) or `sbatch` |
 | `salloc`/`sbatch` rejects `--account=coc` | find your account with `sacctmgr -nP show assoc where user=$USER format=account` and pass `--account=<it>` |
 | `~/scratch not found` | set `OPENFOLD_WORK` in `.env` to a directory on scratch storage |

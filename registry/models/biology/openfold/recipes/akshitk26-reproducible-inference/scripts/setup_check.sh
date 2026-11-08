@@ -4,6 +4,9 @@
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
+command -v nvidia-smi >/dev/null 2>&1 \
+  || die "no NVIDIA GPU here; run on a node from salloc/sbatch with --gpus=rtx_6000:1 (not an AMD mi210/r9700 node)"
+
 if [[ -z "${CONDA_PREFIX:-}" || "$CONDA_PREFIX" != "$OPENFOLD_ENV" ]]; then
   load_modules
   activate_env

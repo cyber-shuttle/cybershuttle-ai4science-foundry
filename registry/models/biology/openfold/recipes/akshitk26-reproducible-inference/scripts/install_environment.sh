@@ -56,6 +56,9 @@ if (cd "$RECIPE_DIR" && python -c "import openfold" 2>/dev/null); then
 else
   export CC="$MODULE_CC" CXX="$MODULE_CXX" CUDAHOSTCXX="$MODULE_CXX"
   export CUTLASS_PATH="$OPENFOLD_DIR/cutlass"
+  # Build for every NVIDIA GPU type on ICE (V100, RTX 6000, A100, A40, L40S,
+  # H100/H200), so the build works no matter which GPU a later job gets.
+  export TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-7.0;7.5;8.0;8.6;8.9;9.0}"
   export LIBRARY_PATH="$CONDA_PREFIX/lib:${LIBRARY_PATH:-}"
   MAX_JOBS=4 python setup.py install
 fi

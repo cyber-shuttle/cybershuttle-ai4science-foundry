@@ -43,10 +43,12 @@ Run every later command from this recipe directory.
 ## Step 2: get a GPU node for the one-time install
 
 ```bash
-salloc --account=coc --partition=ice-gpu --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=32G --gpus=1 --time=02:00:00
+salloc --account=coc --partition=ice-gpu --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=32G --gpus=rtx_6000:1 --time=02:00:00
 ```
 
 `coc` is the charge account this recipe was tested with. If `salloc` rejects it, list your accounts with `sacctmgr -nP show assoc where user=$USER format=account` and use one of those.
+
+`--gpus=rtx_6000:1` asks for an NVIDIA RTX 6000. Always name an NVIDIA type: the `ice-gpu` partition also has AMD GPUs (`mi210`, `r9700`), and OpenFold cannot run on them. Other NVIDIA types on ICE (`v100`, `a40`, `a100`, `l40s`, `h100`, `h200`) also work. List them with `sinfo -p ice-gpu -h -o "%G" | sort -u`.
 
 When the prompt changes to a compute node, `cd` back to the recipe directory if you are not already there.
 
@@ -89,6 +91,8 @@ Leave the interactive node (`exit`), go back to the recipe directory, and submit
 sbatch jobs/openfold_inference.sbatch
 # if you used a different account in step 2:
 # sbatch --account=<your-account> jobs/openfold_inference.sbatch
+# if RTX 6000 GPUs are busy, any NVIDIA type works:
+# sbatch --gpus=v100:1 jobs/openfold_inference.sbatch
 ```
 
 Check on it with `squeue -u $USER`. When it finishes, read the log:

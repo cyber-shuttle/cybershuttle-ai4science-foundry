@@ -16,8 +16,8 @@ CLAY_WEIGHTS="$CLAY_WORKDIR/weights"       # clay-v1.5.ckpt
 CLAY_DATA="$CLAY_WORKDIR/data"             # NAIP tile + reference parquet
 CLAY_RESULTS="$CLAY_WORKDIR/results"       # embeddings written by jobs
 
-# Evidence that gets committed (relative to the repo root).
-CLAY_EVIDENCE="benchmarks/results/clay"
+# Evidence that gets committed (relative to the Clay model folder).
+CLAY_EVIDENCE="benchmarks"
 
 # ---- Pinned upstream artifacts (verified) ----------------------------------
 CLAY_GIT_URL="https://github.com/Clay-foundation/model.git"
@@ -68,10 +68,10 @@ clay_make_dirs() {
         "$XDG_CACHE_HOME" "$MPLCONFIGDIR" "$TMPDIR"
 }
 
-# Stop unless we are at the foundry repo root (sbatch jobs cd to $SLURM_SUBMIT_DIR).
+# Stop unless we are in the Clay model folder (sbatch jobs cd to $SLURM_SUBMIT_DIR).
 clay_require_repo_root() {
     if [[ ! -f scripts/clay_common.sh || ! -d "$CLAY_EVIDENCE/logs" ]]; then
-        echo "ERROR: run this from the foundry repo root (the folder with scripts/ and benchmarks/)." >&2
+        echo "ERROR: run this from registry/models/earth-science/clay (the folder with scripts/ and benchmarks/)." >&2
         exit 1
     fi
 }
@@ -110,11 +110,11 @@ clay_job_partition() {
 
 # Which code ran. The scripts/ tree hash stays the same when only docs or
 # evidence are amended into the commit, so logs can be matched to the final
-# commit with: git rev-parse HEAD:scripts
+# commit with: git rev-parse HEAD:./scripts
 clay_code_version() {
     local dirty
     dirty=$(git status --porcelain -- scripts | wc -l | tr -d ' ')
-    echo "foundry commit $(git rev-parse --short HEAD)  scripts tree $(git rev-parse HEAD:scripts)  uncommitted script changes: $dirty"
+    echo "foundry commit $(git rev-parse --short HEAD)  scripts tree $(git rev-parse HEAD:./scripts)  uncommitted script changes: $dirty"
 }
 
 # Load conda from the PACE module. Module and conda hooks break under `set -u`,

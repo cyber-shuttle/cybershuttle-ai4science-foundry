@@ -8,14 +8,14 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=16G
 #SBATCH --time=01:00:00
-#SBATCH --output=benchmarks/results/clay/logs/%x-%j.out
-#SBATCH --error=benchmarks/results/clay/logs/%x-%j.err
+#SBATCH --output=benchmarks/logs/%x-%j.out
+#SBATCH --error=benchmarks/logs/%x-%j.err
 #
 # Step 2 of the Clay workflow: download and checksum the checkpoint, the
 # DINOv2 teacher, the NAIP tile, and Clay's reference embeddings (~6.6 GB in
 # total, all under $CLAY_WORKDIR). Needs the env from step 1.
 #
-# Submit from the foundry repo root:
+# Submit from the Clay model folder:
 #   sbatch scripts/clay_download.sbatch
 # or chain it after the env build:
 #   sbatch --dependency=afterok:<build job id> scripts/clay_download.sbatch
@@ -23,7 +23,7 @@
 set -euo pipefail
 trap 'echo "== clay-download FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the foundry repo root.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check that the Clay environment matches the lock file and imports cleanly.
 
-Run inside the activated environment from the foundry repo root:
+Run inside the activated environment from the Clay model folder:
     python scripts/clay_check_env.py --lock scripts/clay_requirements.txt
 It prints what it found; the job logs keep that output.
 

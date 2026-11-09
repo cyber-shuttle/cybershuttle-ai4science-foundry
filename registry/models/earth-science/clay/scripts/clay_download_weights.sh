@@ -4,13 +4,13 @@
 # present with the right checksum are skipped.
 #
 # Normally run by: sbatch scripts/clay_download.sbatch
-# Can also be run from the foundry repo root after the env is built:
+# Can also be run from the Clay model folder after the env is built:
 #   bash scripts/clay_download_weights.sh
 #
 # Writes:
 #   $CLAY_WORKDIR/weights/clay-v1.5.ckpt     (5,158,764,629 bytes)
 #   $HF_HOME/hub/models--timm--vit_large_patch14_reg4_dinov2.lvd142m/  (~1.2 GB)
-#   benchmarks/results/clay/outputs/checksums.sha256  (adds both checksums)
+#   benchmarks/outputs/checksums.sha256  (adds both checksums)
 
 set -euo pipefail
 # shellcheck source=scripts/clay_common.sh

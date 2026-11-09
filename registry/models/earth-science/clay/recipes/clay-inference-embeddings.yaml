@@ -1,4 +1,6 @@
-# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+# yaml-language-server: $schema=../../../../../schemas/execution_recipe.schema.json
+# Paths are relative to this model's folder, where every command is run,
+# except resource profiles, which use the foundry's repo-root convention.
 
 id: clay-inference-embeddings
 name: Clay v1.5 — NAIP chip embeddings, verified against Clay's published embeddings
@@ -36,11 +38,11 @@ output:
     format: Parquet (chip_index, row_off, col_off, geometry WKB lon/lat, embeddings list<float32>[1024])
     location: $CLAY_WORKDIR/results/inference-<jobid>/embeddings.parquet
   evidence:
-    - benchmarks/results/clay/outputs/inference/summary.txt
-    - benchmarks/results/clay/outputs/inference/validation_report.json
-    - benchmarks/results/clay/outputs/inference/validation_cosine.png
-    - benchmarks/results/clay/outputs/inference/embeddings_sample.parquet   # first 16 chips
-    - benchmarks/results/clay/logs/clay-*-<jobid>.{out,err}
+    - benchmarks/outputs/inference/summary.txt
+    - benchmarks/outputs/inference/validation_report.json
+    - benchmarks/outputs/inference/validation_cosine.png
+    - benchmarks/outputs/inference/embeddings_sample.parquet   # first 16 chips
+    - benchmarks/logs/clay-*-<jobid>.{out,err}
 
 environment:
   conda_module: miniforge/24.3.0-0 (conda 23.7.4)
@@ -102,7 +104,7 @@ resource_requirements:
   storage_gib: 15   # du of $CLAY_WORKDIR after the reference run (env, checkpoint, teacher, data, caches, results)
 
 compatible_resource_profiles:
-  - resource-profiles/pace-ice/coc-gpu-l40s.yaml
+  - registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
 
 compatible_optimization_profiles: []
 
@@ -116,7 +118,7 @@ slurm_example: |
   #SBATCH --cpus-per-task=4
   #SBATCH --mem=32G
   #SBATCH --time=01:00:00
-  #SBATCH --output=benchmarks/results/clay/logs/%x-%j.out
+  #SBATCH --output=benchmarks/logs/%x-%j.out
 
   source scripts/clay_common.sh
   clay_activate
@@ -130,7 +132,7 @@ slurm_example: |
     --reference "$CLAY_DATA/$REF_NAME" --out-dir "$CLAY_RESULTS/validation"
 
   # The full job (GPU/version capture, embeddings sample, summary, sacct) is
-  # scripts/clay_inference.sbatch. Submit from the repo root.
+  # scripts/clay_inference.sbatch. Submit from this model's folder.
 
 verification:
   criterion: mean cosine similarity >= 0.99 over all chips vs Clay's published embeddings (Shi Jin's own criterion from Assignment 1, not Clay's)

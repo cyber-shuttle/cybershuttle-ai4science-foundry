@@ -3,7 +3,7 @@
 # Safe to rerun: files already present with the right checksum are skipped.
 #
 # Normally run by: sbatch scripts/clay_download.sbatch
-# Can also be run from the foundry repo root after the env is built:
+# Can also be run from the Clay model folder after the env is built:
 #   bash scripts/clay_download_data.sh
 #
 # Inputs (pinned in scripts/clay_common.sh):
@@ -13,8 +13,8 @@
 #              clay/clay-v1-5-naip-2 (Clay v1.5 NAIP embeddings, rev2, CC-BY-4.0)
 # Writes:
 #   $CLAY_WORKDIR/data/<both files>
-#   benchmarks/results/clay/outputs/naip_item.json    (STAC item, unsigned)
-#   benchmarks/results/clay/outputs/checksums.sha256  (adds the checksums)
+#   benchmarks/outputs/naip_item.json    (STAC item, unsigned)
+#   benchmarks/outputs/checksums.sha256  (adds the checksums)
 
 set -euo pipefail
 # shellcheck source=scripts/clay_common.sh

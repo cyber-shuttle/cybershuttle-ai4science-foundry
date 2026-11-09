@@ -19,7 +19,7 @@ Writes <out-dir>/validation_report.json and a histogram PNG.
 
 Usage:
   python scripts/clay_validate.py --smoke --embeddings run1.parquet \\
-      --repeat run2.parquet --out-dir benchmarks/results/clay/outputs/smoke
+      --repeat run2.parquet --out-dir benchmarks/outputs/smoke
   python scripts/clay_validate.py --embeddings ours.parquet \\
       --reference m_3211002_se_12_1_20150530.parquet --out-dir .../inference
 """

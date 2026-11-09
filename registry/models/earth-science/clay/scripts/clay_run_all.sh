@@ -1,6 +1,6 @@
 #!/bin/bash
 # One command for the whole Clay workflow on PACE ICE. Run on a login node
-# from the foundry repo root:
+# from the Clay model folder:
 #
 #   bash scripts/clay_run_all.sh
 #
@@ -18,7 +18,7 @@
 # Different Slurm account, QOS, partitions or GPU: see clay_sbatch_opts in
 # scripts/clay_common.sh (SBATCH_ACCOUNT, SBATCH_QOS, CLAY_CPU_PARTITION,
 # CLAY_GPU_PARTITION, CLAY_GPU_GRES).
-# The job IDs are saved to benchmarks/results/clay/logs/run_all-<time>.txt.
+# The job IDs are saved to benchmarks/logs/run_all-<time>.txt.
 
 set -euo pipefail
 # shellcheck source=scripts/clay_common.sh

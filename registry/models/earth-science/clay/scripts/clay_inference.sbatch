@@ -9,19 +9,19 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=01:00:00
-#SBATCH --output=benchmarks/results/clay/logs/%x-%j.out
-#SBATCH --error=benchmarks/results/clay/logs/%x-%j.err
+#SBATCH --output=benchmarks/logs/%x-%j.out
+#SBATCH --error=benchmarks/logs/%x-%j.err
 #
 # Step 4 of the Clay workflow: embed all 725 chips of the NAIP tile with
 # Clay v1.5 and compare each chip with Clay's published embedding of the same
 # chip (pass criterion: mean cosine similarity >= 0.99). Needs steps 1-3.
 #
-# Submit from the foundry repo root:
+# Submit from the Clay model folder:
 #   sbatch scripts/clay_inference.sbatch
 #
 # Writes:
 #   $CLAY_WORKDIR/results/inference-<jobid>/embeddings.parquet   (725 x 1024 embeddings)
-#   benchmarks/results/clay/outputs/inference/
+#   benchmarks/outputs/inference/
 #       validation_report.json, validation_cosine.png   checks and histogram
 #       embed_run.json                                  inputs, versions, GPU, timing
 #       embeddings_sample.parquet                       the first 16 chips
@@ -30,7 +30,7 @@
 set -euo pipefail
 trap 'echo "== clay-inference FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the foundry repo root.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh
@@ -66,7 +66,7 @@ python - "$EVIDENCE" "$SLURM_JOB_ID" <<'PY' | tee "$EVIDENCE/summary.txt"
 import json, subprocess, sys
 from pathlib import Path
 evidence, job = Path(sys.argv[1]), sys.argv[2]
-tree = subprocess.run(["git", "rev-parse", "HEAD:scripts"], capture_output=True, text=True).stdout.strip()
+tree = subprocess.run(["git", "rev-parse", "HEAD:./scripts"], capture_output=True, text=True).stdout.strip()
 r = json.loads((evidence / "validation_report.json").read_text())
 print(f"clay-inference job {job}, scripts tree {tree}")
 print(f"{r['n_chips']} chips, ours vs Clay's published embeddings: "

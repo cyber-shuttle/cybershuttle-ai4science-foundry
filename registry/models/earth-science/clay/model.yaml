@@ -108,14 +108,14 @@ software:
     - lightning==2.4.0
     - timm==1.0.11
     - claymodel==1.5.0 (installed from the pinned commit)
-  environment_files:
+  environment_files:     # relative to this folder
     - scripts/clay_environment.yml     # conda: python + pip
     - scripts/clay_requirements.txt    # exact pip lock, 106 packages with sha256 hashes
   container: null   # no container; conda environment only
 
 resource_profiles:
   recommended:
-    - resource-profiles/pace-ice/coc-gpu-l40s.yaml
+    - registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
 
 minimum_requirements:
   gpu_memory_gb_observed_peak: 2.01   # 725 chips, batch 16, fp32 (job 6194944)
@@ -137,7 +137,7 @@ readiness:
     Inference verified end to end on PACE ICE (not Nexus) on 1x NVIDIA L40S.
     On the 725 chips of NAIP tile m_3211002_se_12_1_20150530, our embeddings
     match Clay's published rev2 embeddings with mean cosine similarity
-    0.99999995 (job 6194944). See benchmarks/results/clay/clay-pace-ice-inference.yaml.
+    0.99999995 (job 6194944). See benchmarks/clay-pace-ice-inference.yaml.
     Fine-tuning and training are not verified here.
 
 maintainers:
@@ -149,4 +149,4 @@ notes: >
   Related to cyber-shuttle/cybershuttle-ai4science-foundry issue #8.
   Setup, execution, verification, troubleshooting and cleanup:
   registry/models/earth-science/clay/README.md. Recipe:
-  recipes/clay-inference-embeddings.yaml.
+  registry/models/earth-science/clay/recipes/clay-inference-embeddings.yaml.

@@ -1,4 +1,6 @@
-# yaml-language-server: $schema=../../../schemas/benchmark.schema.json
+# yaml-language-server: $schema=../../../../../schemas/benchmark.schema.json
+# Paths are relative to this model's folder, where every command is run,
+# except resource profiles, which use the foundry's repo-root convention.
 
 id: clay-v1.5-pace-ice-naip-inference
 name: Clay v1.5 — NAIP embedding inference on PACE ICE (1x L40S), checked against Clay's published embeddings
@@ -16,7 +18,7 @@ description: >
   compared with Clay's published embedding for the same chip.
 
 environment:
-  resource_profile: resource-profiles/pace-ice/coc-gpu-l40s.yaml
+  resource_profile: registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
   container: null
   software:
     python: "3.11.17"
@@ -36,7 +38,7 @@ environment:
   batch_size: 16
 
 runs:
-  submitted_by_script: benchmarks/results/clay/logs/run_all-20261011T202904.txt
+  submitted_by_script: benchmarks/logs/run_all-20261011T202904.txt
   scripts_tree: 9d02664aa884486779f55a673c435b14e40b8e1b   # git rev-parse <commit>:scripts at run time
   jobs:
     - {step: build_env, job_id: 6194941, partition: coc-cpu, walltime: "00:10:05", max_rss_gib: 12.0, log: logs/clay-build-env-6194941.out}
@@ -82,8 +84,8 @@ cost_and_energy:
   notes: PACE ICE is an instructional cluster; no cost or energy figures are reported (Slurm epilog shows energy_used=0).
 
 notes: >
-  Evidence: benchmarks/results/clay/logs/ (full Slurm stdout/stderr with the
-  PACE prolog and epilog) and benchmarks/results/clay/outputs/ (environment
+  Evidence: benchmarks/logs/ (full Slurm stdout/stderr with the
+  PACE prolog and epilog) and benchmarks/outputs/ (environment
   record, checksums, validation reports and plots, a 16-chip embeddings
   sample). Earlier runs during development that showed real problems are kept in
   logs/troubleshooting/ and explained in the README.

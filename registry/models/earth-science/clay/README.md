@@ -16,8 +16,8 @@ mean of at least 0.99.
 | Input | one NAIP aerial image (Arizona, 2015-05-30, 4 bands, 1 m) from Microsoft Planetary Computer |
 | Reference | Clay's published v1.5 NAIP embeddings for the same image ([source.coop](https://source.coop/clay/clay-v1-5-naip-2)) |
 | Platform | PACE ICE, Slurm; 1× NVIDIA L40S for inference |
-| Reference run | 2026-10-11, Slurm jobs 6194941–6194944; logs and outputs in [`benchmarks/results/clay/`](../../../../benchmarks/results/clay/) |
-| Related files | [`model.yaml`](model.yaml) · [recipe](../../../../recipes/clay-inference-embeddings.yaml) · [resource profile](../../../../resource-profiles/pace-ice/coc-gpu-l40s.yaml) · [run record](../../../../benchmarks/results/clay/clay-pace-ice-inference.yaml) · tracking issue [#8](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/8) |
+| Reference run | 2026-10-11, Slurm jobs 6194941–6194944; logs and outputs in [`benchmarks/`](benchmarks/) |
+| Related files | [`model.yaml`](model.yaml) · [recipe](recipes/clay-inference-embeddings.yaml) · [resource profile](resource-profiles/coc-gpu-l40s.yaml) · [run record](benchmarks/clay-pace-ice-inference.yaml) · tracking issue [#8](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/8) |
 
 ## Contents
 
@@ -71,7 +71,8 @@ the embeddings are for a downstream task.
 
 ## 2. Repository layout
 
-All files below were added by this contribution. Large files (environment,
+All files below were added by this contribution and live in this folder
+(`registry/models/earth-science/clay/`); paths are relative to it. Large files (environment,
 model weights, imagery, embeddings) are not stored in the repository; they are
 created in a work folder on scratch storage (Section 2.2).
 
@@ -79,10 +80,10 @@ created in a work folder on scratch storage (Section 2.2).
 
 | Path | Role |
 |---|---|
-| `registry/models/earth-science/clay/README.md` | this guide |
-| `registry/models/earth-science/clay/model.yaml` | registry entry for Clay v1.5 (foundry model schema) |
+| `README.md` | this guide |
+| `model.yaml` | registry entry for Clay v1.5 (foundry model schema) |
 | `recipes/clay-inference-embeddings.yaml` | machine-readable recipe: steps, scripts, inputs, outputs, resources, verification |
-| `resource-profiles/pace-ice/coc-gpu-l40s.yaml` | hardware and Slurm settings of the PACE ICE GPU used |
+| `resource-profiles/coc-gpu-l40s.yaml` | hardware and Slurm settings of the PACE ICE GPU used |
 | **Scripts** (`scripts/`) | |
 | `clay_common.sh` | shared settings sourced by all scripts: paths, pinned versions, URLs, sha256 checksums, cache locations, helper functions |
 | `clay_preflight.sh` | login-node check before submitting (Slurm account, partitions, `sbatch --test-only`, module, scratch, network); submits nothing |
@@ -99,7 +100,7 @@ created in a work folder on scratch storage (Section 2.2).
 | `clay_inference.sbatch` | job 4 (GPU): embeds all 725 chips and runs the validation |
 | `clay_embed.py` | computes Clay embeddings for the chips of an image |
 | `clay_validate.py` | smoke checks and the comparison against Clay's published embeddings |
-| **Evidence** (`benchmarks/results/clay/`) | |
+| **Evidence** (`benchmarks/`) | |
 | `clay-pace-ice-inference.yaml` | run record of the reference run: hardware, software, runtimes, memory, results |
 | `logs/<job-name>-<jobid>.out`, `.err` | complete output and error streams of the four reference-run jobs, including the ICE resource summary |
 | `logs/run_all-<date>.txt` | job IDs, code version and settings of the reference run |
@@ -151,11 +152,11 @@ Sections 5–7.
 ```bash
 ssh <gt-username>@login-ice.pace.gatech.edu      # from your computer
 git clone --branch clay-assignment-2 https://github.com/Andy216914/cybershuttle-ai4science-foundry.git ~/clay-repro
-cd ~/clay-repro
+cd ~/clay-repro/registry/models/earth-science/clay
 bash scripts/clay_preflight.sh                   # must end with "PREFLIGHT PASSED"
 bash scripts/clay_run_all.sh                     # submits 4 jobs and returns
 squeue -u $USER                                  # repeat until no clay-* jobs are listed (~15 min plus queue)
-cat benchmarks/results/clay/outputs/inference/summary.txt
+cat benchmarks/outputs/inference/summary.txt
 ```
 
 ### 4.1 What these commands do
@@ -220,7 +221,7 @@ node. Run all following commands there.
 ```bash
 cd ~
 git clone --branch clay-assignment-2 https://github.com/Andy216914/cybershuttle-ai4science-foundry.git clay-repro
-cd clay-repro
+cd clay-repro/registry/models/earth-science/clay
 ```
 
 The final argument names the folder `clay-repro`, so the clone does not
@@ -228,7 +229,8 @@ collide with another copy of the foundry repository. No GitHub credentials are
 needed. After the pull request is merged, the same files are on the `main`
 branch of `cyber-shuttle/cybershuttle-ai4science-foundry`.
 
-**Run every command in this guide from this folder (the repository root).**
+**Run every command in this guide from this folder
+(`registry/models/earth-science/clay`).**
 The job scripts locate their files relative to it.
 
 ### 5.3 Configure the Slurm account and run the preflight check
@@ -294,7 +296,7 @@ has finished successfully.
 | 3 | `clay_smoke_test.sbatch` | `coc-gpu` | 1× L40S, 4 CPUs, 32 GiB, 30 min | 1:01 | quick functional test on 8 chips |
 | 4 | `clay_inference.sbatch` | `coc-gpu` | 1× L40S, 4 CPUs, 32 GiB, 1 h | 1:06 | embed all 725 chips and validate |
 
-Each job writes its log to `benchmarks/results/clay/logs/<job-name>-<jobid>.out`
+Each job writes its log to `benchmarks/logs/<job-name>-<jobid>.out`
 (standard output) and `.err` (standard error, empty when the job succeeds).
 ICE adds a header and a footer to the `.out` file with the account,
 partition, node, elapsed time and peak memory.
@@ -308,7 +310,7 @@ bash scripts/clay_run_all.sh
 The script runs the preflight check again, submits the four jobs as a chain
 (`sbatch --dependency=afterok:<previous job>`), prints the four job IDs,
 saves them with the code version in
-`benchmarks/results/clay/logs/run_all-<date>.txt`, and returns. The jobs then
+`benchmarks/logs/run_all-<date>.txt`, and returns. The jobs then
 run without further input. **Run it once.** A second call while jobs are
 still queued starts a second chain that writes to the same folders.
 
@@ -426,7 +428,7 @@ sbatch scripts/clay_inference.sbatch
 
 ```bash
 squeue -u $USER                       # ST column: PD = pending, R = running; finished jobs are not listed
-tail -f benchmarks/results/clay/logs/clay-inference-<jobid>.out    # follow a log; Ctrl+C stops following, not the job
+tail -f benchmarks/logs/clay-inference-<jobid>.out    # follow a log; Ctrl+C stops following, not the job
 sacct -j <jobid> --format=JobID,JobName,State,ExitCode,Elapsed,MaxRSS   # final state, elapsed time, peak memory
 ```
 
@@ -434,8 +436,8 @@ sacct -j <jobid> --format=JobID,JobName,State,ExitCode,Elapsed,MaxRSS   # final 
 
 A run writes its results into your clone, replacing the copies of the
 reference run committed in the repository (the copy on GitHub is not
-affected). Run the following four checks from the repository root after job 4
-has finished.
+affected). Run the following four checks from this folder after job 4 has
+finished.
 
 **7.1 Pass/fail check.** Checks the thresholds, not exact values, so small
 floating-point differences on other GPU types still pass. It first confirms
@@ -448,7 +450,7 @@ import json
 import subprocess
 from pathlib import Path
 
-out = Path("benchmarks/results/clay/outputs")
+out = Path("benchmarks/outputs")
 for f in ["smoke/validation_report.json", "inference/validation_report.json"]:
     unchanged = subprocess.run(["git", "diff", "--quiet", "--", str(out / f)]).returncode == 0
     assert not unchanged, f"{f} is still the committed copy: your run did not write it. Check your job logs."
@@ -471,7 +473,7 @@ PY
 values (lines starting with `-`) next to yours (`+`):
 
 ```bash
-git diff benchmarks/results/clay/outputs/inference/summary.txt
+git diff benchmarks/outputs/inference/summary.txt
 ```
 
 On an L40S only the first line (job ID and code version) should differ. On
@@ -480,7 +482,7 @@ other GPU types the last digits of the scores may also differ.
 **7.3 Input checksums.** Confirms that you downloaded the same files:
 
 ```bash
-(cd "${CLAY_WORKDIR:-$HOME/scratch/clay}" && sha256sum -c "$OLDPWD/benchmarks/results/clay/outputs/checksums.sha256")
+(cd "${CLAY_WORKDIR:-$HOME/scratch/clay}" && sha256sum -c "$OLDPWD/benchmarks/outputs/checksums.sha256")
 ```
 
 All four lines must end in `OK`.
@@ -490,7 +492,7 @@ following on your own computer (Terminal or PowerShell, VPN connected); it
 copies the file into the current folder:
 
 ```bash
-scp <gt-username>@login-ice.pace.gatech.edu:clay-repro/benchmarks/results/clay/outputs/inference/validation_cosine.png .
+scp <gt-username>@login-ice.pace.gatech.edu:clay-repro/registry/models/earth-science/clay/benchmarks/outputs/inference/validation_cosine.png .
 ```
 
 ## 8. Validation of the reference run
@@ -535,7 +537,7 @@ identified as its own match among all 725.
 | Input sensitivity | closest pair of different chips differs by > 1% of the norm | 16.9% |
 | **Result** | | **PASS** |
 
-Report: [`outputs/smoke/validation_report.json`](../../../../benchmarks/results/clay/outputs/smoke/validation_report.json)
+Report: [`outputs/smoke/validation_report.json`](benchmarks/outputs/smoke/validation_report.json)
 
 ### 8.3 Main check — job 6194944
 
@@ -549,14 +551,14 @@ Report: [`outputs/smoke/validation_report.json`](../../../../benchmarks/results/
 | Relative difference | (reported) | 0.03% on average |
 | **Result** | | **PASS** |
 
-![Cosine similarity histogram](../../../../benchmarks/results/clay/outputs/inference/validation_cosine.png)
+![Cosine similarity histogram](benchmarks/outputs/inference/validation_cosine.png)
 
 The histogram (log scale) shows the 725 matched similarities (green) at 1.0,
 the mismatched control (orange) and the similarities between Clay's own
 embeddings of different chips (blue) spread around 0.9, and the 0.99
 criterion (dashed line).
 
-Report: [`outputs/inference/validation_report.json`](../../../../benchmarks/results/clay/outputs/inference/validation_report.json)
+Report: [`outputs/inference/validation_report.json`](benchmarks/outputs/inference/validation_report.json)
 
 ### 8.4 Interpretation
 
@@ -623,13 +625,13 @@ same ground area as reference row *i*.
 | Primary reference | [Clay v1.5 release notes](https://clay-foundation.github.io/model/release-notes/specification.html) (no peer-reviewed paper); 632M parameters (encoder 311M, decoder 15M, teacher 304M) |
 | Checkpoint | `clay-v1.5.ckpt`, https://huggingface.co/made-with-clay/Clay, revision `70200ebcccdf67bf2a0cb9984c77ddee26c10ed2`, DOI [10.57967/hf/1537](https://doi.org/10.57967/hf/1537), 5,158,764,629 bytes, sha256 `21432069250b9b3f9a65ffd0071c5ad56b793247285ab0604edf7f531d4798d0` |
 | Teacher | `vit_large_patch14_reg4_dinov2.lvd142m` (name stored in the checkpoint), https://huggingface.co/timm/vit_large_patch14_reg4_dinov2.lvd142m, revision `f3c408e77602bb412aa65fb03dfa0d5f95cb3832`, sha256 `c893d72294d4c327e631ff92f428dbc14c4f93cb5581b6c5f9d89bb5d17def27`; Apache-2.0 |
-| Input image | USDA NAIP `m_3211002_se_12_1_20150530.tif`: Arizona, 2015-05-30, 4 bands, uint8, 6490 × 7570 px, 1 m, EPSG:26912. Microsoft Planetary Computer item `az_m_3211002_se_12_1_20150530_20151022`, `https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_100cm_2015/32110/m_3211002_se_12_1_20150530.tif`, 188,776,628 bytes, sha256 `4bd22adff7877ef333561620a0b0d8e9c5da25adb9c3e131b865849679ade567`; public domain. Catalog record: [`outputs/naip_item.json`](../../../../benchmarks/results/clay/outputs/naip_item.json) |
+| Input image | USDA NAIP `m_3211002_se_12_1_20150530.tif`: Arizona, 2015-05-30, 4 bands, uint8, 6490 × 7570 px, 1 m, EPSG:26912. Microsoft Planetary Computer item `az_m_3211002_se_12_1_20150530_20151022`, `https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_100cm_2015/32110/m_3211002_se_12_1_20150530.tif`, 188,776,628 bytes, sha256 `4bd22adff7877ef333561620a0b0d8e9c5da25adb9c3e131b865849679ade567`; public domain. Catalog record: [`outputs/naip_item.json`](benchmarks/outputs/naip_item.json) |
 | Reference embeddings | https://source.coop/clay/clay-v1-5-naip-2 (Clay v1.5 NAIP embeddings, revision 2), file `az/2015/100cm/rgbir_cog/32110/m_3211002_se_12_1_20150530.parquet`: 725 rows, columns `geometry` and `embeddings` (1,024 values), sha256 `a551efc22b3ab2e3f0317f9b97a821550baafcb1e0fa2bd5a36fc0c186bece54`; CC-BY-4.0 |
-| Software | Python 3.11.17, torch 2.4.0+cu121 (CUDA 12.1 build, cuDNN 9.1.0), torchvision 0.19.0+cu121, lightning 2.4.0, timm 1.0.11, numpy 2.1.3, rasterio 1.4.2 (GDAL 3.9.3), claymodel 1.5.0. Full list: [`outputs/env/pip-freeze.txt`](../../../../benchmarks/results/clay/outputs/env/pip-freeze.txt); `pip check` reports no broken requirements |
+| Software | Python 3.11.17, torch 2.4.0+cu121 (CUDA 12.1 build, cuDNN 9.1.0), torchvision 0.19.0+cu121, lightning 2.4.0, timm 1.0.11, numpy 2.1.3, rasterio 1.4.2 (GDAL 3.9.3), claymodel 1.5.0. Full list: [`outputs/env/pip-freeze.txt`](benchmarks/outputs/env/pip-freeze.txt); `pip check` reports no broken requirements |
 | Hardware | PACE ICE; CPU jobs on `coc-cpu`; GPU jobs on `coc-gpu` with 1× NVIDIA L40S (46068 MiB, compute capability 8.9, driver 615.71.09), 4 CPU cores, 32 GiB; RHEL 9.8, glibc 2.34; `module load miniforge/24.3.0-0` (conda 23.7.4) |
-| Reference run | 2026-10-11; jobs 6194941 (build), 6194942 (download), 6194943 (smoke test), 6194944 (inference); started by [`logs/run_all-20261011T202904.txt`](../../../../benchmarks/results/clay/logs/run_all-20261011T202904.txt) from a fresh clone and an empty work folder |
+| Reference run | 2026-10-11; jobs 6194941 (build), 6194942 (download), 6194943 (smoke test), 6194944 (inference); started by [`logs/run_all-20261011T202904.txt`](benchmarks/logs/run_all-20261011T202904.txt) from a fresh clone and an empty work folder |
 | Resources used | peak memory from Slurm, peak GPU memory from PyTorch: job 1 10:05, 12.0 GiB; job 2 2:48, 7.8 GiB; job 3 1:01, 14.4 GiB, 1.63 GB GPU; job 4 1:06, 7.6 GiB, 2.01 GB GPU, 12.2 s to embed 725 chips (about 59 chips/s). 0.04 GPU-hours in total; 15 GiB of scratch |
-| Code version | every log prints the Git hash of the `scripts/` folder; compare with `git rev-parse HEAD:scripts` |
+| Code version | every log prints the Git hash of the `scripts/` folder; compare with `git rev-parse HEAD:./scripts`. The reference run predates the move of these files into this folder: its logs show the old locations (`scripts/`, `benchmarks/results/clay/`) and the tree hash `9d02664…` (commit `37e02f1`). The move changed only paths inside the scripts, so newer runs print a different hash |
 
 ## 10. Running the embedding script directly
 
@@ -644,7 +646,7 @@ batch jobs; this interactive command was not part of it.)
 srun -A coc --qos=coc-ice -p coc-gpu --gres=gpu:l40s:1 -c 4 --mem=32G -t 00:30:00 --pty bash
 ```
 
-Then, from the repository root, after jobs 1 and 2 have completed:
+Then, from this folder, after jobs 1 and 2 have completed:
 
 ```bash
 source scripts/clay_common.sh && clay_activate && export HF_HUB_OFFLINE=1
@@ -669,11 +671,11 @@ next to it.
 
 Problems encountered while building this workflow are listed first, with
 their logs in
-[`benchmarks/results/clay/logs/troubleshooting/`](../../../../benchmarks/results/clay/logs/troubleshooting/).
+[`benchmarks/logs/troubleshooting/`](benchmarks/logs/troubleshooting/).
 
 **Embeddings close to Clay's but not equal (mean cosine about 0.97).**
 Observed in the first full run (job 6189009,
-[`clay-inference-6189009.out`](../../../../benchmarks/results/clay/logs/troubleshooting/clay-inference-6189009.out)).
+[`clay-inference-6189009.out`](benchmarks/logs/troubleshooting/clay-inference-6189009.out)).
 That run took the hour from the image timestamp (stored as 00:00, so 0) and
 ordered the location as latitude first, as Clay's example notebooks do; the
 mean cosine similarity was 0.968. With the hour set to 12 and longitude first,
@@ -684,13 +686,13 @@ it against that source.
 
 **Preflight or download job reports Planetary Computer as unreachable.**
 Observed in the first preflight run
-([`preflight-836cb46-planetary-computer-502.txt`](../../../../benchmarks/results/clay/logs/troubleshooting/preflight-836cb46-planetary-computer-502.txt)).
+([`preflight-836cb46-planetary-computer-502.txt`](benchmarks/logs/troubleshooting/preflight-836cb46-planetary-computer-502.txt)).
 The network was working: the check requested a single byte (an HTTP range
 request), which the Planetary Computer catalog answers with error 502.
 `clay_check_url` in `clay_common.sh` now retries with a normal request.
 
 **Download job close to its memory limit.** Job 6188620
-([`clay-download-6188620.out`](../../../../benchmarks/results/clay/logs/troubleshooting/clay-download-6188620.out))
+([`clay-download-6188620.out`](benchmarks/logs/troubleshooting/clay-download-6188620.out))
 requested 8 GiB and peaked at 7.5 GiB (94%) while building the DINOv2 teacher
 model to cache it. The job now requests 16 GiB (reference run: 7.8 GiB peak).
 
@@ -748,7 +750,7 @@ PyTorch, matplotlib and temporary files there.
 **`MKL_INTERFACE_LAYER: unbound variable` or `mkdir: Permission denied` in a
 job.** Known ICE issues that the scripts avoid (conda activation is wrapped in
 `set +u`; paths are taken from `$SLURM_SUBMIT_DIR`, not `${BASH_SOURCE[0]}`).
-Make sure jobs are submitted from the repository root.
+Make sure jobs are submitted from this folder.
 
 ## 12. Cleanup
 

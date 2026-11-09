@@ -9,25 +9,25 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=00:30:00
-#SBATCH --output=benchmarks/results/clay/logs/%x-%j.out
-#SBATCH --error=benchmarks/results/clay/logs/%x-%j.err
+#SBATCH --output=benchmarks/logs/%x-%j.out
+#SBATCH --error=benchmarks/logs/%x-%j.err
 #
 # Step 3 of the Clay workflow: a quick GPU smoke test on the first 8 chips.
 # Checks that the checkpoint loads strictly, the output is [8, 1024] and
 # finite, two identical runs agree, and different chips differ.
 # Needs steps 1-2 (env build and downloads).
 #
-# Submit from the foundry repo root:
+# Submit from the Clay model folder:
 #   sbatch scripts/clay_smoke_test.sbatch
 #
 # Writes:
 #   $CLAY_WORKDIR/results/smoke-<jobid>/run{1,2}.parquet   (embeddings)
-#   benchmarks/results/clay/outputs/smoke/validation_report.json
+#   benchmarks/outputs/smoke/validation_report.json
 
 set -euo pipefail
 trap 'echo "== clay-smoke FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the foundry repo root.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

@@ -8,13 +8,13 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=01:00:00
-#SBATCH --output=benchmarks/results/clay/logs/%x-%j.out
-#SBATCH --error=benchmarks/results/clay/logs/%x-%j.err
+#SBATCH --output=benchmarks/logs/%x-%j.out
+#SBATCH --error=benchmarks/logs/%x-%j.err
 #
 # Step 1 of the Clay workflow: build the conda environment on a CPU node
 # (login nodes kill large installs) and record exactly what was installed.
 #
-# Submit from the foundry repo root:
+# Submit from the Clay model folder:
 #   sbatch scripts/clay_build_env.sbatch
 #
 # What it does:
@@ -26,7 +26,7 @@
 #      hashes, no dependency resolution) and claymodel from the pinned source.
 #   4. Runs scripts/clay_check_env.py and `pip check`.
 #   5. Writes conda-env-export.yml and pip-freeze.txt to
-#      benchmarks/results/clay/outputs/env/.
+#      benchmarks/outputs/env/.
 #
 # Re-running is safe. A finished env is reused unless the environment file,
 # the lock, or the Clay commit changed; then it is rebuilt from scratch.
@@ -34,7 +34,7 @@
 set -euo pipefail
 trap 'echo "== clay-build-env FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the foundry repo root.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

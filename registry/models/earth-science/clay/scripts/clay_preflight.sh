@@ -2,9 +2,9 @@
 # Quick checks on an ICE login node before submitting any Clay job.
 # Takes a few seconds and submits nothing.
 #
-#   bash scripts/clay_preflight.sh        (from the foundry repo root)
+#   bash scripts/clay_preflight.sh        (from the Clay model folder)
 #
-# Checks: repo root and branch, your Slurm account/QOS, that the CPU and GPU
+# Checks: Clay model folder and branch, your Slurm account/QOS, that the CPU and GPU
 # partitions used by the job scripts exist, that Slurm would accept each job
 # (sbatch --test-only), the miniforge module, scratch space, and that the
 # download hosts are reachable from the login node.

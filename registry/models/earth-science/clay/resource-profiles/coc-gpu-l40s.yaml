@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+# yaml-language-server: $schema=../../../../../schemas/resource_profile.schema.json
 
 id: pace-ice-coc-gpu-l40s
 name: Georgia Tech PACE ICE — coc-gpu partition, 1x NVIDIA L40S
@@ -58,4 +58,4 @@ notes: >
 
   Batch jobs run from a spooled copy of the script, so ${BASH_SOURCE[0]} does
   not point at the checkout; resolve paths from $SLURM_SUBMIT_DIR and submit
-  from the repo root. Slurm does not create the --output directory.
+  from the Clay model folder. Slurm does not create the --output directory.

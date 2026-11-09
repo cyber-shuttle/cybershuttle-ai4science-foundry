@@ -23,9 +23,18 @@ ENV_PREFIX="$HOME/scratch/.conda/envs/hyena-dna"
 # spool directory on the compute node before running it, so that would
 # resolve to the spool dir, not to where the sibling scripts actually live
 # (confirmed live in the training sbatch, which has this same pattern).
-# SLURM_SUBMIT_DIR is the directory `sbatch` was invoked from, which is
-# where this file's siblings are.
-SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+# Not SLURM_SUBMIT_DIR either: that's wherever `sbatch` was invoked FROM,
+# which only equals this file's directory if the caller happens to cd into
+# it first -- confirmed live: `sbatch scripts/hyenadna_inference.sbatch` run
+# from a repo checkout's root resolved SCRIPT_DIR to the repo root and died
+# on "can't open file '.../hyenadna_validate.py'", since that file is in
+# scripts/, not the root. `scontrol show job` still has this job's real
+# Command= (the path as submitted, not the spool copy) while it's running,
+# so derive SCRIPT_DIR from that; SLURM_SUBMIT_DIR is only a fallback.
+SCRIPT_DIR="$(scontrol show job "$SLURM_JOB_ID" 2>/dev/null | grep -oP 'Command=\K\S+' | xargs -r dirname)"
+if [ -z "$SCRIPT_DIR" ]; then
+    SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+fi
 
 # module purge first: a fresh job starts with anaconda3 loaded by default,
 # and `module load miniforge` on top of that triggers Lmod's automatic
@@ -54,6 +63,10 @@ export HF_HOME="$HOME/scratch/.cache/huggingface"  # must match setup script, or
 python "$SCRIPT_DIR/hyenadna_validate.py" --model hyenadna-tiny-1k-seqlen
 
 if [ -n "${1:-}" ]; then
+    # torch.save has no "create the parent dir for me" option -- confirmed
+    # live: without this, a fresh job with no prior results/ dir dies on
+    # the save call after a full successful embedding pass.
+    mkdir -p results
     python "$SCRIPT_DIR/hyenadna_inference.py" \
         --model hyenadna-tiny-1k-seqlen \
         --fasta "$1" \

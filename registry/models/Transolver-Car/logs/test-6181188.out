@@ -1,0 +1,52 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 09:16:37
+Job ID:    6181188
+User ID:   mli863
+Account:   coc
+Job name:  transolver-test
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+/home/hice1/mli863/.conda/envs/transolver/bin/python
+atl1-1-01-005-13-0.pace.gatech.edu
+Sun Oct 11 09:16:41 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   33C    P0             45W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+cuda available: True
+/home/hice1/mli863/.conda/envs/transolver/lib/python3.8/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Namespace(batch_size=1, cfd_config_dir='cfd/cfd_params.yaml', cfd_mesh=False, cfd_model='Transolver', data_dir='/home/hice1/mli863/scratch/Transolver/data/mlcfd_data/training_data', fold_id=0, gpu=0, lr=0.001, nb_epochs=1, preprocessed=0, r=0.2, save_dir='/home/hice1/mli863/scratch/Transolver/data/preprocessed_data', val_iter=10, weight=0.5)
+loading data
+load data finish
+  0%|          | 0/1 [00:00<?, ?it/s]  0%|          | 0/1 [02:34<?, ?it/s, train_loss=1.21, val_loss=0.478]100%|██████████| 1/1 [02:34<00:00, 154.82s/it, train_loss=1.21, val_loss=0.478]100%|██████████| 1/1 [02:34<00:00, 154.82s/it, train_loss=1.21, val_loss=0.478]
+Number of parameters: 3860804.0
+Time elapsed: 154.82 seconds
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 10:48:53
+Job ID:        6181188
+User ID:       mli863
+Account:       coc
+Job name:      transolver-test
+Resources:     cpu=8,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=12:18:08,vmem=0,walltime=01:32:16,mem=19449560K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-13-0
+---------------------------------------

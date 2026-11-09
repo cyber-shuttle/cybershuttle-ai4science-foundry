@@ -158,6 +158,55 @@ squeue -u $USER                                  # repeat until no clay-* jobs a
 cat benchmarks/results/clay/outputs/inference/summary.txt
 ```
 
+### 4.1 What these commands do
+
+The diagram follows one run from start to finish. Jobs 1–3 prepare and test
+everything, and job 4 does the rest, from the input image down. The left
+column (blue) is computed by this workflow. The right column (teal) is what
+Clay published for the same photo, which serves as the answer key. Both
+columns hold one list of numbers per chip, so they can be compared chip by
+chip. A match shows that this setup produces the same output as Clay's.
+
+```mermaid
+%%{init: {"theme": "base", "flowchart": {"curve": "step", "wrappingWidth": 460, "nodeSpacing": 50, "rankSpacing": 50}, "themeVariables": {"background": "#ffffff", "primaryColor": "#ffffff", "primaryTextColor": "#14213d", "primaryBorderColor": "#8a96a3", "lineColor": "#5b6675", "edgeLabelBackground": "#ffffff", "clusterBkg": "#ffffff", "clusterBorder": "#ffffff", "fontSize": "15px"}}}%%
+flowchart TB
+    subgraph page[" "]
+        direction TB
+        SETUP["<b>Jobs 1–3: prepare</b><br/>Build the software, download and verify every file,<br/>then smoke-test the model on 8 chips"]
+
+        IMG["<b>Input image</b><br/>One NAIP aerial photo of Arizona,<br/>6490 × 7570 pixels, 4 bands"]
+        CHIPS["<b>725 chips</b><br/>The photo cut into 256 × 256 pixel tiles,<br/>along the chip outlines in Clay's file"]
+        ENC["<b>Clay v1.5 encoder</b><br/>Reads each chip with its metadata:<br/>bands, resolution, date, location"]
+        OURS["<b>Our embeddings</b><br/>725 lists of 1,024 numbers, one per chip"]
+
+        REF["<b>Clay's published embeddings</b><br/>The answer key: 725 lists of 1,024 numbers<br/>for the same photo, one per chip"]
+
+        CMP["<b>Compare chip by chip</b><br/>Our chip 1 with Clay's chip 1, chip 2 with chip 2, and so on.<br/>Cosine similarity of 1.0 means the two lists point the same way"]
+        RES["<b>Result, written to summary.txt</b><br/>PASS needs an average similarity of at least 0.99,<br/>and higher than the score for mismatched chips"]
+
+        SETUP --> IMG
+        SETUP --> REF
+        IMG --> CHIPS
+        CHIPS --> ENC
+        ENC --> OURS
+        OURS --> CMP
+        REF --> CMP
+        CMP --> RES
+    end
+
+    classDef setup fill:#f2f5f8,stroke:#8a96a3,color:#14213d
+    classDef ours fill:#e8f0f9,stroke:#2f6db5,color:#14213d
+    classDef ref fill:#e3f1f0,stroke:#2f8f89,color:#14213d
+    classDef verdict fill:#ffffff,stroke:#14213d,stroke-width:2px,color:#14213d
+    class SETUP setup
+    class IMG,CHIPS,ENC,OURS ours
+    class REF ref
+    class CMP,RES verdict
+    style page fill:#ffffff,stroke:#ffffff
+```
+
+Section 6.3 describes each job, and Section 8 describes the checks in full.
+
 ## 5. Setup
 
 ### 5.1 Log in to ICE

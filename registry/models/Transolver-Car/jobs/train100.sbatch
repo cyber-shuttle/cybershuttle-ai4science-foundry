@@ -10,9 +10,12 @@
 #SBATCH -o logs/train100-%j.out
 
 cd $SLURM_SUBMIT_DIR
+source ./config.sh
+require_data
+
 module load anaconda3
 eval "$(conda shell.bash hook)"
-conda activate transolver
+conda activate "$ENV_DIR"
 which python
 
 hostname
@@ -22,7 +25,7 @@ python -c "import torch; print('cuda available:', torch.cuda.is_available())"
 cd Car-Design-ShapeNetCar
 python -u main.py \
   --cfd_model=Transolver \
-  --data_dir /home/hice1/mli863/scratch/Transolver/data/mlcfd_data/training_data \
-  --save_dir /home/hice1/mli863/scratch/Transolver/data/preprocessed_data \
+  --data_dir "$DATA_DIR" \
+  --save_dir "$SAVE_DIR" \
   --nb_epochs 100 \
   --preprocessed 1

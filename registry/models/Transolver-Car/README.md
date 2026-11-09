@@ -8,6 +8,7 @@ point you to the file that gives you evidence that I have met the requirement fo
 ## Requirements
 - Cluster: Georgia Tech PACE ICE (AI Makerspace), Red Hat Enterprise Linux 9.8
 - GPU: 1x NVIDIA A100 80GB, partition ice-gpu, account coc, QOS coc-ice
+	- Note: This is just for training. For inference and preprocessing, any CUDA GPU with at least 16 GB of memory should work.
 - Job resources: 8 CPUs, 32 GB memory
 - Module: anaconda3
 - Python: 3.8.20
@@ -27,9 +28,11 @@ point you to the file that gives you evidence that I have met the requirement fo
 ### Initializing Model
 1. If your computer's IP address is broken (like mine), use a Global Protect VPN from vpn.gatech.edu.
 2. Sign in to your login node with `ssh <gt username>@login-ice.pace.gatech.edu`, input your password, and then run `cd scratch`
-3. Clone the repo using `git clone https://github.com/Magical452/Transolver.git` and then run `cd Transolver`
+3. Clone the repo using `git clone https://github.com/Magical452/Transolver-Car.git` and then run `cd Transolver`
 4. Load anaconda and git into your login node with `module load anaconda3` and `module load git2.45.2` respectively
-5. Create the environment with `conda create -n transolver python=3.8 -y` and then activate it with `conda activate transolver`
+5. Create and activate the environemtn with these commands:
+	- `conda create --prefix $HOME/scratch/envs/transolver python=3.8 -y`
+	- `conda activate $HOME/scratch/envs/transolver`
 6. Install packages in this order: (Note: the order is important due to torch-cluster needing to match the installed PyTorch and CUDA version)
 	- python -m pip install --no-cache-dir torch==2.4.1
 	- python -m pip install --no-cache-dir "numpy<2"
@@ -38,9 +41,11 @@ point you to the file that gives you evidence that I have met the requirement fo
 	- python -m pip install --no-cache-dir vtk timm einops scikit-learn
 7. Create a directory named "data" in the repo root directory, go into that directory, and run 
 `wget -c  http://www.nobuyuki-umetani.com/publication/mlcfd_data.zip`
-8. Run `mkdir -p preprocessed_data`, then `cd preprocessed_data`, then `pwd`, and save the absolute path outputed to be used later
-9. Run `cd ..`, then `unzip -q mlcfd_data.zip`, then `cd mlcfd_data`, then `cd training_data`, then `pwd`, and save the absolute path outputed to be used later.
-10. Run `for f in param*.tar.gz; do tar -xzf "$f"; done` to unzip all the tar.gz files
+8. Run `mkdir -p preprocessed_data`, then `cd preprocessed_data`.
+9. Run `cd ..`, then `unzip -q mlcfd_data.zip`, then `cd mlcfd_data`, then `cd training_data`.
+10. Run `for f in param*.tar.gz; do tar -xzf "$f"; done` to unzip all the tar.gz files (This will take a few minutes, don't interrupt it.)
+11. Check: `ls data/mlcfd_data/training_data` should list `param0` through `param8`.
+Note: DO NOT REMOVE OR RENAME these folders. The jobs scripts look for them.
 ### Preprocessing (takes about 1.5 hours)
 1. Return to the repo root directory
 2. Run `mkdir -p logs`

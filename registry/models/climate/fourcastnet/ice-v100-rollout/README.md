@@ -2,7 +2,7 @@
 
 **Completed V100 run:** job **6205007**, finished October 12, 2026 at 1:58 AM EDT (05:58 UTC). FourCastNet ran a 234-hour rollout (40 saved states: the initial condition plus 39 six-hour steps) on a Tesla V100-PCIE-16GB on PACE-ICE, the cluster my course calls AI Makerspace, under account `coc`, partition `ice-gpu` and QOS `coc-ice`. All smoke tests and substantive checks passed. A second job (6205661) on the same node gave identical numbers. Raw evidence is in `logs/` and `outputs/`.
 
-The job used 1 GPU, 8 CPU cores and 64 GB of requested RAM, of which 21.7 GB was used. It took **95 seconds** of wall time, 77 of them in inference. Peak GPU memory was **11,292 MiB**, sampled twice a second in `logs/gpu_usage_6205007.csv`.
+The job used 1 GPU, 8 CPU cores and 64 GB of requested RAM, of which 21.7 GB was used. It took **95 seconds** of wall time, 77 of them in inference. A rerun from a fresh clone of the PR branch (job 6885282, also a V100) took 243 seconds, 113 of them in inference, and gave identical results, so expect timings to vary with the node and the load. Peak GPU memory was **11,292 MiB**, sampled twice a second in `logs/gpu_usage_6205007.csv`.
 
 This workflow loads the pretrained FourCastNet AFNO backbone (`backbone.ckpt` from the NVIDIA demo bundle) and rolls it forward 39 six-hour steps from the first state of the released 2018 out-of-sample ERA5 file. That gives 40 saved states, from lead 0 h (the initial condition) to lead 234 h. It scores 20 channels against ERA5 with RMSE and ACC, and Z500 (channel 14) is the headline variable. My model-selection issue also proposed T850, but `inference.py` only scores Z500, so T850 is not covered by this workflow. Z500 ACC is **0.9952 at 24 hours**, **0.9813 at 48 hours**, and it first falls below 0.6 at **174 hours**. Training, the precipitation model and the 26-channel HuggingFace release are out of scope.
 
@@ -16,8 +16,8 @@ Use a GPU node on the `ice-gpu` partition with the course account. The job scrip
 |---|---|---|
 | GPU | 1, with at least 16 GB of memory | Tesla V100-PCIE-16GB, peak 11,292 MiB |
 | CPU cores | 8 | not measured |
-| RAM | 64 GB | 21.7 GB |
-| Wall time | 45 minutes | 95 seconds |
+| RAM | 64 GB | 21.7 to 22.0 GB |
+| Wall time | 45 minutes | 95 s (job 6205007), 243 s (job 6885282) |
 | Scratch storage | plan for about 20 GB | the artifact tar is 3,998,497,644 bytes and the prediction file is 6.6 GB |
 
 I did not measure the final total for storage. The 20 GB figure is my estimate for the environment, artifacts and prediction file together. The home quota is about 30 GB and fills quickly, so put everything large on scratch. The workflow needs outbound HTTPS for the package install and the artifact download, and it needs no Globus account.

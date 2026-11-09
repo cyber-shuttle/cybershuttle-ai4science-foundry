@@ -69,8 +69,8 @@ resource_requirements:
   gpu_count: 1
   recommended_gpu: Tesla V100-PCIE-16GB or newer (sm_70 and up)
   measured_peak_gpu_memory_gib: 11.3
-  measured_host_ram_gb: 21.7
-  measured_wall_time: "about 95 s of inference on a V100"
+  measured_host_ram_gb: 22.0
+  measured_wall_time: "95 to 243 s in total on a V100, of which 77 to 113 s is inference"
   storage_gb: 25
 
 compatible_resource_profiles:

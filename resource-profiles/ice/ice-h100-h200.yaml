@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: ice-h100-h200
+name: Georgia Tech ICE — NVIDIA H100 / H200 (HX00) GPU nodes
+system: ICE
+provider: Georgia Tech PACE
+
+description: >
+  Single-GPU slices of the Georgia Tech ICE (Instructional Cluster Environment)
+  HGX nodes, requested with the `HX00` Slurm feature so a job lands on either an
+  H100 80 GB or an H200 141 GB node. Both are Hopper (compute capability 9.0),
+  so kernels built for sm_90 run unchanged on either. Suitable for inference and
+  evaluation of protein-structure models such as OpenFold.
+
+hardware:
+  gpu:
+    model: NVIDIA H100 80GB HBM3 or NVIDIA H200 141GB HBM3e (Slurm feature HX00)
+    memory_gb: 80   # H100; 141 on H200
+    count_per_node: 8
+    compute_capability: "9.0"
+  cpu:
+    model: Intel Xeon Platinum 8462Y+ (H100) / 8562Y+ (H200)
+    cores_per_node: 64
+    memory_gb: 2000
+  storage:
+    home_quota_gb: 30          # per user
+    scratch_quota_gb: 300      # per user; ~/scratch, 1M files
+    local_scratch: node-local NVMe at /tmp
+    parallel_filesystem: Lustre (/storage/ice1)
+
+software:
+  os: RHEL 9
+  driver_cuda: "13 (node feature cuda13); user-space CUDA 12.4 from conda works"
+  modules:
+    - anaconda3
+    - cuda/12.x
+  container_runtime: Apptainer (compute nodes only)
+  internet_access: outbound HTTPS available on login and compute nodes
+
+scheduler:
+  type: SLURM
+  partition: ice-gpu
+  gres: gpu:1
+  constraint: HX00
+  max_walltime: "16:00:00"
+  default_mem_per_cpu_gb: 4
+  example_directive: "#SBATCH -p ice-gpu --gres=gpu:1 -C HX00"
+
+suitable_tasks:
+  - inference
+  - evaluation and benchmarking
+  - fine-tuning of models up to a few billion parameters on one GPU
+
+unsuitable_tasks:
+  - jobs longer than 16 hours (split into array tasks or resumable steps)
+  - workloads needing multi-terabyte local databases (scratch quota is 300 GB)
+
+model_compatibility:
+  openfold: "inference validated (registry/models/biology/openfold); chains up to 700 residues"
+
+notes: >
+  ICE is a shared instructional cluster; queue waits vary with course load.
+  Other GPU types on ice-gpu (A100, A40, L40S, RTX 6000, V100) are reachable by
+  swapping the constraint (e.g. -C gpu-a100). The login nodes have no GPUs, so
+  every GPU step must be submitted through Slurm.
+
+  Account/QOS: request with `--account=<your-account> --partition=ice-gpu
+  --gres=gpu:1` (add a GPU type, e.g. `gpu:a100:1`, to pin a specific
+  architecture instead of taking whatever is free).
+
+  Home directory quota is small (~30GB) and is hit by package manager caches
+  long before scratch fills up — `pip`, `git lfs`, and HuggingFace's hub
+  cache all default to paths under $HOME. Every job script for this profile
+  should redirect PIP_CACHE_DIR, TMPDIR, HF_HOME, and GIT_CONFIG_GLOBAL to a
+  scratch path before installing anything or downloading checkpoints/data.

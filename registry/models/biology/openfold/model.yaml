@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: openfold
+name: OpenFold
+version: "2.2.0"
+
+description: >
+  OpenFold is a trainable, open-source PyTorch reproduction of AlphaFold2 from the
+  AlQuraishi Laboratory. It predicts a protein's 3D atomic structure from its amino-acid
+  sequence plus a multiple sequence alignment (MSA) and optional PDB templates, and
+  reports per-residue confidence (pLDDT); pTM variants also predict aligned error.
+  OpenFold runs both its own openly trained weights and DeepMind's AlphaFold2 weights,
+  so the two can be compared on identical inputs.
+
+  The pipeline has two stages with different hardware profiles:
+    1. Data pipeline: CPU MSA/template search (JackHMMER, HHblits, HHsearch) against
+       ~2.6 TB of sequence databases. This entry skips it by using the precomputed
+       OpenProteinSet alignments published with OpenFold.
+    2. Model inference: GPU Evoformer (48 blocks) + structure module, 3 recycles.
+
+domain:
+  - biology
+  - structural-biology
+  - protein-science
+  - drug-discovery
+
+model_family:
+  - evoformer
+  - structure-prediction
+  - foundation-model
+
+tasks:
+  - inference
+  - training
+  - fine-tuning
+  - evaluation
+
+upstream:
+  github: https://github.com/aqlaboratory/openfold
+  paper: https://doi.org/10.1038/s41592-024-02272-z
+  other:
+    - https://openfold.readthedocs.io
+    - https://registry.opendata.aws/openfold/   # weights + OpenProteinSet
+    - https://huggingface.co/nz/OpenFold        # weights mirror
+    - https://www.biorxiv.org/content/10.1101/2022.11.20.517210
+
+license:
+  code: Apache-2.0
+  openfold_weights: CC BY 4.0
+  openproteinset: CC BY 4.0
+  alphafold2_weights: CC BY 4.0
+
+lifecycle:
+  supported_stages:
+    - inference
+    - training
+    - fine-tuning
+    - evaluation
+
+input:
+  format: FASTA (one chain per file for monomer inference) + precomputed alignments
+  alignments: per-chain directory with *.a3m / *.sto MSAs and an HHsearch *.hhr template hit file
+  templates: mmCIF files for template hits, plus release dates for the date cutoff
+
+output:
+  format: PDB (or ModelCIF with --cif_output)
+  files:
+    - <tag>_<preset>_unrelaxed.pdb: predicted structure, pLDDT in the B-factor column
+    - timings.json: per-target GPU inference time
+
+datasets:
+  recommended:
+    - cameo
+    - openproteinset
+  supported:
+    - casp15
+    - pdb
+
+software:
+  python: "3.10"
+  pytorch: "2.5.1 (CUDA 12.4)"
+  environment: registry/models/biology/openfold/environment.yml
+  setup: registry/models/biology/openfold/scripts/setup.sh
+
+resource_profiles:
+  recommended:
+    - resource-profiles/ice/ice-h100-h200.yaml
+
+cybershuttle:
+  enabled: false
+
+readiness:
+  registry_status: benchmarked
+  nexus_validation: untested
+  benchmark_status: complete
+  optimization_status: not-started
+  workflow_status: validated
+  last_updated: "2026-10-26"
+  notes: >
+    Reproducible inference workflow validated on Georgia Tech ICE (H100/H200). On 109 CAMEO
+    chains OpenFold finetuning_ptm_2 scores mean lDDT-Ca 0.9096 (published 0.9097) and matches
+    AlphaFold2 weights on identical inputs (paired difference -0.002 / +0.001 with / without
+    templates). See registry/models/biology/openfold/README.md and
+    benchmarks/results/openfold/openfold-ice-cameo.yaml. Not yet run on Nexus.
+
+maintainers:
+  - name: Boyang Gong
+    github: Rosette2237
+    affiliation: Georgia Institute of Technology

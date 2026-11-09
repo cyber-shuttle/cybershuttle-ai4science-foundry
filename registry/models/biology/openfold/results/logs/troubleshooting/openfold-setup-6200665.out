@@ -1,0 +1,51 @@
+Begin Slurm Prolog: Oct-11-2026 23:36:56
+Job ID:    6200665
+User ID:   bgong36
+Account:   coc
+Job name:  openfold-setup
+Partition: ice-cpu
+QOS:       coc-ice
+openfold_params/finetuning_ptm_2.pt: OK
+openfold_params/finetuning_no_templ_ptm_1.pt: OK
+params/params_model_1_ptm.npz: OK
+params/params_model_3_ptm.npz: OK
+73cf5d547cfcb291bbd3aa9f4c2f35aa5c030d663da0622f4312ca3b6a1657d8 duplicate_pdb_chains.txt
+ab8a3ad21a8cfcde0570793288f6a1a8f23a0cb3f78e4bf89884c2f23d773ff9 mmcif_cache.json
+4acf8d1ee4f4ed87524e6e40bc6a790b8590ca42db8b1e86ee73efd283bc646d obsolete.dat
+[2026-10-11 23:37:30,663] [WARNING] [real_accelerator.py:162:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-10-11 23:37:30,678] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cpu (auto detect)
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+Traceback (most recent call last):
+  File "/home/hice1/bgong36/cybershuttle-ai4science-foundry/registry/models/biology/openfold/scripts/prepare_data.py", line 171, in <module>
+    main()
+  File "/home/hice1/bgong36/cybershuttle-ai4science-foundry/registry/models/biology/openfold/scripts/prepare_data.py", line 139, in main
+    featurizer = templates.HhsearchHitFeaturizer(  # same settings run_pretrained_openfold.py uses
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 1089, in __init__
+    self._obsolete_pdbs = _parse_obsolete(obsolete_pdbs_path)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 179, in _parse_obsolete
+    return _replace_obsolete_references(result)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 162, in _replace_obsolete_references
+    obsolete_new[k] = _new_target(k)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 158, in _new_target
+    return _new_target(v)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 158, in _new_target
+    return _new_target(v)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/data/templates.py", line 158, in _new_target
+    return _new_target(v)
+  [Previous line repeated 991 more times]
+RecursionError: maximum recursion depth exceeded
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+Begin Slurm Epilog: Oct-11-2026 23:37:34
+Job ID:        6200665
+User ID:       bgong36
+Account:       coc
+Job name:      openfold-setup
+Resources:     cpu=8,mem=32G,node=1
+Rsrc Used:     cput=00:05:04,vmem=0,walltime=00:00:38,mem=2739852K,energy_used=0
+Partition:     ice-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-002-36-0

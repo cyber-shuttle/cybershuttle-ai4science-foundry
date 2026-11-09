@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../../schemas/benchmark.schema.json
+
+id: openfold-ice-cameo
+name: OpenFold — ICE infrastructure and CAMEO structure-quality benchmark (OpenFold vs AlphaFold2 weights)
+model: openfold
+model_version: "2.2.0"
+status: complete
+date_run: "2026-10-26"
+submitted_by: Boyang Gong
+
+description: >
+  Reproduction of OpenFold's claim that its openly trained weights match AlphaFold2's accuracy.
+  OpenFold and AlphaFold2 weights run through the same OpenFold v2.2.0 inference code on identical
+  inputs (OpenProteinSet alignments and template hits, template cutoff 2021-10-10) for 109 CAMEO chains
+  from OpenFold's validation window, scored with OpenFold's own validation metric (lDDT-Ca).
+  Workflow, logs, and per-target scores: registry/models/biology/openfold/.
+
+environment:
+  resource_profile: resource-profiles/ice/ice-h100-h200.yaml
+  container: null   # conda env: openfold/environment.yml
+  software:
+    openfold_commit: e938c184a291bf053af3b14c1e3e8bb29aee57e2   # tag v2.2.0
+    python_version: "3.10.22"
+    pytorch_version: "2.5.1"
+    cuda_version: "12.4"
+    nvidia_driver: "615.71.09"
+  hardware_notes: >
+    Georgia Tech ICE, one GPU per Slurm array task, 8 CPU cores, 64 GB RAM, Slurm feature HX00.
+    Canonical run on NVIDIA H200 141GB; an earlier, byte-identical run also used H100 80GB HBM3.
+
+# ── Infrastructure benchmarks ─────────────────────────────────────────────────
+
+infrastructure:
+  setup:
+    slurm_job: 6601181
+    description: Miniforge + pinned conda env + CUDA kernel build + weights + input staging (CPU only)
+    cpu_cores: 8
+    elapsed_min: 18.4
+    peak_ram_gib: 33    # MaxRSS incl. page cache; requests 64 GB
+    downloaded_gb: 16
+    scratch_footprint_gb: 30
+
+  inference:
+    precision: fp32 weights, TF32 matmuls (OpenFold sets matmul precision "high")
+    recycles: 3
+    relaxation: skipped
+    gpu_hours_allocated: 2.29        # jobs 6601182 + 6601183, task wall time
+    gpu_hours_forward_pass: 1.6      # sum of timings.json
+    wall_min_per_array_task: [23.5, 22.6, 59.9, 23.0]   # task 2: slow H200, see README
+    seconds_per_target_openfold_templates:   # median, H200
+      lt_200_residues: 2.4
+      200_to_400_residues: 6.7
+      400_to_700_residues: 17.2
+      max: 35.6                              # 678 residues
+    host_ram_peak_gib: 10.3
+    gpu_memory_notes: >
+      All targets (<= 678 residues) fit on an 80 GB H100 with default chunking. nvidia-smi reports
+      80 GB (H100) / 140 GB (H200) because PyTorch's caching allocator grows into free memory;
+      this is not the model's requirement.
+
+# ── Structure quality benchmarks ─────────────────────────────────────────────
+# - Published: OpenFold_Parameters.md, ~180 CAMEO chains (3 months ending 2022-01-16)
+# - Here: 109 of 181 window chains (those with OpenProteinSet alignments)
+
+science_metrics:
+
+  dataset:
+    name: CAMEO 3D weekly targets 2021-10-23..2022-01-15, <= 700 residues
+    n_window: 181
+    n_scored: 109
+    exclusions: 72 chains released after OpenProteinSet's PDB snapshot (no precomputed alignments)
+    manifest: registry/models/biology/openfold/results/data_manifest.tsv
+
+  per_weight_set:
+    openfold_templates:
+      checkpoint: finetuning_ptm_2.pt
+      preset: model_1_ptm
+      mean_lddt_ca: 0.9096
+      published_mean_lddt_ca: 0.9097
+      mean_gdt_ts: 0.821
+      median_ca_rmsd_angstrom: 1.44
+      mean_plddt: 89.4
+      plddt_vs_lddt_ca_pearson_r: 0.88
+    alphafold2_templates:
+      checkpoint: params_model_1_ptm.npz
+      preset: model_1_ptm
+      mean_lddt_ca: 0.9119
+      mean_gdt_ts: 0.818
+      median_ca_rmsd_angstrom: 1.50
+      mean_plddt: 88.9
+      plddt_vs_lddt_ca_pearson_r: 0.81
+    openfold_no_templates:
+      checkpoint: finetuning_no_templ_ptm_1.pt
+      preset: model_3_ptm
+      mean_lddt_ca: 0.9093
+      published_mean_lddt_ca: 0.9025
+      mean_gdt_ts: 0.814
+      median_ca_rmsd_angstrom: 1.56
+      mean_plddt: 89.7
+      plddt_vs_lddt_ca_pearson_r: 0.82
+    alphafold2_no_templates:
+      checkpoint: params_model_3_ptm.npz
+      preset: model_3_ptm
+      mean_lddt_ca: 0.9086
+      mean_gdt_ts: 0.805
+      median_ca_rmsd_angstrom: 1.59
+      mean_plddt: 89.6
+      plddt_vs_lddt_ca_pearson_r: 0.83
+
+  paired_openfold_minus_alphafold2_lddt_ca:
+    templates: {n: 109, mean: -0.0024, bootstrap_95ci: [-0.0114, 0.0038], per_target_pearson_r: 0.92}
+    no_templates: {n: 109, mean: 0.0007, bootstrap_95ci: [-0.0036, 0.0058], per_target_pearson_r: 0.97}
+
+  smoke_test_6kwc:
+    ca_rmsd_vs_bundled_reference_angstrom: {openfold_templates: 0.049, alphafold2_templates: 0.373}
+    lddt_ca_vs_experimental: [0.963, 0.983]   # range over 4 weight sets
+    bitwise_reproducible: true   # 3 env builds; H100 and H200
+
+  cameo_predictions_bitwise_reproducible: true   # all 436; clean runs 6201044 and 6601183
+
+  success_criteria:
+    mean_within_0_02_of_published: pass
+    abs_paired_difference_le_0_01: pass
+    smoke_within_0_5_angstrom: pass
+
+cost_and_energy:
+  gpu_hours: 2.29
+  cpu_hours_setup: 2.5
+  notes: ICE is an instructional cluster with no per-hour charge; energy accounting is not reported (energy_used=0).
+
+notes: >
+  Results: registry/models/biology/openfold/results/summary.json and metrics.csv.
+  Peer-reproduced on a V100 (smoke test + 5 shortest chains) in the PR #44 review.
+  Cite Ahdritz et al., Nature Methods 21, 1514–1524 (2024) and Jumper et al., Nature 596, 583–589 (2021).

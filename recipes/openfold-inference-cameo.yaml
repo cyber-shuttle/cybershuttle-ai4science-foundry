@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: openfold-inference-cameo
+name: OpenFold — Paired OpenFold vs AlphaFold2 monomer inference on CAMEO (precomputed alignments)
+model: openfold
+task: inference
+description: >
+  Reproduces OpenFold's headline claim ("OpenFold matches the accuracy of AlphaFold2")
+  with released weights rather than retraining. OpenFold and AlphaFold2 weights run
+  through the same OpenFold v2.2.0 inference code on identical inputs: CAMEO targets from
+  OpenFold's validation window (13 weekly releases, 2021-10-23..2022-01-15, <= 700 residues),
+  with OpenProteinSet alignments and template hits (template cutoff 2021-10-10).
+  Predictions are scored against the experimental structures with OpenFold's own
+  validation metric (lDDT-Ca) and compared with the published per-checkpoint values.
+  The executable workflow and reproduction guide live in registry/models/biology/openfold/.
+
+prerequisites:
+  - Georgia Tech ICE account (or any Slurm cluster with an sm_70+ NVIDIA GPU and outbound HTTPS)
+  - ~40 GB of scratch space (30 GB used); no sequence databases are needed
+
+input:
+  targets: archived CAMEO 3D target list (Wayback snapshot, sha256-checked)
+  alignments: OpenProteinSet, s3://openfold/pdb/<chain>/{a3m,hhr}
+  templates: RCSB mmCIFs fetched on demand + s3://openfold/data_caches/mmcif_cache.json
+  ground_truth: RCSB mmCIF of each target entry
+
+output:
+  per_prediction:
+    - <tag>_<preset>_unrelaxed.pdb: predicted structure (pLDDT in B-factor column)
+  per_run:
+    - timings.json: GPU inference seconds per target
+    - gpu_usage.csv: nvidia-smi memory/utilization trace
+  evaluation:
+    - results/metrics.csv: lDDT-Ca, GDT-TS, Ca RMSD, pLDDT per prediction
+    - results/summary.json: means, paired differences, success criteria
+
+environment:
+  conda_env: registry/models/biology/openfold/environment.yml   # full pin; PyTorch 2.5.1, CUDA 12.4
+  openfold_commit: e938c184a291bf053af3b14c1e3e8bb29aee57e2     # tag v2.2.0
+  container: null   # not used
+
+steps:
+  - name: setup
+    description: Miniforge + conda env, OpenFold build (CUDA kernel), weights, input staging
+    commands:
+      - sbatch scripts/setup.sh
+  - name: smoke_test
+    description: Bundled 6KWC example with all four weight sets
+    commands:
+      - sbatch scripts/run_inference.sh smoke
+  - name: inference
+    description: Slurm array, one task per weight set (OpenFold/AlphaFold2 x templates/no templates)
+    commands:
+      - sbatch scripts/run_inference.sh cameo
+  - name: evaluate
+    description: Score against experimental structures and check the success criteria (~2 min, login node)
+    commands:
+      - source scripts/config.sh && activate_env && python scripts/evaluate.py
+
+weight_sets:
+  openfold_templates: {preset: model_1_ptm, weights: openfold_params/finetuning_ptm_2.pt}
+  alphafold2_templates: {preset: model_1_ptm, weights: params/params_model_1_ptm.npz}
+  openfold_no_templates: {preset: model_3_ptm, weights: openfold_params/finetuning_no_templ_ptm_1.pt}
+  alphafold2_no_templates: {preset: model_3_ptm, weights: params/params_model_3_ptm.npz}
+
+resource_requirements:
+  setup:
+    gpu: false
+    cpu_cores: 8
+    ram_gb: 64
+    estimated_runtime: "~20 min (clean build, job 6601181)"
+  inference:
+    gpu: true
+    gpu_count: 1
+    gpu_model: H100 80 GB or H200 141 GB (Slurm feature HX00)
+    cpu_cores: 8
+    ram_gb: 64
+    estimated_runtime: "~25 min per array task for 109 chains (34-678 residues)"
+  storage_gb: 30
+
+compatible_resource_profiles:
+  - resource-profiles/ice/ice-h100-h200.yaml
+
+slurm_example: registry/models/biology/openfold/scripts/run_inference.sh
+
+notes: >
+  Relaxation (OpenMM) is skipped: the evaluation scores Ca positions, which relaxation
+  barely moves. Seeds are fixed (--data_random_seed 42).

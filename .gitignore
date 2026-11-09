@@ -1,3 +1,12 @@
-benchmarks/results/.DS_Store
-registry/.DS_Store
-registry/models/.DS_Store
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Slurm output from jobs submitted without -o
+slurm-*.out
+
+# Partial downloads (prepare_data.py)
+*.part

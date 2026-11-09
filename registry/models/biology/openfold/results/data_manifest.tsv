@@ -1,0 +1,191 @@
+set	tag	pdb	chain	cameo_date	length	status	mmcif_sha256	msa_source	msa_sha256	n_msa_seqs	templates
+smoke	6KWC_1	6kwc	A		191	ok	d030bff369c5c3cebf941862bfc8d43c19fa80af318143968bd3a65fba9b7949	openfold/examples/monomer/alignments/6KWC_1	c919729ed05863220cb31d012536a181badb4909c10654451bc410529011c0ed	6233	2dfb_A 1h1a_B 1te1_B 5hxv_D
+cameo	7dck_A	7dck	A	2021-10-23	248	ok	25e625e844f4d3cd5142e9527ce7e251614d30b43bf1c420b95dde7f0126e938	s3://openfold/pdb/7dck_A/	a95b77228d27434cd568d9fd07c48bccadb06eb57df6176bf585ac341a6c5a0b	16507	2p4z_B 3h3e_A 5ajl_B 5iqk_B
+cameo	7f17_B	7f17	B	2021-10-23	217	ok	344c226b86a8bf5c9fc8bfca0be33616070bc70519522d4dc25b5a5bfd2d3461	s3://openfold/pdb/7f17_A/	7d5e8093650de9ff873796403d771e12fa390095418ef8c9617311baa1dfa816	10752	2ipb_D 1d2t_A 3w36_A 4cit_A
+cameo	7msj_A	7msj	A	2021-10-23	112	ok	9496320581400cf617a1802b885af1c739246551ad7a73b80f3d55cf3ca1d546	s3://openfold/pdb/7msj_A/	47335a2592ec3198303930b6667513bbf4a3148162e0b84946ca477ccb435de6	6437	6ng3_A 5t2q_A 4rsu_K 5tl5_A
+cameo	7nwz_D	7nwz	D	2021-10-23	81	ok	1ca38ec2e1b373ec8d3b667deac3141c35da0cebf945a2e6d8a966323924fd87	s3://openfold/pdb/7nwz_C/	2391ca1e9e72ff39ebeb5bafd3c10d30884f7b032ede4faaf98399284e8ea1c2	514	2elc_D 2k5c_A 3kde_C 2d8r_A
+cameo	7nx0_B	7nx0	B	2021-10-23	322	ok	e1dd1d3b2da5cdb26975e84952e35d4594100339ddbe3de3c6c1856733239709	s3://openfold/pdb/7nx0_B/	53e2cb73a2594a37c6e5cfcab937a02ab5c318e12092995e45326c1b66a3c701	4555	7khx_A 4dou_A 5hkj_A 5kc6_B
+cameo	7nx0_E	7nx0	E	2021-10-23	126	ok	e1dd1d3b2da5cdb26975e84952e35d4594100339ddbe3de3c6c1856733239709	s3://openfold/pdb/7nx0_D/	1eb1a573346aab80842de124658727a636464572f84f713c3c2b68b85499d933	12425	6qd6_G 6xux_A 6qd6_F 5wts_A
+cameo	7og0_B	7og0	B	2021-10-23	527	ok	43421dfd3f6957c8c5b218edf7cb71c521fc953a13627be7ccda30d6dbde3d64	s3://openfold/pdb/7og0_A/	7024615d4b43c1125e92c23efe8f6db238dc5093a671e47f8d640b12edf361e3	16704	5f1q_B 1dpp_A 4qfl_A 1uqw_B
+cameo	7pkx_A	7pkx	A	2021-10-23	416	ok	7a2340c8aba4fb0bc6728ea72d2adb708999cd310ce1828f3a3d95ad4e70bc54	s3://openfold/pdb/7pkx_A/	a507a5d06f20d690b6a88d1faaf63d80ffd60d6cd93055c7bd53f4007fbdddf1	12441	4grc_A 4gt2_A 6jbn_A 6kmn_B
+cameo	7plq_B	7plq	B	2021-10-23	191	ok	38f3593e15309862c2cb24d4979838a98855bfb5f7f247f54aac5641f32af429	s3://openfold/pdb/7plq_A/	e604026c1e0a2d4912548607cefe53d5b55b6b071a50d882276debab617e78b3	3001	5ngo_D 6tl1_A 3hkv_A 3hkv_B
+cameo	7s6g_A	7s6g	A	2021-10-23	275	ok	a2e6cb00521178ee517f5c974473d937ef1585703a1650687438b965e54d828a	s3://openfold/pdb/7s6g_A/	70ad7737396d226df4a0ff2f5b757a8c8042588b3c680a5e21adad86d6daef35	13837	5lq5_A 5ub3_A 6ghq_A 6ght_A
+cameo	7siq_A	7siq	A	2021-10-23	542	ok	fd3f6f25a80a87acc8a3c4cd27b2cf6ab35553540ef7c3f2e4580cb13e57bfcd	s3://openfold/pdb/7siq_A/	ee9273e366fc7300d9c8eb166a3e1c56c3201ce794025d109a8022601c8f6184	18845	6gwt_w 3tr5_A 3vr1_B 6lkq_v
+cameo	7ar0_B	7ar0	B	2021-10-30	126	ok	0c51fe22c6cbc5577ab2e4298f107992856ab0ff29366dcd6f1ec661ab5cbf8a	s3://openfold/pdb/7ar0_B/	2a03636687e3ca15af64fa15ec892dd19150ed7e12df78c530a9e9b01ac3dc64	12306	6qd6_G 6xux_A 5wts_A 5wb1_A
+cameo	7cjs_B	7cjs	B	2021-10-30	254	ok	fc51fe9f77d1dc447393c08cebb533ec87cd2118498d01720882f421f6def1b0	s3://openfold/pdb/7cjs_A/	f7445a440b8241ca3c3c4f091ef9cd7224b0a71f657fe9a3f6bea4fe6ce77143	16806	4nef_B 3iyz_A 1j4n_A 3d9s_C
+cameo	7dcm_A	7dcm	A	2021-10-30	186	ok	d94b73a87e9c769dcf32eec85ad4f983ec2391adf29d20e85a3dcbfd6a71391b	s3://openfold/pdb/7dcm_A/	6af47889729ca56e9e8711b4dd0c46ec00bc07abf7853f1f2e63c4b5d0f82f37	4814	2lxf_A 2lql_A 6lkq_n 7a23_Y
+cameo	7ef6_A	7ef6	A	2021-10-30	250	ok	91dedf0cee09f116bc117f60c10d13074a2f0f6c2737611daefca79d0d88b9d4	s3://openfold/pdb/7ef6_A/	41f17b74ead69bac6e02825a37a905945162394b4d83dc0001969da139b8e699	12432	3opx_A 3nuq_A 4eel_A 3l5k_A
+cameo	7et8_A	7et8	A	2021-10-30	266	ok	841577f45e0645105be525da9df2db7f88171909a0de3484f9516ebdc7e5dbda	s3://openfold/pdb/7et8_A/	3d9294de62799542928ccb2006a04d3bfa3cde3672cc5d196d2c71cb740cf137	16942	2v5j_A 4mf4_A 2vws_C 4b5u_B
+cameo	7lc5_A	7lc5	A	2021-10-30	192	ok	1209a98d21a4ffb7c4155ac73a69da26e1141e080aae0c0bcef9551913dd9e59	s3://openfold/pdb/7lc5_A/	93c87854285fa4052b8baa3b8bbdf48db3e5da484bf0fba3bbb844ca1f6227da	10145	5unm_A 6b2m_A 5f4w_C 3lg3_A
+cameo	7ndr_A	7ndr	A	2021-10-30	314	ok	781d424441695d37145c02c31e14c9cdb51a60c8d9b5b4e1291271fac95f8078	s3://openfold/pdb/7ndr_A/	aa725697d8c9f5c2bfb33a4405dd4d55649951761d0a1cd2ab0526fce2c7b71b	16877	5oei_A 2dvz_A 2qpq_C 2f5x_B
+cameo	7nl4_A	7nl4	A	2021-10-30	227	ok	e66cb9e2a9078debd947732533545dd93eda170b988b3f1a4151feb0e2819e73	s3://openfold/pdb/7nl4_A/	6aacf17c088a6ca87adbf3222c337b06c4cf80da23f09fcbf35cbc367d497e3b	16493	3iyz_A 5c5x_D 3d9s_C 1j4n_A
+cameo	7o49_F	7o49	F	2021-10-30	650	ok	10ea6f869bb7f5a18d0e3e611186bfdea6a6085ce60c79da85bdc7f320abfd9b	s3://openfold/pdb/7o49_A/	3e738276be6644df974985f26d3e526a6885ac45292c9b4c92743d4231ede05f	19309	1pmd_A 5u47_A 1qme_A 7onk_A
+cameo	7s6b_A	7s6b	A	2021-10-30	944	excluded: > 700 residues					
+cameo	7sir_A	7sir	A	2021-10-30	456	ok	40e9e0207afa9f20bfc5c588a04b5dd0ac1f6e52933fe3494d4d4abb2ad5ca05	s3://openfold/pdb/7sir_A/	f54783df1ac9737759a9e5edfabdf3a56c7597bbb44f6ac0cf2ac838cd8d05cd	18350	2x5o_A 3lk7_A 4buc_B 1p3d_A
+cameo	7v1v_A	7v1v	A	2021-10-30	460	ok	022cad745162b8fe8dc3d8a128feb85ac95b844c970f1baa5db635530f502468	s3://openfold/pdb/7v1v_A/	405e639d0cc0df92ec426056aeb896b40e79d995c105d83df1cffaebeb1b6234	13777	4kq7_B 4kq7_B 4kq7_B
+cameo	7vmu_A	7vmu	A	2021-10-30	245	ok	b3df971f9468fda9d04a8bf7721bf371e2e19e9518d21a6eff52eb12ac7ab9fc	s3://openfold/pdb/7vmu_A/	e80e1bbd6056f85f4135b2df717917b38b94e368a38d6f4344ca470f5b92b338	11657	5u0u_A 3juy_A 7kh0_S 6yxg_H
+cameo	6wmk_A	6wmk	A	2021-11-06	69	ok	4bb9fd351ab6e845fd251a068c7f4770bb0100ff589e6e0e398067a388197391	s3://openfold/pdb/6wmk_A/	8f5a000b33f8293f7a3e5028dace4ce7b651e30414426f041ad25f8e41ca970b	1	2kl8_A 1zl0_B 4h7w_A 1jh6_A
+cameo	6wqc_A	6wqc	A	2021-11-06	294	ok	c267402393cc6ca100c4084e4ae399a7ba805bd2c831eba14ec82e82d95e31f4	s3://openfold/pdb/6wqc_A/	850155317c41ca993cb7719c19b42c03f13dfabb6fd3683434be6825ee9d8ed6	9245	7c4f_A 7c4e_A 2wpx_B 3tt2_A
+cameo	7au7_A	7au7	A	2021-11-06	263	ok	9b86f8a8daa2e333819b97f70be388e7a055836dad14d0192fc61021cfe1d529	s3://openfold/pdb/7au7_A/	d2bf19bc340748a4730c109bfb1b6096b3b2edd8fd8436a4d1c045e4785dc663	4871	5jce_A 5jce_B 5jcd_B 4eby_A
+cameo	7b3a_A	7b3a	A	2021-11-06	280	ok	4733091a281547445c94439e2a949eff60753b131acc681dabfc3f8b491e98b2	s3://openfold/pdb/7b3a_A/	39cd5abc0c5f8d51fc88d7380e04c7af8a8889b26d09f969427cb773e6767aa7	5953	3g3s_B 7c4f_A 7c4e_A 3iwg_A
+cameo	7bcz_A	7bcz	A	2021-11-06	245	ok	28138ec26ea1e1b779ecc69a8c3a01e13e7294620d2eaa0780b999d7a7a673e1	s3://openfold/pdb/7bcz_A/	1728dbc4aca8795c0365c4fe4de2129d37f699380649feabdc582322a6adb318	9451	4qjl_A 4u89_A 4qvh_B 4qvh_A
+cameo	7bhy_A	7bhy	A	2021-11-06	57	ok	9d773829165e07b6a3271138759360d105f4a207d7dbc8e1d8584fe88c7f3a38	s3://openfold/pdb/7bhy_A/	6bb72b86262e152eaa2994b6702e81ac44f277b772e49baf7ef22cd872764af4	4600	4go1_A 4l5j_D 2w48_C 2w48_B
+cameo	7dru_C	7dru	C	2021-11-06	163	ok	76eb02e9a8fca2d4f2ca38bebd646d116841b7bcb276e7af73f16b224bedc05a	s3://openfold/pdb/7dru_A/	c3a7fe9edcff4b4d06c762688414ccdf1672586b3e1bb84808f2550b2a4eacc6	1991	2lb6_A 3fiq_B 4wfv_A 3zq3_A
+cameo	7eqx_A	7eqx	A	2021-11-06	98	ok	a187f7d5d6cf9e5630d9fafc3aaf33108794c893477994c4b889ea4603709fb8	s3://openfold/pdb/7eqx_A/	79213cf38003243a1125ccbb4b5baa73eaf4da210aea665acda3498b3ddacd35	1297	1pyt_A 1aye_A 2boa_A 1pca_A
+cameo	7eqx_C	7eqx	C	2021-11-06	299	ok	a187f7d5d6cf9e5630d9fafc3aaf33108794c893477994c4b889ea4603709fb8	s3://openfold/pdb/7eqx_C/	661cf799cc6c73853710de1c8498f680753b9be6fa2615f5fbffb2c0599e6de4	16777	4uf4_B 2boa_A 5hvg_A 1kwm_B
+cameo	7esx_A	7esx	A	2021-11-06	499	ok	3946e8f4641d4837213f5b0d57660456072c41b22b7c909c634a57871e93c2a2	s3://openfold/pdb/7esx_A/	bbda88ffcafe181c47cdfc38b23007aa4151916faa8d64109652199fba8990da	1651	6sw9_8 6g81_A
+cameo	7f7n_A	7f7n	A	2021-11-06	126	ok	02e23007254077174e29376776d55cc13d42e462dc4d12c6b9d111e978b5acec	s3://openfold/pdb/7f7n_A/	9af06f5388f5a94fdef9f0e8a2f21a247c5a39fda553e1e76216d87f78d1d23d	12737	7kim_Z 5oay_A 6ono_C 7kug_A
+cameo	7fbp_B	7fbp	B	2021-11-06	34	ok	c87d3a59720231ee67b96e7a7c5c512e5925d1d8c9cae645dc1fe2642604e97a	s3://openfold/pdb/7fbp_B/	af126c05da3bf79b53e09bb06ac8b624d0cc60cf79e8dec35da0908c90e272cb	58	5wow_A 1w7z_D 4gux_E 2c4b_A
+cameo	7fe3_A	7fe3	A	2021-11-06	678	ok	6ef5cf845a04d1cd6b6da38aa0a926d71757c5e3af181da5e88de987d6edd19d	s3://openfold/pdb/7fe3_A/	7e08eae10e0931a18a06662ea16762a1ea987adaa45b9fd2a0366d345cea954c	18532	1h54_A 6w0p_A 6w0p_B 4ktp_A
+cameo	7lew_B	7lew	B	2021-11-06	34	ok	0c377f16e914f7e08fae1d82b27b0196211d988b2aad800e5aa519a309d86d96	s3://openfold/pdb/7lew_B/	4ec9219868a1321f6366b751847b9735d30a6fa98837742eda302d756f3bba7f	402	4jqu_B 6op8_B 6sn1_B 6dew_A
+cameo	7mfw_B	7mfw	B	2021-11-06	104	ok	2703352f83ba0e0a39888131f0e5c3a2c5cf4a2d8dc279b65962dc48492ab6d8	s3://openfold/pdb/7mfw_A/	4dc3db6c2dca6088cb3ddc45b4b63143fc38548647005ed3c52a3b451400b482	3521	1z87_A 3egg_C 2xkx_A 5v6b_A
+cameo	7obm_A	7obm	A	2021-11-06	639	ok	43384117f13e514610536a11166d7affa41941d817a4c6d3545e4a634865ee5e	s3://openfold/pdb/7obm_A/	795ff6d6f62edcc2429bb1d0a3d02a0271cb959c282bce6d876eb29ab2024253	14822	7ne5_A 4bp8_B 2xe4_A 6can_B
+cameo	7ool_A	7ool	A	2021-11-06	109	ok	a809227fa80a49a7d0eb8033e94de441ad2de711c4a0990fe52a43ba24603450	s3://openfold/pdb/7ool_A/	a58bf5f4b9832000deaa2242aeaf3e50d19c73d21b4216f0cee3e4c550965f9f	15577	5hr2_A 3gnj_A 1f6m_D 4kca_B
+cameo	7r84_A	7r84	A	2021-11-06	54	ok	5069120395f2727fd6dd8ae72829031028d8bc8047cb9b1ed2f0e79aa71e751a	s3://openfold/pdb/7r84_A/	2bd7319f35057398a391f5744edbdf256e4c36ae6418ed868cc905b05cfa9522	10869	3vn4_A 5ftt_E 5ftt_A 5foe_B
+cameo	7rwk_A	7rwk	A	2021-11-06	384	ok	6f2744851a2b649c2d8f273d694b61b0e1535bba388e438443d2e2b9ec36aa74	s3://openfold/pdb/7rwk_A/	1765ec00de4f820b8dd22fca947eb1015f9a7c4d3125c2d652a04977e77b1a38	6581	6vm6_B 5vgb_A 6j9n_A 6jhw_D
+cameo	6xqj_A	6xqj	A	2021-11-13	234	ok	4e9155455f78a3fbdf727cb2be12c46e1af336fd016a14462bbe3c8970f12231	s3://openfold/pdb/6xqj_A/	d452bd565e1cb184d438dec13a8eac96f6c8aa80795b287002d72de7f1386ea6	5939	1oqy_A 2qsf_X 1esx_A 5aja_B
+cameo	6z01_A	6z01	A	2021-11-13	539	ok	50b310228e1c90bc72f541452638955e567f162ad3409799a01dc4d9e782dcae	s3://openfold/pdb/6z01_A/	fec34c316b32d4f72cf6d904c7424a904f88ffd66af1bbe0f9cef6b98b4523d9	14028	1k4t_A 1rrj_A 1k4s_A 2b9s_A
+cameo	7atr_A	7atr	A	2021-11-13	580	ok	004e443effc749ba199b0069d795855c36fcf21817ff8399858e07f0b589db0d	s3://openfold/pdb/7atr_A/	038ba8a4d25aae1c1026d5c5ebdc001d1023c80f7f89de32572a3d49e8ea98f1	17328	5icq_A 4ony_A 3ryb_A 4i9d_B
+cameo	7dfe_A	7dfe	A	2021-11-13	142	ok	589a33ef1b452248494ac0a7a5187c51b4a9776263d28c6ec5c4236f912dddc5	s3://openfold/pdb/7dfe_A/	a76bfb72af71a64cff57d09499a37d842e63c793cddfdd6c8a4cb49585f227fb	92	2k3n_A 2k3o_A 2lyi_A 2mqa_A
+cameo	7dtp_A	7dtp	A	2021-11-13	477	ok	9c8b3d37c0aa2efc856c92d9a114a948b6c6bb920ab1fae23f5e17eda526f2cc	s3://openfold/pdb/7dtp_A/	f46fe434d562082f5d6d7e3ede9a6c1c452c499835bb001d90fc7f017002d6fd	13075	7cys_A 7dex_A 6wcs_A 7dev_A
+cameo	7kik_A	7kik	A	2021-11-13	137	ok	8af20303dd399783f685104c0dbc720ae0a8fa003c9fcc1655bf1bfa27f616b0	s3://openfold/pdb/7kik_A/	9465b97a616c6d50efb0f223fcdd19c3ab4fd1fdbd59c7cc8dd77309e8dc7eed	2503	6we0_A 1l2m_A 5xor_B 2hw0_A
+cameo	7kos_A	7kos	A	2021-11-13	149	ok	6c5cd12e23679c71f00078738aef003d7ebd8cc7be60494799fbf907794cd45b	s3://openfold/pdb/7kos_A/	03e10e450b394a9a4f7af1ad49f54f3d92ee03b3a2e6178fc62dd39ce35fed77	6004	1xdy_H 2ca4_A 2blf_A 1sox_B
+cameo	7ouq_A	7ouq	A	2021-11-13	130	ok	c38b85601b78a1052f396499a99407c24359d880de415f87a0eb23d72a978bce	s3://openfold/pdb/7ouq_A/	2a87b817a1afdb1a3d741809a5d32b5201adf923bd06d2bcab128322d81f1312	1259	6hdv_D 3ew1_C 6zyt_AAA 3szi_D
+cameo	7p82_C	7p82	C	2021-11-13	426	ok	fa4cde3a4ded4ba859c6fa0b4d7a5a87ff08b7e2b4287a8c1d45d259254d4539	s3://openfold/pdb/7p82_A/	2e98b68c54e5b86934acfe5aed8027d2871f72ab7548af1ff01bd228c06ed9a7	6739	4l2z_A 6s83_H 1fug_B 2obv_A
+cameo	7pbk_A	7pbk	A	2021-11-13	646	ok	2f308cf48a6edab965bbd49e04f5f7d5657ce80efce8e7213baacc02a03e4df5	s3://openfold/pdb/7pbk_A/	3c737312f25a091610edecdba3ad17c64466dc08d71a71bea1ca06557844c75b	17956	1ksp_A 1kfs_A 6vde_A 4yfu_A
+cameo	7q47_A	7q47	A	2021-11-13	170	ok	197cde50433cb659eb87ac8da0261c98d58c508857aa789f9f425c3c4a17cf4f	s3://openfold/pdb/7q47_A/	58689c2126d1c35790d47831ca0aa1e6e6acf8fdc9b0dc7a26f299c13717ef26	4589	5dn5_B 4kt3_A 7cla_A 2o9l_A
+cameo	7re4_A	7re4	A	2021-11-13	254	ok	36aa0eeece3ee1e2dde7a0e3195a473e878450fb0a5d772a3a57fb85c6194b3b	s3://openfold/pdb/7re4_A/	b4ea65778869ada396837855e941cc737ca90246f48b8519f321211a9ab973af	2135	6om5_A 4o3x_B 5ec6_A 3hol_A
+cameo	7re6_A	7re6	A	2021-11-13	374	ok	b76ffc81ab7a74ae14964750835b92a8c6694e55959f06281daa3f14b4789a32	s3://openfold/pdb/7re6_A/	59a7186165e5a8499a8bea892eed41f43d830848c1dc9b4788d08b74856ecb5b	14679	1m15_A 4bg4_B 4rf6_B 4rf7_B
+cameo	6tf4_A	6tf4	A	2021-11-20	67	ok	dc17bd038f09b391bfd76143dd26d8a547d7378ce23980ffd3463db53c092298	s3://openfold/pdb/6tf4_A/	bae47cf1408e4a3a1d641c7526595e1b38b23d33289a53eb95aa2569b8f1f314	1604	2lcl_A 2mi6_A 1npp_A 6x7k_AB
+cameo	7awk_A	7awk	A	2021-11-20	130	ok	271721191e4be627145030bba7f068ab731bcc886a79ed91f51828942082ceb4	s3://openfold/pdb/7awk_A/	d3c152a8d7d0758812c057f5f8ebc226dbce39a8d2b2de7c715716a04d03d99a	1206	6af4_A 5mje_A 5ja9_C 1wmi_C
+cameo	7bcj_A	7bcj	A	2021-11-20	147	ok	ac900ff8a9e15fb9ce348dbef01eb4b4c58055cb67bf9c85a51ec5aa789f5ef9	s3://openfold/pdb/7bcj_A/	16d670c2b713c90b784015f81c4851a7b85e13b4c0deb722c3b92cf0822e8ccf	19	5wx9_A 7et4_D 7rsk_A 6b6l_B
+cameo	7djy_A	7djy	A	2021-11-20	129	ok	15b9651e344e858a998ae796ba49d51f44f84af7ae19e18b73d4ee0b83fcaa69	s3://openfold/pdb/7djy_A/	3a9f268aae9db828678c5ccd892d8b1e260262ae28418c8c778d7e5ac51523fb	12028	6xux_A 6qd6_G 5wts_A 6gkd_B
+cameo	7dk9_A	7dk9	A	2021-11-20	232	ok	30da67f2ac7d6d83f2856d5efd4b25d2b66296db563a4aab9915508ae173639b	s3://openfold/pdb/7dk9_A/	5376901a47f429cc9a1edf396b71d1759bbfff208cc4c1d6ef66d663babe545e	2240	1yzx_A 1r4w_A 4zil_B 4zil_A
+cameo	7dvn_A	7dvn	A	2021-11-20	147	ok	bf859593b5741adc90295c2780a38cda43b546fd2181c05e92d62285af7d79be	s3://openfold/pdb/7dvn_A/	b68a4af09032019c038c9def8cc2cba33c873ae58fc21f9880eddaec866e3a5a	2673	4kdp_F 3e6m_D 2eth_B 1s3j_B
+cameo	7kqv_D	7kqv	D	2021-11-20	496	ok	affafe41d78fa632e78ad95d572155534515804ed997271ef748dbbfae426ffd	s3://openfold/pdb/7kqv_A/	c2448a9dd8a4d6b2cf335e3b563f129e51263a5ed8ec9c099f7a075204cfead9	17710	4qto_A 4qn2_A 3ek1_E 4i8p_A
+cameo	7ls0_B	7ls0	B	2021-11-20	451	ok	565edcba8c3861c791153f4a7d4d86dd8049ab075b53e3e51d709895d8686084	s3://openfold/pdb/7ls0_A/	b7ebc4dc417f5a6229a94b55cfaa4639105e2af270182c59e6ea7d32dbe75f40	5895	5kc6_B 5hba_A 4f3j_A 2wnv_B
+cameo	7ny6_A	7ny6	A	2021-11-20	211	ok	8530589be67da7845a65650d262f7ecc7dab3d409ee57074a58a5e375902a59c	s3://openfold/pdb/7ny6_A/	ee4177006dd14c82ad31f20b082bd3935034c914edded87f99eafbfe3f639817	15812	1yd9_A 6fy5_A 3q6z_A 3iif_B
+cameo	7plb_B	7plb	B	2021-11-20	290	ok	3b82c526aff51563fb1f32ba8a2277ee93c08ee38f1b842a157fabbafa287e46	s3://openfold/pdb/7plb_A/	3b48d4755b9ca034d578dfe2c782ef965be2aa608e5f2dcc99475eb12bb0ddee	17241	5gx4_A 5gtq_A 3g4h_A 3g4e_A
+cameo	7rbw_A	7rbw	A	2021-11-20	411	ok	f2fb5987e2c9ca0a4fcf11b1a52984da0128c670978d4277b1fd5a7acd3144e1	s3://openfold/pdb/7rbw_A/	6cd35e851f21b13e29466c1c6201c07f8bdc8fb54b40f030b5bf4c053e9539da	16643	6i7u_A 1oo8_A 5ei0_A 6kga_B
+cameo	7vnb_A	7vnb	A	2021-11-20	118	ok	76dda78635c8e71c5a00071de003bb604f195c04e6b64ee95db2cd1cb422f36f	s3://openfold/pdb/7vnb_A/	c2df60880662dcf9bbf679c82025a0a6b3761a0213e937919f8c814bcb94dfeb	11773	6xux_A 5wb1_A 5wts_A 6qd6_G
+cameo	7b0d_A	7b0d	A	2021-11-27	399	ok	75ba866c437016a7059fa9a0e759b02db27c52d74892e85ca68321eefbfbcef0	s3://openfold/pdb/7b0d_A/	e0d16fd5851559aa45d7ac9b6774dc9e41869e2106ac3e8c1ae9c25f685c216b	17412	4zas_A 6ewj_C 3frk_A 7n63_A
+cameo	7e2v_A	7e2v	A	2021-11-27	550	ok	48aea36697383dd262740633eaa00a4c366facc28702a0af0e3bdf2a3b7a725c	s3://openfold/pdb/7e2v_A/	50b69a46830921914718daca9938ea55734ef35bbba7f6bbd8d994b9f4804a49	19289	5d79_A 4ud8_A 6jqh_B 3vte_A
+cameo	7f6e_B	7f6e	B	2021-11-27	342	ok	37e92fc25af75fa34deaa68445f70c608046c4d44dc3f650bba343d9c146e024	s3://openfold/pdb/7f6e_A/	7539fc68d9cb307e902f28b355f06766395d7ef01a7d7e9cea1d3121ccbd850b	13143	3c9h_B 3c9h_A 6fjl_B 5t1p_D
+cameo	7fbh_A	7fbh	A	2021-11-27	303	ok	364a01ee53355b3f3141491a6bc06153063845f7735bfe687b0e40a8018d44dd	s3://openfold/pdb/7fbh_A/	abe7f83830208d6d6ea90a8c56b26be94c760eacb803cdb22ca77d877a10269d	15563	5z9o_A 5z9o_B 1kpg_D 3hem_A
+cameo	7fh3_A	7fh3	A	2021-11-27	393	ok	bb6450c357c4f76e12d6204bed06527be22b9351f7326b778e8b39ab25653cb7	s3://openfold/pdb/7fh3_A/	e93ab99a1abf3d71fb95688b9dddfde6b1a9573592c0e5a3b80ce9d7780b6788	14542	1x6v_B 2qjf_B 2qjf_A 4maf_B
+cameo	7kiu_A	7kiu	A	2021-11-27	281	ok	c4125c5cc11e4ce65f5127b16285f6fd291b6ba5ab2f2d1f3b76eae0481df517	s3://openfold/pdb/7kiu_A/	6149c4f5426bff4a168592999d13374e01568f309945060deb1a54e9ee1554a7	5248	2a42_B 4fva_D 2f1n_A 1sr4_B
+cameo	7kua_A	7kua	A	2021-11-27	191	ok	2b4d2c92135588116c332aaac1096631018f0023631151cfcf2d21c80a012908	s3://openfold/pdb/7kua_A/	5425caf93019790681629424fe10120ecc0b42718bd9bed7f48838087548f366	9667	6pcp_A 5e1w_A 3e6m_D 3e6m_A
+cameo	7l6j_A	7l6j	A	2021-11-27	213	ok	e72e48419aa1d7c5246a7f29d9983508621f60ee15cd2fb363676dbbab3181cd	s3://openfold/pdb/7l6j_A/	c4c9f238f249b3b881fe722e028bc3cbcac57748806045a45eefbf4dfdb0a8d2	15920	1nf9_A 3r77_A 5gle_B 5xo0_B
+cameo	7l6y_A	7l6y	A	2021-11-27	212	ok	8fa4fc585040cd7e3b755fc69c40e060392c0265d50fe9e7db18d2a3a3907f56	s3://openfold/pdb/7l6y_A/	2a337d9c8d97b93ecb819ad9232204621c1396dd275527f157c2b2237b305ed4	15767	7dvq_9 7dvq_z 1zkc_A 2x7k_A
+cameo	7lxc_A	7lxc	A	2021-11-27	105	ok	9bc73f232225a829eb02ad1a2cf139f60c52dd30142a3a228bf8fa8c244501d3	s3://openfold/pdb/7lxc_A/	0b31515c25eab36b7ab2f24c3557105d63c9a8ee0235572d13b2817e0c589ea9	1839	6agw_A 5lde_B 5jqe_A 3cl3_A
+cameo	7swh_A	7swh	A	2021-11-27	454	ok	8f1d05048e777e594a6195290ec6682a58bd9f01b1705dc1d0f74b5d9af4d574	s3://openfold/pdb/7swh_A/	68b1be67dbf7c3da1f925d71c910eb0e328068716f41bf5e3a9f146d885afce9	18221	6ld7_A 2rfv_A 4iy7_D 6ld8_A
+cameo	7swk_B	7swk	B	2021-11-27	498	ok	b1024450c8b237b2b44915d6b7b7379d30c32c9c413ce5d61c7366eb328ad4f8	s3://openfold/pdb/7swk_A/	41aef41c65641e704fb110b73f68429af6623ef64e65212de30ad19ab5967054	17751	4i9b_B 4i8q_A 3ek1_E 4qto_A
+cameo	7b1k_B	7b1k	B	2021-12-04	225	ok	3c8ddfc4e746b469c2e5aa3b9b30b4114c8174db01f887b1634d6a0b6c765f41	s3://openfold/pdb/7b1k_A/	9e376f93bb90b09b393dd30ee6f92779f8417b6860b07c3579fdd8ee38c14e75	16561	5d91_A 4o6m_A 4mnd_A 6h5a_B
+cameo	7b1w_F	7b1w	F	2021-12-04	247	ok	c095f1cfa5ca20f47dfc9f93e013f1697bb92016b7f581bb99f57f257663152f	s3://openfold/pdb/7b1w_A/	bd6647fdc1d4a8b4208b41ea3221e1479658d7a026f21c765beac420057839a4	16910	3cu2_A 3cu2_B 1tqx_B 3inp_A
+cameo	7b26_C	7b26	C	2021-12-04	180	ok	ab4679d02447cf222a23c1b97ab66251718a3daa10a6a690d6fd3b94ec679e22	s3://openfold/pdb/7b26_C/	bad789ea0a8756d3b31e984bbc4c614fc34d501f09aff02ab0ca5ad06ee4dc1b	1192	3brn_A 3bs2_A 3zuo_C 2x45_C
+cameo	7b28_F	7b28	F	2021-12-04	165	ok	10e6a984b1b3e3af3498f165e163288511c7683e7118a6223740b77fa0fad978	s3://openfold/pdb/7b28_A/	095d5a5a8aac0e230e67455c0d28c8419bf653e6726ebccb9232e094303c6cfc	1246	3brn_A 2x45_C 3zuo_C 3zui_A
+cameo	7b29_A	7b29	A	2021-12-04	162	ok	14371cc4743ac94438c0b21481e064776cdc5d4ded44b4a88f8b7d0146b3f883	s3://openfold/pdb/7b29_A/	39764ecdc03a6b8925e31f18fac6334e4380286ef25777d1111e483cecb78a4b	1187	3brn_A 3bs2_A 3bu1_A 3zuo_C
+cameo	7b2a_A	7b2a	A	2021-12-04	167	ok	0607fe27d5893359061d66755de57a4d8ee16c4b612ae9330849935c05c3ef80	s3://openfold/pdb/7b2a_A/	eb3215707caeb9d2628ace1bb14591d6fe1802b415768420fe19601aa8829130	1245	3brn_A 3bs2_A 2x45_C 3zuo_C
+cameo	7b2o_A	7b2o	A	2021-12-04	331	ok	4cf4479f1b999b623ae385b5783914634ec68eaf9e967faced4667765c735eb3	s3://openfold/pdb/7b2o_A/	fdace4e38d85b3063f748909486eed0c61c12439bb670908e4688c371d263b28	16378	5oey_C 1rdz_A 2qvr_A 5ofu_B
+cameo	7bny_B	7bny	B	2021-12-04	152	ok	01a92f7020c862df19490220cdbe1c457da48b4b473e29acfe1e7497f1d703b7	s3://openfold/pdb/7bny_A/	5b21a0781ba056b7373ef44b8582736a5fc9c86840064d7ed17a2a74683bf2ce	12	6e43_A 6wjy_B 2vbd_A 3on7_C
+cameo	7dkk_A	7dkk	A	2021-12-04	89	ok	028c05a25d3e57e0f67f87c0f506d54db127167ab8674a4da697bd286f341e2e	s3://openfold/pdb/7dkk_A/	e77472238f3e6e00c30f333289f3fa7c43d9bce4d8193056dc18fb1905b98b90	2	1vpx_E 2hc5_A 3r8r_C 6jsx_A
+cameo	7dko_A	7dko	A	2021-12-04	92	ok	ee402cf866081dee71df2f492e5acb17f9574da8c76349a096840ac6822c89da	s3://openfold/pdb/7dko_A/	ba95b597135ec40932cab69073d06e839d5f142854ac611df81dfc1da6de7bfe	4	6g7o_A 6yxh_A 6ko5_A 3dtd_C
+cameo	7dmf_A	7dmf	A	2021-12-04	189	ok	5bca18a3a9fbdd1024e175dab26cfb1d762c28100df17d1ee4bad7b1fb71c961	s3://openfold/pdb/7dmf_A/	688479e4c31fb6db8764c8f34085c2ab81257dc25ba3d4830ba56c21187a8181	720	5wf2_A 2lt3_A 5b3d_D 5cwf_A
+cameo	7dms_A	7dms	A	2021-12-04	94	ok	d0c3cae0a2cffd85d1c8fd72e2f64f52af144a95029a156664ef8df1a24c13aa	s3://openfold/pdb/7dms_A/	d5a1549e969d2a3dac8fcd415dcf19b92bd0e20184d9c7cce99aea00852d5688	193	6d8w_B 4mc5_B 6idd_A 2wr1_C
+cameo	7lbu_A	7lbu	A	2021-12-04	455	ok	18697780b06125527ebf4c5340f33d455ed3357b33c9f557f8ba5ed87985e216	s3://openfold/pdb/7lbu_A/	d2d0a7399bbac78efe1204b8b355f694bcd1695881f72dedc0a22b194b2a5afc	12802	4q6k_C 4fj6_A 6mrv_A 6mnj_A
+cameo	7ljh_A	7ljh	A	2021-12-04	425	ok	2c565fcb0e95f1334abbc3b6c4511aead296a79bff972b62e90a73f3fcb04cad	s3://openfold/pdb/7ljh_A/	e91b303d6988d7961d05815aeb4b873e6d58f860e66af45eca1c23cecaa11aba	14435	3pfo_B 5k8p_A 1cg2_B 3rza_B
+cameo	7poh_B	7poh	B	2021-12-04	96	ok	d1c00160eaa3fc8f7ddb9725d6dd42554ccf8e67f8b89ad01c5f520a943a4c08	s3://openfold/pdb/7poh_A/	6f0ed40af0d27e63b7ff91ac7a0afdb93ee90ddde97176ad520461f31d98f5a7	67	1pzw_A 5svb_C 4p2l_A 5m45_I
+cameo	7ppp_A	7ppp	A	2021-12-04	90	ok	1cca9046227e33c0d354f495ece1fb1cd7b01f67649b0f3896d77d295f279970	s3://openfold/pdb/7ppp_A/	dc498831977fc733590c1bb43371f83fcbd0672eb6673ccd1ff7c88e995db8ef	267	1pzw_A 6fp5_B 6fp5_A 6o9l_Q
+cameo	7q03_A	7q03	A	2021-12-04	330	ok	57b57709cee663434f65c3dc5806600aaed5e4dc4dfaf0c8a17649725f28468b	s3://openfold/pdb/7q03_A/	88c40a5b92153e3260f8b101885683f55ea54b322c5259f9b0172fe3531c3434	17372	5e4r_A 4xdz_A 4kqw_B 4xdz_B
+cameo	7b4q_A	7b4q	A	2021-12-11	320	ok	82fedaf96a9e8c3ac94dc08fe48e8abc5ed7de882cfd90a8b0ed621af8f83445	s3://openfold/pdb/7b4q_A/	aa205662d776311af2077f386da69a42567a3823fa5c53f26da06485f26281c6	17157	6qla_A 5gms_A 4v2i_A 5jd4_F
+cameo	7dnu_A	7dnu	A	2021-12-11	250	ok	948652dbec45935a9867064fd8b48330c5c5304257e15f9493464e6825ae56fc	s3://openfold/pdb/7dnu_A/	f08d2493285fe34278b030572c08e0837243bca023a33fbce7e5888ba0851ea7	5322	4ick_B 1xsa_A 5cfi_A 3i7u_D
+cameo	7e37_A	7e37	A	2021-12-11	318	ok	31a18948942c5d16c5f5e8259c06097e9a5e41044aae640aa304073f165e02d2	s3://openfold/pdb/7e37_A/	740c9ffcc8f7dbd594248bf11caacb487d61c7b171ce0c299d6d005a637f1a17	14266	5o7y_A 1gp6_A 4xae_A 6lsv_B
+cameo	7kuw_A	7kuw	A	2021-12-11	62	ok	400ce4ca0193ac2c25f22e8a5fd35e0aac924d810994f848a5f954829d63e8d5	s3://openfold/pdb/7kuw_A/	b16e7f3c0f38d21d479422f6825c733128715038091401deef0008d63fab21c1	7	6k5x_A 6cok_A 4imi_C 4uy3_A
+cameo	7kzh_A	7kzh	A	2021-12-11	202	ok	02a8e1b582e4476318b7afdcee1376d6933314151a6a72baedfb284c9f6990d9	s3://openfold/pdb/7kzh_A/	8cfc8a1501496f458fac33d6eb4e0164d25124735887d46b7348fd745dedccbd	4334	2a90_A 1ujr_A 2dk6_A 4qpl_A
+cameo	7mfi_A	7mfi	A	2021-12-11	174	ok	05224c57742066497784bc3d5bb948432e0dc1269f516956142d88bbdbb17be7	s3://openfold/pdb/7m93_A/	125814f5d89b0c891eeee4bd1208cad50a9f20215caf56ce30d597fb2205038c	2379	6oht_B 6yxy_BV 7am2_Av 4gh4_D
+cameo	7p3t_B	7p3t	B	2021-12-11	302	ok	10eda9d448717e365652681799a6cf824fd747379b70c410df724724643bddc5	s3://openfold/pdb/7p3t_A/	60f013765970ab8165f6698ed5dd8f5a7acbbace0d66eb691d4f90e7e071a2b2	16730	4cmd_B 4chi_A 4ce5_A 4uug_A
+cameo	7q1b_A	7q1b	A	2021-12-11	467	ok	2525254ec2358e1a36402ec967743e39713aa0b81e185b0d025803e1287f5a70	s3://openfold/pdb/7q1b_A/	4b2e6fff2b1a047b35b56b72c0f758825333ca7d6702406aa454a0e0968e4aa4	18562	7ao9_B 6hsh_D 4bz7_C 4bkx_B
+cameo	7sf6_A	7sf6	A	2021-12-11	314	ok	bc449c6c536ee7697eb9c6607d64e285be5819001ef52cc72ede460e219f8c21	s3://openfold/pdb/7sf6_A/	ae9b7e294997f80ee0a7b992c4bb7b6e238dce8d10405b8dd95b16048665680c	10558	3gfv_B 4mx8_D 6all_B 5b51_A
+cameo	7sy9_A	7sy9	A	2021-12-11	448	ok	49128861e53ea18f8af136e0b0f6342f2f76df0528670a24093925be47583b02	s3://openfold/pdb/7sy9_A/	8db9cb5e88200b6c63c4dfa382a4a9e4334c47b38fe0c7614a9635d789e968c5	18670	2x5o_A 3lk7_A 4buc_B 1p3d_A
+cameo	7t24_A	7t24	A	2021-12-11	464	ok	f64f3deae86525b5c2ecc0fe12145a7dd3b6b51dc27e2173ba7f1069393c11ab	s3://openfold/pdb/7t24_A/	c2ace0243e0724a3d2210dcd3ac13279d4e5cbe5ad00660b0f0bcdccf2d8ad1e	17750	2qga_B 2ptr_A 4efc_B 4mx2_D
+cameo	7v5y_B	7v5y	B	2021-12-11	85	ok	8e57f993e6d00b1e4c023a184600d0cad60ca8bcbe94cf7d31b13eba73cf92a6	s3://openfold/pdb/7v5y_A/	f85e4d4580b615c94d623f4bdd3e6519b17206b7ad7bbac69ae6a4e0b08165d8	3545	2a6q_A 6l8e_I 3g5o_A 3cto_C
+cameo	7vdy_A	7vdy	A	2021-12-11	295	ok	caaf1732630fbe084ad579fb2b05054bacef8734023e0da3f2864c08351ad0a6	s3://openfold/pdb/7vdy_A/	3d3a69ea69e73273a740140244aa3209d3fbe11373a33cab461d0f623cf20d7b	16869	5h2g_B 5ha4_A 6vcl_A 5ha4_B
+cameo	7don_B	7don	B	2021-12-18	425	excluded: no OpenProteinSet alignment					
+cameo	7dq9_A	7dq9	A	2021-12-18	266	excluded: no OpenProteinSet alignment					
+cameo	7dut_A	7dut	A	2021-12-18	220	excluded: no OpenProteinSet alignment					
+cameo	7duv_A	7duv	A	2021-12-18	115	excluded: no OpenProteinSet alignment					
+cameo	7e0m_A	7e0m	A	2021-12-18	391	excluded: no OpenProteinSet alignment					
+cameo	7e3z_A	7e3z	A	2021-12-18	261	excluded: no OpenProteinSet alignment					
+cameo	7ee3_C	7ee3	C	2021-12-18	124	excluded: no OpenProteinSet alignment					
+cameo	7l19_C	7l19	C	2021-12-18	181	excluded: no OpenProteinSet alignment					
+cameo	7lnu_B	7lnu	B	2021-12-18	279	excluded: no OpenProteinSet alignment					
+cameo	7mpz_A	7mpz	A	2021-12-18	154	excluded: no OpenProteinSet alignment					
+cameo	7mu9_A	7mu9	A	2021-12-18	105	excluded: no OpenProteinSet alignment					
+cameo	7nit_D	7nit	D	2021-12-18	1304	excluded: > 700 residues					
+cameo	7p3b_B	7p3b	B	2021-12-18	507	excluded: no OpenProteinSet alignment					
+cameo	7rg7_A	7rg7	A	2021-12-18	306	excluded: no OpenProteinSet alignment					
+cameo	7t71_A	7t71	A	2021-12-18	369	excluded: no OpenProteinSet alignment					
+cameo	7dqg_A	7dqg	A	2021-12-25	186	excluded: no OpenProteinSet alignment					
+cameo	7f0h_A	7f0h	A	2021-12-25	161	excluded: no OpenProteinSet alignment					
+cameo	7m0q_B	7m0q	B	2021-12-25	121	excluded: no OpenProteinSet alignment					
+cameo	7nf9_A	7nf9	A	2021-12-25	70	excluded: no OpenProteinSet alignment					
+cameo	7ofn_A	7ofn	A	2021-12-25	163	excluded: no OpenProteinSet alignment					
+cameo	7pq7_A	7pq7	A	2021-12-25	202	excluded: no OpenProteinSet alignment					
+cameo	7pqf_A	7pqf	A	2021-12-25	204	excluded: no OpenProteinSet alignment					
+cameo	7rds_A	7rds	A	2021-12-25	257	excluded: no OpenProteinSet alignment					
+cameo	7rdt_A	7rdt	A	2021-12-25	250	excluded: no OpenProteinSet alignment					
+cameo	7s02_C	7s02	C	2021-12-25	36	excluded: no OpenProteinSet alignment					
+cameo	7t5f_B	7t5f	B	2021-12-25	131	excluded: no OpenProteinSet alignment					
+cameo	7t8o_B	7t8o	B	2021-12-25	229	excluded: no OpenProteinSet alignment					
+cameo	7t9w_B	7t9w	B	2021-12-25	105	excluded: no OpenProteinSet alignment					
+cameo	7tav_B	7tav	B	2021-12-25	233	excluded: no OpenProteinSet alignment					
+cameo	7v6p_A	7v6p	A	2021-12-25	283	excluded: no OpenProteinSet alignment					
+cameo	7vpf_A	7vpf	A	2021-12-25	293	excluded: no OpenProteinSet alignment					
+cameo	7w83_A	7w83	A	2021-12-25	222	excluded: no OpenProteinSet alignment					
+cameo	7dsu_B	7dsu	B	2022-01-01	567	excluded: no OpenProteinSet alignment					
+cameo	7fip_A	7fip	A	2022-01-01	313	excluded: no OpenProteinSet alignment					
+cameo	7ksp_A	7ksp	A	2022-01-01	230	excluded: no OpenProteinSet alignment					
+cameo	7lvz_D	7lvz	D	2022-01-01	256	excluded: no OpenProteinSet alignment					
+cameo	7m4m_A	7m4m	A	2022-01-01	277	excluded: no OpenProteinSet alignment					
+cameo	7m4n_A	7m4n	A	2022-01-01	138	excluded: no OpenProteinSet alignment					
+cameo	7mqy_A	7mqy	A	2022-01-01	408	excluded: no OpenProteinSet alignment					
+cameo	7mrk_D	7mrk	D	2022-01-01	309	excluded: no OpenProteinSet alignment					
+cameo	7mro_A	7mro	A	2022-01-01	309	excluded: no OpenProteinSet alignment					
+cameo	7mrq_A	7mrq	A	2022-01-01	309	excluded: no OpenProteinSet alignment					
+cameo	7mrs_B	7mrs	B	2022-01-01	188	excluded: no OpenProteinSet alignment					
+cameo	7spo_C	7spo	C	2022-01-01	141	excluded: no OpenProteinSet alignment					
+cameo	7spp_C	7spp	C	2022-01-01	117	excluded: no OpenProteinSet alignment					
+cameo	7tbs_A	7tbs	A	2022-01-01	238	excluded: no OpenProteinSet alignment					
+cameo	7tcb_B	7tcb	B	2022-01-01	184	excluded: no OpenProteinSet alignment					
+cameo	7wbr_A	7wbr	A	2022-01-01	436	excluded: no OpenProteinSet alignment					
+cameo	7ab3_E	7ab3	E	2022-01-08	103	excluded: no OpenProteinSet alignment					
+cameo	7b7t_A	7b7t	A	2022-01-08	629	excluded: no OpenProteinSet alignment					
+cameo	7b9p_A	7b9p	A	2022-01-08	925	excluded: > 700 residues					
+cameo	7bbz_A	7bbz	A	2022-01-08	319	excluded: no OpenProteinSet alignment					
+cameo	7bcb_B	7bcb	B	2022-01-08	110	excluded: no OpenProteinSet alignment					
+cameo	7bew_A	7bew	A	2022-01-08	333	excluded: no OpenProteinSet alignment					
+cameo	7dt1_A	7dt1	A	2022-01-08	1047	excluded: > 700 residues					
+cameo	7ezg_A	7ezg	A	2022-01-08	305	excluded: no OpenProteinSet alignment					
+cameo	7f8a_A	7f8a	A	2022-01-08	261	excluded: no OpenProteinSet alignment					
+cameo	7kdx_B	7kdx	B	2022-01-08	681	excluded: no OpenProteinSet alignment					
+cameo	7prd_A	7prd	A	2022-01-08	125	excluded: no OpenProteinSet alignment					
+cameo	7s94_C	7s94	C	2022-01-08	98	excluded: no OpenProteinSet alignment					
+cameo	7vee_A	7vee	A	2022-01-08	921	excluded: > 700 residues					
+cameo	6zpp_A	6zpp	A	2022-01-15	190	excluded: no OpenProteinSet alignment					
+cameo	7bgs_B	7bgs	B	2022-01-15	163	excluded: no OpenProteinSet alignment					
+cameo	7dup_A	7dup	A	2022-01-15	534	excluded: no OpenProteinSet alignment					
+cameo	7ffa_A	7ffa	A	2022-01-15	431	excluded: no OpenProteinSet alignment					
+cameo	7kpj_E	7kpj	E	2022-01-15	272	excluded: no OpenProteinSet alignment					
+cameo	7kw6_A	7kw6	A	2022-01-15	704	excluded: > 700 residues					
+cameo	7l8n_A	7l8n	A	2022-01-15	151	excluded: no OpenProteinSet alignment					
+cameo	7lqm_D	7lqm	D	2022-01-15	284	excluded: no OpenProteinSet alignment					
+cameo	7lqn_A	7lqn	A	2022-01-15	286	excluded: no OpenProteinSet alignment					
+cameo	7mcc_A	7mcc	A	2022-01-15	190	excluded: no OpenProteinSet alignment					
+cameo	7mwr_A	7mwr	A	2022-01-15	204	excluded: no OpenProteinSet alignment					
+cameo	7ntn_A	7ntn	A	2022-01-15	81	excluded: no OpenProteinSet alignment					
+cameo	7os0_A	7os0	A	2022-01-15	1304	excluded: > 700 residues					
+cameo	7pab_A	7pab	A	2022-01-15	446	excluded: no OpenProteinSet alignment					
+cameo	7pug_A	7pug	A	2022-01-15	842	excluded: > 700 residues					
+cameo	7tb5_A	7tb5	A	2022-01-15	299	excluded: no OpenProteinSet alignment					
+cameo	7thh_A	7thh	A	2022-01-15	131	excluded: no OpenProteinSet alignment					
+cameo	7wgk_A	7wgk	A	2022-01-15	227	excluded: no OpenProteinSet alignment					

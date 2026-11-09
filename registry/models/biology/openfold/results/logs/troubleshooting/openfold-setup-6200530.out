@@ -1,0 +1,162 @@
+Begin Slurm Prolog: Oct-11-2026 23:28:25
+Job ID:    6200530
+User ID:   bgong36
+Account:   coc
+Job name:  openfold-setup
+Partition: ice-cpu
+QOS:       coc-ice
+Channels:
+ - conda-forge
+ - bioconda
+ - pytorch
+ - nvidia
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... By downloading and using the CUDA Toolkit conda packages, you accept the terms and conditions of the CUDA End User License Agreement (EULA): https://docs.nvidia.com/cuda/eula/index.html
+For Linux 64, Open MPI is built with CUDA awareness but this support is disabled by default.
+To enable it, please set the environment variable OMPI_MCA_opal_cuda_support=true before
+launching your MPI processes. Equivalently, you can set the MCA parameter in the command line:
+mpiexec --mca opal_cuda_support 1 ...
+In addition, the UCX support is also built but disabled by default.
+To enable it, first install UCX (conda install -c conda-forge ucx). Then, set the environment
+variables OMPI_MCA_pml="ucx" OMPI_MCA_osc="ucx" before launching your MPI processes.
+Equivalently, you can set the MCA parameters in the command line:
+mpiexec --mca pml ucx --mca osc ucx ...
+Note that you might also need to set UCX_MEMTYPE_CACHE=n for CUDA awareness via UCX.
+Please consult UCX's documentation for detail.
+done
+Installing pip dependencies: ...working... done
+WARNING conda.conda_pypi.main:notify_externally_managed_future(156): 
+  Did you know? You can install many PyPI packages with conda
+  using the conda-pypi beta. Get started:
+    https://docs.conda.io/projects/conda/en/stable/new-features.html
+--2026-10-11 23:30:53--  https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+Resolving git.scicore.unibas.ch (git.scicore.unibas.ch)... 131.152.229.50
+Connecting to git.scicore.unibas.ch (git.scicore.unibas.ch)|131.152.229.50|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 9119 (8.9K) [text/plain]
+Saving to: ‘openfold/resources/stereo_chemical_props.txt’
+     0K ........                                              100% 33.8M=0s
+Last-modified header missing -- time-stamps turned off.
+2026-10-11 23:30:53 (33.8 MB/s) - ‘openfold/resources/stereo_chemical_props.txt’ saved [9119/9119]
+ln: failed to create symbolic link 'tests/test_data/alphafold/common/stereo_chemical_props.txt': File exists
+No CUDA runtime is found, using CUDA_HOME='/home/hice1/bgong36/scratch/openfold-repro/env'
+running install
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/easy_install.py:156: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running bdist_egg
+running egg_info
+writing openfold.egg-info/PKG-INFO
+writing dependency_links to openfold.egg-info/dependency_links.txt
+writing top-level names to openfold.egg-info/top_level.txt
+reading manifest file 'openfold.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'openfold.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+copying openfold/resources/stereo_chemical_props.txt -> build/lib.linux-x86_64-3.10/openfold/resources
+running build_ext
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py:426: UserWarning: There are no /home/hice1/bgong36/scratch/openfold-repro/env/bin/x86_64-conda-linux-gnu-c++ version bounds defined for CUDA version 12.4
+  warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+building 'attn_core_inplace_cuda' extension
+Emitting ninja build file /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/build.ninja...
+Compiling objects...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/2] /home/hice1/bgong36/scratch/openfold-repro/env/bin/x86_64-conda-linux-gnu-c++ -MMD -MF /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -fno-merge-constants -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -fPIC -O2 -fno-merge-constants -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -fPIC -I/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/bgong36/scratch/openfold-repro/env/include -I/home/hice1/bgong36/scratch/openfold-repro/env/include/python3.10 -c -c /storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/softmax_cuda.cpp -o /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o -O3 -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
+FAILED: [code=1] /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o 
+/home/hice1/bgong36/scratch/openfold-repro/env/bin/x86_64-conda-linux-gnu-c++ -MMD -MF /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -fno-merge-constants -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -fPIC -O2 -fno-merge-constants -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/hice1/bgong36/scratch/openfold-repro/env/include -fPIC -I/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/bgong36/scratch/openfold-repro/env/include -I/home/hice1/bgong36/scratch/openfold-repro/env/include/python3.10 -c -c /storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/softmax_cuda.cpp -o /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o -O3 -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
+x86_64-conda-linux-gnu-c++: fatal error: cannot execute 'cc1plus': execvp: No such file or directory
+compilation terminated.
+[2/2] /home/hice1/bgong36/scratch/openfold-repro/env/bin/nvcc --generate-dependencies-with-compile --dependency-output /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o.d -I/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/bgong36/scratch/openfold-repro/env/include -I/home/hice1/bgong36/scratch/openfold-repro/env/include/python3.10 -c -c /storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/softmax_cuda_kernel.cu -o /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 --use_fast_math -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -std=c++17 -maxrregcount=50 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ --expt-relaxed-constexpr --expt-extended-lambda -gencode arch=compute_90,code=sm_90 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_80,code=sm_80 -gencode arch=compute_52,code=sm_52 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -ccbin /home/hice1/bgong36/scratch/openfold-repro/env/bin/x86_64-conda-linux-gnu-cc
+FAILED: [code=1] /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o 
+/home/hice1/bgong36/scratch/openfold-repro/env/bin/nvcc --generate-dependencies-with-compile --dependency-output /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o.d -I/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/bgong36/scratch/openfold-repro/env/include -I/home/hice1/bgong36/scratch/openfold-repro/env/include/python3.10 -c -c /storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/kernel/csrc/softmax_cuda_kernel.cu -o /storage/ice1/5/3/bgong36/openfold-repro/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 --use_fast_math -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -std=c++17 -maxrregcount=50 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ --expt-relaxed-constexpr --expt-extended-lambda -gencode arch=compute_90,code=sm_90 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_80,code=sm_80 -gencode arch=compute_52,code=sm_52 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -ccbin /home/hice1/bgong36/scratch/openfold-repro/env/bin/x86_64-conda-linux-gnu-cc
+x86_64-conda-linux-gnu-cc: fatal error: cannot execute 'cc1plus': execvp: No such file or directory
+compilation terminated.
+nvcc fatal   : Failed to preprocess host compiler properties.
+ninja: build stopped: subcommand failed.
+Traceback (most recent call last):
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2104, in _run_ninja_build
+    subprocess.run(
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['ninja', '-v']' returned non-zero exit status 1.
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "/storage/ice1/5/3/bgong36/openfold-repro/openfold/setup.py", line 114, in <module>
+    setup(
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/__init__.py", line 153, in setup
+    return distutils.core.setup(**attrs)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/core.py", line 148, in setup
+    dist.run_commands()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/dist.py", line 966, in run_commands
+    self.run_command(cmd)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/dist.py", line 985, in run_command
+    cmd_obj.run()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/install.py", line 74, in run
+    self.do_egg_install()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/install.py", line 116, in do_egg_install
+    self.run_command('bdist_egg')
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/cmd.py", line 313, in run_command
+    self.distribution.run_command(command)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/dist.py", line 985, in run_command
+    cmd_obj.run()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/bdist_egg.py", line 164, in run
+    cmd = self.call_command('install_lib', warn_dir=0)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/bdist_egg.py", line 150, in call_command
+    self.run_command(cmdname)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/cmd.py", line 313, in run_command
+    self.distribution.run_command(command)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/dist.py", line 985, in run_command
+    cmd_obj.run()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/install_lib.py", line 11, in run
+    self.build()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/command/install_lib.py", line 107, in build
+    self.run_command('build_ext')
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/cmd.py", line 313, in run_command
+    self.distribution.run_command(command)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/dist.py", line 985, in run_command
+    cmd_obj.run()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/build_ext.py", line 79, in run
+    _build_ext.run(self)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/command/build_ext.py", line 340, in run
+    self.build_extensions()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 868, in build_extensions
+    build_ext.build_extensions(self)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/command/build_ext.py", line 449, in build_extensions
+    self._build_extensions_serial()
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/command/build_ext.py", line 474, in _build_extensions_serial
+    self.build_extension(ext)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/setuptools/command/build_ext.py", line 202, in build_extension
+    _build_ext.build_extension(self, ext)
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/distutils/command/build_ext.py", line 529, in build_extension
+    objects = self.compiler.compile(sources,
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 681, in unix_wrap_ninja_compile
+    _write_ninja_file_and_compile_objects(
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 1784, in _write_ninja_file_and_compile_objects
+    _run_ninja_build(
+  File "/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2120, in _run_ninja_build
+    raise RuntimeError(message) from e
+RuntimeError: Error compiling objects for extension
+Download CUTLASS, required for Deepspeed Evoformer attention kernel
+fatal: destination path 'cutlass' already exists and is not an empty directory.
+To make your changes take effect please reactivate your environment
+To make your changes take effect please reactivate your environment
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'attn_core_inplace_cuda'
+Begin Slurm Epilog: Oct-11-2026 23:31:04
+Job ID:        6200530
+User ID:       bgong36
+Account:       coc
+Job name:      openfold-setup
+Resources:     cpu=8,mem=32G,node=1
+Rsrc Used:     cput=00:21:12,vmem=0,walltime=00:02:39,mem=5082200K,energy_used=0
+Partition:     ice-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-002-36-0

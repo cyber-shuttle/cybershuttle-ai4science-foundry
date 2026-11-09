@@ -1,0 +1,6 @@
+# nvidia-smi on atl1-1-03-018-2-0 during job 6201044_2 (openfold_no_templates), 2026-10-12T00:55:42-04:00
+name, clocks.current.sm [MHz], clocks.max.sm [MHz], power.draw [W], power.limit [W], temperature.gpu, clocks_event_reasons.sw_thermal_slowdown, clocks_event_reasons.hw_slowdown, clocks_event_reasons.sw_power_cap
+NVIDIA H200, 1890 MHz, 1980 MHz, 177.26 W, 700.00 W, 86, Active, Not Active, Not Active
+# earlier sample (2026-10-12T00:55 -04:00, one minute before): clock oscillates under thermal slowdown
+NVIDIA H200, 345 MHz, 1980 MHz, 223.50 W, 700.00 W, 87, Active, Not Active, Not Active
+# For comparison, the same targets ran ~3x faster with the same preset on an unthrottled H100 (task 3).

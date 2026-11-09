@@ -1,0 +1,47 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 23:53:58
+Job ID:    6200944
+User ID:   bgong36
+Account:   coc
+Job name:  openfold-infer
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+set=smoke config=alphafold2_templates preset=model_1_ptm weights=--jax_param_path /home/hice1/bgong36/scratch/openfold-repro/params/params/params_model_1_ptm.npz host=atl1-1-03-012-18-0.pace.gatech.edu
+name, driver_version, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 615.71.09, 81559 MiB
+[2026-10-11 23:54:20,428] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+INFO:/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /home/hice1/bgong36/scratch/openfold-repro/params/params/params_model_1_ptm.npz...
+INFO:/home/hice1/bgong36/scratch/openfold-repro/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /home/hice1/bgong36/scratch/openfold-repro/data/alignments...
+INFO:/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/storage/ice1/5/3/bgong36/openfold-repro/openfold/openfold/utils/script_utils.py:Inference time: 11.682526135002263
+/home/hice1/bgong36/scratch/openfold-repro/openfold/run_pretrained_openfold.py:341: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/home/hice1/bgong36/scratch/openfold-repro/openfold/run_pretrained_openfold.py:344: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/home/hice1/bgong36/scratch/openfold-repro/openfold/run_pretrained_openfold.py:Output written to /home/hice1/bgong36/scratch/openfold-repro/runs/smoke/alphafold2_templates/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 23:55:06
+Job ID:        6200944
+Array Job ID:  6200939_1
+User ID:       bgong36
+Account:       coc
+Job name:      openfold-infer
+Resources:     cpu=8,gres/gpu:h100=1,mem=64G,node=1
+Rsrc Used:     cput=00:09:12,vmem=0,walltime=00:01:09,mem=3008988K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-012-18-0
+---------------------------------------

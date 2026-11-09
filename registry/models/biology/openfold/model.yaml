@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+$schema_version: "1.0"
+
+id: openfold
+name: OpenFold
+
+description: >
+  OpenFold is an open-source PyTorch implementation of AlphaFold2 for
+  protein structure prediction. This registry entry includes a reproducible
+  inference workflow validated on the 6KWC protein target.
+
+domain:
+  - biology
+  - protein-structure
+
+model_family:
+  - alphafold
+  - protein-structure-prediction
+
+tasks:
+  - inference
+  - evaluation
+
+upstream:
+  github: https://github.com/aqlaboratory/openfold
+  paper: https://doi.org/10.1038/s41592-024-02272-z
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+
+cybershuttle:
+  enabled: false
+
+readiness:
+  registry_status: candidate
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: validated
+
+maintainers:
+  - name: Yuhwa Lee
+    github: Yuhwa-L
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  Reproducible inference was validated on Georgia Tech PACE/ICE using an
+  NVIDIA A100-PCIE-40GB. The included 6KWC workflow uses the official
+  OpenFold source at commit be2ec1841f16c966c65ae0e7599ebbadc725757d,
+  model_1_ptm AlphaFold parameters, and precomputed sequence alignments.

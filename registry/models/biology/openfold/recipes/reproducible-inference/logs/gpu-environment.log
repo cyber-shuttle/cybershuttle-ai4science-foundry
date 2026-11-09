@@ -1,0 +1,39 @@
+=== A100 execution environment ===
+Recorded: 2026-10-11T20:00:02-04:00
+SLURM_JOB_ID=6187757
+SLURM_JOB_PARTITION=coc-gpu
+SLURMD_NODENAME=atl1-1-03-007-35-0
+
+=== Host ===
+atl1-1-03-007-35-0.pace.gatech.edu
+
+=== NVIDIA GPU ===
+Sun Oct 11 20:00:02 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   35C    P0             42W /  250W |       0MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+=== PyTorch CUDA verification ===
+PyTorch: 2.5.1
+PyTorch CUDA: 12.4
+CUDA available: True
+CUDA device count: 1
+GPU: NVIDIA A100-PCIE-40GB
+GPU memory: 39.52 GiB
+Compute capability: 8.0

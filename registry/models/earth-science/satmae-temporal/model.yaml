@@ -97,11 +97,11 @@ datasets:
 software:
   python: "3.9"
   frameworks:
-    - pytorch==1.12.1
-    - torchvision==0.13.1
-    - cudatoolkit==11.3
+    - pytorch==1.12.1+cu113  # pip wheel; conda pytorch 1.12.1 broke on miniforge ICE
+    - torchvision==0.13.1+cu113
     - timm==0.3.2
   environment_file: scripts/satmae_temporal_environment.yml
+  pip_requirements: scripts/satmae_temporal_requirements.txt
   container: null
 
 resource_profiles:

@@ -106,9 +106,11 @@ Imagery: `s3://spacenet-dataset/Hosted-Datasets/fmow/fmow-rgb/val`.
 If Google Drive is blocked on the compute node, `scp` `val_62classes.csv` to
 `$SATMAE_TEMPORAL_WORKDIR/data/` and rerun step 5.
 
-The env pins Python 3.9, `pytorch=1.12.1`, `cudatoolkit=11.3`,
-`torchvision=0.13.1`, `timm==0.3.2`, and `numpy=1.23.5`. The build job writes
-the resolved lock file and `pip freeze` to `$SATMAE_TEMPORAL_WORKDIR/env/`.
+The env pins Python 3.9 and `numpy=1.23.5` from conda, then pip-installs
+`torch==1.12.1+cu113`, `torchvision==0.13.1+cu113`, and `timm==0.3.2`. A
+conda-solved pytorch 1.12.1 failed to import on a miniforge ICE account
+(MKL `iJIT_NotifyEvent`). The build job writes the resolved lock file and
+`pip freeze` to `$SATMAE_TEMPORAL_WORKDIR/env/`.
 
 ## Execution
 
@@ -227,8 +229,14 @@ pass/fail target.
 - **Software:** Python 3.9.18, torch 1.12.1 (CUDA 11.3), torchvision 0.13.1,
   timm 0.3.2 (patched), numpy 1.23.5. Recorded in
   `logs/smoke_6196203_versions.txt` and `logs/full_6197773_versions.txt`.
-  Resolved lock + `pip freeze`: `$SATMAE_TEMPORAL_WORKDIR/env/`.
-- **Seeds:** `--seed 0` in the evaluator; subset sampling uses `--seed 0`.
+  Resolved lock + `pip freeze`: `$SATMAE_TEMPORAL_WORKDIR/env/`. After the
+  PR #38 peer report, new env builds pip-install `torch==1.12.1+cu113`
+  instead of solving pytorch from conda.
+- **Seeds:** `--seed 0` in the evaluator and DataLoader workers; subset
+  sampling uses `--seed 0`. Companion-frame `glob.glob` is sorted so a
+  fresh crop dump does not shuffle timestamps. A peer full-val on a new
+  clone was 61.63% vs 62.60% before that sort (RandomCrop at eval still
+  allows about a point of run-to-run noise).
 - **Paper:** Cong et al., NeurIPS 2022, https://arxiv.org/abs/2207.08051
 - **Run dates:** 2026-10-11.
 - **Resource usage:** env rebuild 17s after the failed first build (job
@@ -241,6 +249,23 @@ pass/fail target.
 
 **Login-node killed / conda killed.** The login node allows about 1 CPU and 4 GB.
 Submit `satmae_temporal_build_env.sbatch` to `coc-cpu`.
+
+**`module load anaconda3` breaks miniforge / torch import fails with
+`iJIT_NotifyEvent`.** A peer ICE account already had miniforge conda.
+Loading `anaconda3` on top of it, then `conda env create` of
+`pytorch=1.12.1`, produced a torch that could not import. Scripts now
+leave an existing `conda` on PATH alone (try `miniforge` before
+`anaconda3` only if `conda` is missing). The env YAML no longer installs
+pytorch from conda; `satmae_temporal_build_env.sbatch` pip-installs
+`torch==1.12.1+cu113` from the PyTorch wheel index. If an old prefix is
+broken, delete `$HOME/scratch/envs/satmae-temporal` and re-run the build
+job.
+
+**Peer full-val 61.63% vs 62.60%.** Same checkpoint hash and 53,041 crops.
+Upstream eval uses `RandomCrop` at test time and unsorted `glob()` for
+companion frames, so seed 0 is only exact on the same filesystem listing.
+The evaluator now sorts those globs and seeds DataLoader workers. Expect
+scores in the low-60s on reconstructed tight crops, not 79.99%.
 
 **Home disk full (30 GB / 96%+).** Do not install the env in `$HOME/.conda`.
 The prefix is `$HOME/scratch/envs/satmae-temporal`. If `conda` still writes to

@@ -44,7 +44,8 @@ output:
 environment:
   conda_env: $HOME/scratch/envs/satmae-temporal
   environment_file: scripts/satmae_temporal_environment.yml
-  pytorch: "1.12.1, CUDA 11.3 (cudatoolkit=11.3)"
+  pip_requirements: scripts/satmae_temporal_requirements.txt
+  pytorch: "1.12.1+cu113 from the PyTorch wheel index (not conda)"
   timm: "0.3.2, patched by scripts/satmae_temporal_patch_env.sh"
   upstream_code: https://github.com/sustainlab-group/SatMAE @ 0b210aceb37a14bbbd897110db5b104b3271d818
   workdir: $SATMAE_TEMPORAL_WORKDIR (default $HOME/scratch/satmae-temporal)
@@ -52,8 +53,10 @@ environment:
 steps:
   - name: build_environment
     description: >
-      Clone SatMAE at the pinned commit and create the conda prefix on scratch.
-      Must run as a CPU batch job; login-node builds are killed by the 4 GB cap.
+      Clone SatMAE at the pinned commit, create a conda prefix (python +
+      rasterio only), then pip-install torch 1.12.1+cu113. Must run as a
+      CPU batch job; login-node builds are killed by the 4 GB cap. Do not
+      module-load anaconda3 if miniforge conda is already on PATH.
     script: scripts/satmae_temporal_build_env.sbatch
     partition: coc-cpu
 
@@ -203,6 +206,10 @@ notes: >
      site-packages files without importing timm (job 6190908 failed when
      the patch script imported timm first).
   4. CustomDatasetFromImagesTemporal uses RandomCrop even at eval time, so
-     a seeded run is required for comparability.
+     a seeded run is required for comparability. Companion-frame glob is
+     sorted; DataLoader workers are seeded. A peer still saw 61.63% vs
+     62.60% on a fresh clone before those changes.
   5. fMoW-RGB is ~200 GB train+val. This recipe downloads val only.
   6. Home on ICE is 30 GB (this user was at 96.9%). All artifacts go to scratch.
+  7. Do not module-load anaconda3 over miniforge. PyTorch is pip cu113,
+     not conda pytorch=1.12.1 (MKL iJIT_NotifyEvent on a peer account).

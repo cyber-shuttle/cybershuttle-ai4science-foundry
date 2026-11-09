@@ -12,11 +12,9 @@ echo "job=$SLURM_JOB_ID host=$(hostname) date=$(date -Is) tag=$JOB_TAG"
 
 nvidia-smi > "logs/${JOB_TAG}_${SLURM_JOB_ID}_nvidia-smi.txt"
 
-module load anaconda3 2>/dev/null || module load anaconda 2>/dev/null || true
-set +u
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate "$SATMAE_TEMPORAL_ENV"
-set -u
+# shellcheck source=satmae_temporal_conda.sh
+source "$REPO_ROOT/scripts/satmae_temporal_conda.sh"
+satmae_activate_env
 
 python - <<'PY' | tee "logs/${JOB_TAG}_${SLURM_JOB_ID}_versions.txt"
 import torch, timm, torchvision, sys

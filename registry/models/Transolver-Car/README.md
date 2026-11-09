@@ -28,7 +28,11 @@ point you to the file that gives you evidence that I have met the requirement fo
 ### Initializing Model
 1. If your computer's IP address is broken (like mine), use a Global Protect VPN from vpn.gatech.edu.
 2. Sign in to your login node with `ssh <gt username>@login-ice.pace.gatech.edu`, input your password, and then run `cd scratch`
-3. Clone the repo using `git clone https://github.com/Magical452/Transolver-Car.git` and then run `cd Transolver`
+3. Clone only this model's folder (not the whole repository):
+	- `git clone --branch add-transolver-car --single-branch --filter=blob:none --sparse https://github.com/Magical452/cybershuttle-ai4science-foundry.git`
+	- `cd cybershuttle-ai4science-foundry`
+	- `git sparse-checkout set registry/models/Transolver-Car`
+	- `cd registry/models/Transolver-Car`
 4. Load anaconda and git into your login node with `module load anaconda3` and `module load git2.45.2` respectively
 5. Create and activate the environemtn with these commands:
 	- `conda create --prefix $HOME/scratch/envs/transolver python=3.8 -y`

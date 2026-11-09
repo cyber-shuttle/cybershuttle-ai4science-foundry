@@ -67,6 +67,27 @@ def restore_scale_transform() -> None:
         transforms.Scale = transforms.Resize
 
 
+def sort_temporal_globs() -> None:
+    """Companion frames are chosen with glob.glob on the last 15 characters.
+
+    Unsorted glob follows directory order, which differs across filesystems,
+    so --seed 0 is not enough for a peer on a fresh crop dump (PR #38:
+    61.63% vs 62.60%). Sort the matches.
+    """
+    import glob
+
+    if getattr(glob.glob, "_satmae_sorted", False):
+        return
+    original = glob.glob
+
+    def _sorted_glob(*args, **kwargs):
+        result = original(*args, **kwargs)
+        return sorted(result) if isinstance(result, list) else result
+
+    _sorted_glob._satmae_sorted = True  # type: ignore[attr-defined]
+    glob.glob = _sorted_glob
+
+
 def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -157,6 +178,7 @@ def main() -> None:
         raise SystemExit("Pass --code-dir or set SATMAE_CODE_DIR to the pinned SatMAE clone")
     add_satmae_to_path(args.code_dir)
     restore_scale_transform()
+    sort_temporal_globs()
     set_seed(args.seed)
 
     from util.datasets import CustomDatasetFromImagesTemporal
@@ -167,6 +189,12 @@ def main() -> None:
     elif args.limit and args.limit < len(dataset):
         dataset = torch.utils.data.Subset(dataset, list(range(args.limit)))
 
+    def _worker_init(worker_id: int) -> None:
+        wseed = args.seed + worker_id
+        random.seed(wseed)
+        np.random.seed(wseed)
+        torch.manual_seed(wseed)
+
     loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -174,6 +202,8 @@ def main() -> None:
         num_workers=args.num_workers,
         pin_memory=True,
         drop_last=False,
+        worker_init_fn=_worker_init,
+        generator=torch.Generator().manual_seed(args.seed),
     )
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")

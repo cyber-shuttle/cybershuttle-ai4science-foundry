@@ -16,12 +16,15 @@ cd "$REPO_ROOT"
 mkdir -p logs
 # shellcheck source=satmae_temporal_paths.sh
 source "$REPO_ROOT/scripts/satmae_temporal_paths.sh"
+# shellcheck source=satmae_temporal_conda.sh
+source "$REPO_ROOT/scripts/satmae_temporal_conda.sh"
 
 echo "job=$SLURM_JOB_ID host=$(hostname) date=$(date -Is)"
 echo "workdir=$SATMAE_TEMPORAL_WORKDIR"
 echo "env=$SATMAE_TEMPORAL_ENV"
 
-module load anaconda3 2>/dev/null || module load anaconda 2>/dev/null || true
+satmae_source_conda
+echo "conda=$(command -v conda) base=$(conda info --base)"
 
 if [[ ! -d "$SATMAE_CODE_DIR/.git" ]]; then
   git clone https://github.com/sustainlab-group/SatMAE.git "$SATMAE_CODE_DIR"
@@ -36,11 +39,9 @@ else
   echo "conda prefix already exists: $SATMAE_TEMPORAL_ENV"
 fi
 
-# conda activate is unset-variable unfriendly
-set +u
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate "$SATMAE_TEMPORAL_ENV"
-set -u
+satmae_activate_env
+
+pip install -r "$REPO_ROOT/scripts/satmae_temporal_requirements.txt"
 
 bash "$REPO_ROOT/scripts/satmae_temporal_patch_env.sh"
 
@@ -52,6 +53,7 @@ print("python_ok")
 print("torch", torch.__version__, "cuda", torch.version.cuda)
 print("torchvision", torchvision.__version__)
 print("timm", timm.__version__)
+print("cuda_available", torch.cuda.is_available())
 PY
 
 conda env export -p "$SATMAE_TEMPORAL_ENV" > "$SATMAE_TEMPORAL_WORKDIR/env/environment.lock.yml"

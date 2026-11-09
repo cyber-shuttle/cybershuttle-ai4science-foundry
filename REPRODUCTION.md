@@ -87,6 +87,16 @@ sbatch scripts/satmae_temporal_eval_full.sbatch
 
 Do not run conda create, S3 sync, crop, or the evaluator on the login node.
 
+The build job uses whichever `conda` is already on PATH (miniforge is
+fine). It does **not** `module load anaconda3` on top of an existing
+conda — that combination installed a torch that failed to import on a
+peer ICE account. PyTorch is pip-installed as `1.12.1+cu113`.
+
+A second full-val on a fresh clone reported **61.63%** vs **62.60%** here.
+Same checkpoint and crop count; leftover noise is `RandomCrop` at eval
+plus (previously) unsorted companion-frame globs. The evaluator now
+sorts those globs. Neither number is the 79.99% upstream claim.
+
 ## Suggested PR title and body
 
 **Title:** Add SatMAE Temporal (earth science) with a verified inference recipe for PACE ICE

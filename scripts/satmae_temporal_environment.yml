@@ -1,27 +1,21 @@
-# Conda environment for SatMAE Temporal inference.
-# Pins follow SatMAE main_finetune.py (timm==0.3.2) and a torch 1.12 /
-# CUDA 11.3 stack that still provides torchvision.transforms.Scale, which
-# CustomDatasetFromImagesTemporal uses.
+# Conda prefix for SatMAE Temporal inference.
+# Python + geospatial libs only. PyTorch is installed with pip from the
+# cu113 wheel index (see satmae_temporal_requirements.txt). A full conda
+# solve of pytorch=1.12.1 pulled an MKL torch that failed to import on a
+# miniforge ICE account (PR #38 peer report).
 #
 # Create on a compute node, never on the ICE login node:
 #   conda env create -p "$HOME/scratch/envs/satmae-temporal" \
 #     -f scripts/satmae_temporal_environment.yml
+#   conda activate "$HOME/scratch/envs/satmae-temporal"
+#   pip install -r scripts/satmae_temporal_requirements.txt
 name: satmae-temporal
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
 dependencies:
   - python=3.9
   - pip
-  - pytorch=1.12.1
-  - torchvision=0.13.1
-  - cudatoolkit=11.3
   - numpy=1.23.5          # SatMAE util/pos_embed.py uses np.float
   - pandas=1.5.3
   - pillow=9.4.0
   - rasterio              # imported by util/datasets.py even for RGB
-  - pip:
-      - timm==0.3.2
-      - gdown
-      - awscli

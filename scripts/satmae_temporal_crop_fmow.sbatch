@@ -16,13 +16,9 @@ mkdir -p logs
 # shellcheck source=satmae_temporal_paths.sh
 source "$REPO_ROOT/scripts/satmae_temporal_paths.sh"
 
-module load anaconda3 2>/dev/null || module load anaconda 2>/dev/null || true
-set +u
-source "$(conda info --base)/etc/profile.d/conda.sh"
-if [[ -x "$SATMAE_TEMPORAL_ENV/bin/python" ]]; then
-  conda activate "$SATMAE_TEMPORAL_ENV"
-fi
-set -u
+# shellcheck source=satmae_temporal_conda.sh
+source "$REPO_ROOT/scripts/satmae_temporal_conda.sh"
+satmae_activate_env
 
 python "$REPO_ROOT/scripts/satmae_temporal_crop_fmow.py" \
   --val-root "$SATMAE_TEMPORAL_WORKDIR/data/fmow/val" \

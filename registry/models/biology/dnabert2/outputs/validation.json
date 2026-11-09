@@ -1,0 +1,13 @@
+{
+  "model": "zhihan1996/DNABERT-2-117M",
+  "model_revision": "7bce263b15377fc15361f52cfab88f8b586abda0",
+  "device": "cuda",
+  "embedding_dimension": 768,
+  "all_finite": true,
+  "duplicate_max_absolute_difference": 0.0,
+  "duplicate_validation_passed": true,
+  "modified_l2_difference": 0.6468818783760071,
+  "modified_cosine_similarity": 0.972720742225647,
+  "reference_sequence": "ACGTAGCATCGGATCTATCTATCGACACTTGGTTATCGATCTACGAGCATCTCGTTAGC",
+  "modified_sequence": "ACGTAGCATCGGATCTATCTATCGACACTTGGTTATCGATCTACGAGCATCTCGTTAGA"
+}

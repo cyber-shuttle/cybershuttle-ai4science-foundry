@@ -1,0 +1,5 @@
+Python: 3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 23:02:24) [GCC 14.4.0]
+PyTorch: 1.13.1+cu117
+NumPy: 1.24.4
+Transformers: 4.29.2
+Setuptools: 69.5.1

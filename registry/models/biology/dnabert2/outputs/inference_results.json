@@ -1,0 +1,27 @@
+{
+  "model": "zhihan1996/DNABERT-2-117M",
+  "model_revision": "7bce263b15377fc15361f52cfab88f8b586abda0",
+  "dna_sequence": "ACGTAGCATCGGATCTATCTATCGACACTTGGTTATCGATCTACGAGCATCTCGTTAGC",
+  "device": "cuda",
+  "hidden_states_shape": [
+    1,
+    17,
+    768
+  ],
+  "embedding_shape": [
+    768
+  ],
+  "embedding_first_10": [
+    -0.019617680460214615,
+    0.05414265766739845,
+    0.014457657001912594,
+    -0.12051830440759659,
+    -0.09069934487342834,
+    -0.08171871304512024,
+    0.07935716211795807,
+    -0.0028285121079534292,
+    0.0035809786058962345,
+    -0.03521072119474411
+  ],
+  "all_finite": true
+}

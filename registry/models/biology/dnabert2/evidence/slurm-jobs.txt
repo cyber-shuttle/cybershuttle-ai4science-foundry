@@ -1,0 +1,8 @@
+JobID           JobName      State    Elapsed  AllocCPUS     ReqMem  AllocTRES 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- 
+6198973      dnabert2-+  COMPLETED   00:00:06          2        16G billing=2+ 
+6198973.bat+      batch  COMPLETED   00:00:06          2            cpu=2,gre+ 
+6198973.ext+     extern  COMPLETED   00:00:06          2            billing=2+ 
+6198978      dnabert2-+  COMPLETED   00:00:06          2        16G billing=2+ 
+6198978.bat+      batch  COMPLETED   00:00:06          2            cpu=2,gre+ 
+6198978.ext+     extern  COMPLETED   00:00:06          2            billing=2+ 

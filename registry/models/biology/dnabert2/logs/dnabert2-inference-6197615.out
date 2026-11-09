@@ -1,0 +1,46 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 21:27:32
+Job ID:    6197615
+User ID:   sathelli3
+Account:   coc
+Job name:  dnabert2-inference
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Job ID: 6197615
+Node: atl1-1-01-005-13-0.pace.gatech.edu
+Start time: 2026-10-11T21:27:34-04:00
+Sun Oct 11 21:27:34 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:25:00.0 Off |                    0 |
+| N/A   36C    P0             43W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loading tokenizer...
+Loading DNABERT-2 model...
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 21:27:46
+Job ID:        6197615
+User ID:       sathelli3
+Account:       coc
+Job name:      dnabert2-inference
+Resources:     cpu=2,gres/gpu:a100=1,mem=16G,node=1
+Rsrc Used:     cput=00:00:28,vmem=0,walltime=00:00:14,mem=397476K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-13-0
+---------------------------------------

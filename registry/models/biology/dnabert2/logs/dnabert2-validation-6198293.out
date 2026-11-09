@@ -1,0 +1,59 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 21:39:56
+Job ID:    6198293
+User ID:   sathelli3
+Account:   coc
+Job name:  dnabert2-validation
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Job ID: 6198293
+Node: atl1-1-01-005-13-0.pace.gatech.edu
+Start time: 2026-10-11T21:39:58-04:00
+Sun Oct 11 21:39:58 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:25:00.0 Off |                    0 |
+| N/A   36C    P0             44W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Validation device: cuda
+{
+  "model": "zhihan1996/DNABERT-2-117M",
+  "device": "cuda",
+  "embedding_dimension": 768,
+  "all_finite": true,
+  "duplicate_max_absolute_difference": 0.0,
+  "duplicate_validation_passed": true,
+  "modified_l2_difference": 0.6468818783760071,
+  "modified_cosine_similarity": 0.972720742225647,
+  "reference_sequence": "ACGTAGCATCGGATCTATCTATCGACACTTGGTTATCGATCTACGAGCATCTCGTTAGC",
+  "modified_sequence": "ACGTAGCATCGGATCTATCTATCGACACTTGGTTATCGATCTACGAGCATCTCGTTAGA"
+}
+VALIDATION SUCCESSFUL
+End time: 2026-10-11T21:40:03-04:00
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 21:40:03
+Job ID:        6198293
+User ID:       sathelli3
+Account:       coc
+Job name:      dnabert2-validation
+Resources:     cpu=2,gres/gpu:a100=1,mem=16G,node=1
+Rsrc Used:     cput=00:00:14,vmem=0,walltime=00:00:07,mem=2471180K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-13-0
+---------------------------------------

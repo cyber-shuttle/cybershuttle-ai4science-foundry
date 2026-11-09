@@ -1,0 +1,47 @@
+/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+A new version of the following files was downloaded from https://huggingface.co/zhihan1996/DNABERT-2-117M:
+- flash_attn_triton.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+A new version of the following files was downloaded from https://huggingface.co/zhihan1996/DNABERT-2-117M:
+- bert_padding.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+A new version of the following files was downloaded from https://huggingface.co/zhihan1996/DNABERT-2-117M:
+- bert_layers.py
+- flash_attn_triton.py
+- bert_padding.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+Traceback (most recent call last):
+  File "/storage/ice1/9/0/sathelli3/dnabert2/scripts/inference.py", line 21, in <module>
+    model = AutoModel.from_pretrained(
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 459, in from_pretrained
+    model_class = get_class_from_dynamic_module(
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/transformers/dynamic_module_utils.py", line 437, in get_class_from_dynamic_module
+    return get_class_in_module(class_name, final_module.replace(".py", ""))
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/transformers/dynamic_module_utils.py", line 163, in get_class_in_module
+    module = importlib.import_module(module_path)
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/hice1/sathelli3/scratch/dnabert2/.hf-cache/modules/transformers_modules/zhihan1996/DNABERT-2-117M/7bce263b15377fc15361f52cfab88f8b586abda0/bert_layers.py", line 21, in <module>
+    from transformers.models.bert.modeling_bert import BertPreTrainedModel
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 42, in <module>
+    from ...modeling_utils import PreTrainedModel
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/transformers/modeling_utils.py", line 84, in <module>
+    from accelerate import __version__ as accelerate_version
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/accelerate/__init__.py", line 3, in <module>
+    from .accelerator import Accelerator
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/accelerate/accelerator.py", line 34, in <module>
+    from .checkpointing import load_accelerator_state, load_custom_state, save_accelerator_state, save_custom_state
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/accelerate/checkpointing.py", line 24, in <module>
+    from .utils import (
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/accelerate/utils/__init__.py", line 151, in <module>
+    from .torch_xla import install_xla
+  File "/home/hice1/sathelli3/scratch/dnabert2/.conda-env/lib/python3.10/site-packages/accelerate/utils/torch_xla.py", line 18, in <module>
+    import pkg_resources
+ModuleNotFoundError: No module named 'pkg_resources'

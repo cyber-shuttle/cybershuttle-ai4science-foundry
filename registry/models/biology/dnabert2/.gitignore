@@ -1,0 +1,19 @@
+# Local Conda environment
+.conda-env/
+.conda/
+__pycache__/
+*.pyc
+
+# Downloaded model weights and caches
+.hf-cache/
+.cache/
+.pip-cache/
+.tmp/
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+
+# Temporary logs and files
+*.tmp
+*.swp

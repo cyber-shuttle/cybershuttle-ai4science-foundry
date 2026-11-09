@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schemas/benchmark.schema.json
+
+id: satmae-temporal-fmow-temporal-pace-ice
+name: SatMAE Temporal ViT-Large — fMoW-Temporal validation on PACE ICE
+model: satmae-temporal
+model_version: "1.0"
+status: completed-with-documented-gap
+date_run: "2026-10-11"
+submitted_by: Rohan Singhal
+
+description: >
+  Inference-only evaluation of finetune_fmow_temporal.pth on the
+  fMoW-Temporal validation CSV. Primary science metric is Top-1 accuracy
+  without test-time augmentation. Repository reference is 79.99%. Paper
+  ablation without TTA is 79.69%.
+
+environment:
+  resource_profile: resource-profiles/pace-ice/coc-gpu.yaml
+  container: null
+  software:
+    python: "3.9.18"
+    pytorch: "1.12.1"
+    torchvision: "0.13.1"
+    timm: "0.3.2"
+    cudatoolkit: "11.3"
+  hardware_notes: "PACE ICE coc-gpu, 1x NVIDIA L40S confirmed via nvidia-smi (job 6197773)."
+
+infrastructure:
+  inference:
+    throughput_sequences_per_min: 3398  # 53041 / (935.8/60)
+    gpu_memory_peak_gb: 2.05
+    host_memory_peak_gb: 21.3  # sacct MaxRSS 22312020K
+    batch_size: 8
+    precision: fp16-autocast
+    wall_seconds: 994
+    notes: Single GPU job 6197773. Official command used 8 GPUs.
+
+science_metrics:
+  classification:
+    - task: fmow-temporal-val
+      description: 62-class land-use classification, no TTA
+      metric: Top-1 accuracy
+      reference_result: 79.99  # SatMAE README, temporal ViT-Large
+      paper_no_tta_result: 79.69
+      pace_ice_result: 62.60
+      n_images: 53041
+      split: val
+      notes: >
+        Full val ran. 62.60% misses the 79.99% repository number because
+        SatMAE never published *_rgb_crop_0.jpg; chips were reconstructed
+        as tight JSON bbox crops. Stratified subset (n=500, seed 0) was
+        61.00%, far above 1.61% chance, and is not the 79.99% claim.
+
+cost_and_energy:
+  inference_cost_usd: null
+  inference_energy_kwh: null
+
+notes: >
+  metrics.json copies: evidence/satmae-temporal/. Related to Foundry issue #22.

@@ -1,0 +1,21 @@
+# Conda prefix for SatMAE Temporal inference.
+# Python + geospatial libs only. PyTorch is installed with pip from the
+# cu113 wheel index (see satmae_temporal_requirements.txt). A full conda
+# solve of pytorch=1.12.1 pulled an MKL torch that failed to import on a
+# miniforge ICE account (PR #38 peer report).
+#
+# Create on a compute node, never on the ICE login node:
+#   conda env create -p "$HOME/scratch/envs/satmae-temporal" \
+#     -f scripts/satmae_temporal_environment.yml
+#   conda activate "$HOME/scratch/envs/satmae-temporal"
+#   pip install -r scripts/satmae_temporal_requirements.txt
+name: satmae-temporal
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - numpy=1.23.5          # SatMAE util/pos_embed.py uses np.float
+  - pandas=1.5.3
+  - pillow=9.4.0
+  - rasterio              # imported by util/datasets.py even for RGB

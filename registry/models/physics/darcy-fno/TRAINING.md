@@ -62,6 +62,9 @@ before execution.
 
 ```bash
 git clone https://github.com/neuraloperator/neuraloperator.git
+cd neuraloperator
+git checkout 00b7d86f8d74ff0af55da53eb585fe26df9c71f0
+cd ..
 ```
 
 ### 2. Load Anaconda

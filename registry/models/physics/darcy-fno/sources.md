@@ -2,7 +2,8 @@
 
 ## Model Source
 Fourier Neural Operator (FNO)
-Repository: https://github.com/neuraloperator/neuraloperator  
+Repository: https://github.com/neuraloperator/neuraloperator
+Validated commit: 00b7d86f8d74ff0af55da53eb585fe26df9c71f0
 Model file: neuraloperator/neuralop/models/fno.py  
 License: MIT
 

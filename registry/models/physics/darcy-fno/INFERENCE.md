@@ -61,6 +61,9 @@ relative to the directory containing `darcy_inference.py`.
 
 ```bash
 git clone https://github.com/neuraloperator/neuraloperator.git
+cd neuraloperator
+git checkout 00b7d86f8d74ff0af55da53eb585fe26df9c71f0
+cd ..
 ```
 
 ### 2. Load Anaconda
@@ -83,7 +86,7 @@ conda activate neuralop
 ```bash
 cd ../neuraloperator
 pip install -e .
-cd ../darcy-fno
+cd ../darcy-fno-inference
 ```
 
 ---
@@ -149,7 +152,7 @@ The inference script records:
 ## Repository Structure
 
 ```text
-darcy-fno/
+darcy-fno-inference/
 ├── README.md
 ├── environment.yml
 ├── darcy_inference.py

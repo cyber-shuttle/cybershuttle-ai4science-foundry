@@ -1,0 +1,15 @@
+name: neuralop
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch=2.5.1
+  - pytorch-cuda=12.4
+  - numpy
+  - scipy
+  - matplotlib
+  - pip
+  - pip:
+      - -e ../neuraloperator

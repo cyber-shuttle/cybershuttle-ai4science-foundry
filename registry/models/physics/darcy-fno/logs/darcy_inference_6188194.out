@@ -1,0 +1,35 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 15:50:10
+Job ID:    6188194
+User ID:   tkohli7
+Account:   coc
+Job name:  run_darcy_inference.slurm
+Partition: coc-cpu
+QOS:       coc-ice
+---------------------------------------
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+=== Darcy Inference Script ===
+Dataset path: ../neuraloperator/neuralop/data/datasets/data/darcy_test_16.pt
+Input shape: torch.Size([1, 1, 16, 16])
+Target shape: torch.Size([1, 1, 16, 16])
+Running on device: cpu
+Output shape: torch.Size([1, 1, 16, 16])
+Prediction stats:
+min: -0.09005787
+max: -0.08031973
+mean: -0.08528947
+=== Inference complete ===
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 15:50:25
+Job ID:        6188194
+User ID:       tkohli7
+Account:       coc
+Job name:      run_darcy_inference.slurm
+Resources:     cpu=4,mem=16G,node=1
+Rsrc Used:     cput=00:01:00,vmem=0,walltime=00:00:15,mem=626724K,energy_used=0
+Partition:     coc-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-010-2-1
+---------------------------------------

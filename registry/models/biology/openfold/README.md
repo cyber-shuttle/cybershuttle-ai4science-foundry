@@ -67,8 +67,12 @@ sequence databases are needed. To run elsewhere, set `OF_ROOT` and adjust the `#
 and constraint lines.
 
 ```bash
-git clone -b add-openfold https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git
-cd cybershuttle-ai4science-foundry/registry/models/biology/openfold   # every script runs from here
+# Before PR #44 is merged: the contributor's fork, branch add-openfold.
+# After the merge: clone https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git and skip the checkout.
+git clone https://github.com/Rosette2237/cybershuttle-ai4science-foundry.git
+cd cybershuttle-ai4science-foundry
+git checkout add-openfold
+cd registry/models/biology/openfold   # every script runs from here
 
 setup=$(sbatch --parsable scripts/setup.sh)                                      # ~20 min, CPU
 smoke=$(sbatch --parsable --dependency=afterok:$setup scripts/run_inference.sh smoke)   # ~2 min, 4 GPUs
@@ -166,7 +170,7 @@ All numbers below come from [results/summary.json](results/summary.json). Per-ta
 | Artifact | Source | Version / identifier | Retrieval |
 |---|---|---|---|
 | OpenFold code | <https://github.com/aqlaboratory/openfold> | tag `v2.2.0`, commit `e938c184a291bf053af3b14c1e3e8bb29aee57e2` | `git clone` + `checkout` in `setup.sh` |
-| Python environment | [environment.yml](environment.yml) | full pin (230 conda packages with build strings + 10 pip packages), Python 3.10.22, PyTorch 2.5.1, CUDA 12.4 | `conda env create` with Miniforge `26.5.3-0` |
+| Python environment | [environment.yml](environment.yml) | full pin (225 conda packages with build strings + 10 pip packages), Python 3.10.22, PyTorch 2.5.1, CUDA 12.4 | `conda env create` with Miniforge `26.5.3-0` |
 | Stereochemistry table | OpenStructure `stereo_chemical_props.txt` (LGPL-3.0), `git.scicore.unibas.ch/schwede/openstructure` at commit `7102c636`; fallback: [Software Heritage blob](https://archive.softwareheritage.org/api/1/content/sha1_git:25262efd7689fc76f4d6ea1a7c75e342e840ea1d/raw/) | sha256 `24510899eeb49167…` (asserted) | `setup.sh` (60 s timeout); read only by relaxation/training |
 | OpenFold weights | `s3://openfold/openfold_params/` (Registry of Open Data on AWS) | release `v06_22`: `finetuning_ptm_2.pt`, `finetuning_no_templ_ptm_1.pt` | upstream `scripts/download_openfold_params.sh`; sha256 in [results/weights.sha256](results/weights.sha256) |
 | AF2 weights | `https://storage.googleapis.com/alphafold/alphafold_params_2022-12-06.tar` | `params_model_1_ptm.npz`, `params_model_3_ptm.npz` | upstream `scripts/download_alphafold_params.sh`; sha256 in [results/weights.sha256](results/weights.sha256) |

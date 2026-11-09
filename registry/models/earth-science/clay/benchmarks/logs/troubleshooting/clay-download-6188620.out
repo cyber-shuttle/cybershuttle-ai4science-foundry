@@ -1,0 +1,54 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 16:28:34
+Job ID:    6188620
+User ID:   sjin308
+Account:   coc
+Job name:  clay-download
+Partition: coc-cpu
+QOS:       coc-ice
+---------------------------------------
+== clay-download  job=6188620  node=atl1-1-01-005-3-1.pace.gatech.edu  start=2026-10-11T16:28:34-04:00
+== CLAY_WORKDIR=/home/hice1/sjin308/scratch/clay  foundry commit=0689db9396aabe3e694a89e98f5e3152a2f9cbd6
+== Network check
+   reachable (200)  https://huggingface.co/api/models/made-with-clay/Clay
+   reachable (200)  https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip
+   reachable (206)  https://data.source.coop/clay/clay-v1-5-naip-2/az/2015/100cm/rgbir_cog/32110/m_3211002_se_12_1_20150530.parquet
+== Clay v1.5 checkpoint (made-with-clay/Clay @ 70200ebcccdf67bf2a0cb9984c77ddee26c10ed2)
+   downloading clay-v1.5.ckpt ...
+   downloaded and verified: /home/hice1/sjin308/scratch/clay/weights/clay-v1.5.ckpt
+   sha256 21432069250b9b3f9a65ffd0071c5ad56b793247285ab0604edf7f531d4798d0  clay-v1.5.ckpt
+== DINOv2 teacher (vit_large_patch14_reg4_dinov2.lvd142m)
+   cached at /home/hice1/sjin308/scratch/clay/cache/huggingface/hub/models--timm--vit_large_patch14_reg4_dinov2.lvd142m/snapshots/f3c408e77602bb412aa65fb03dfa0d5f95cb3832/model.safetensors
+   hf revision f3c408e77602bb412aa65fb03dfa0d5f95cb3832
+   sha256 c893d72294d4c327e631ff92f428dbc14c4f93cb5581b6c5f9d89bb5d17def27  vit_large_patch14_reg4_dinov2.lvd142m.safetensors
+== Offline check: GPU jobs read the teacher from the cache with HF_HUB_OFFLINE=1
+   offline load OK
+== WEIGHTS READY
+== NAIP tile: STAC item az_m_3211002_se_12_1_20150530_20151022
+   href      https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_100cm_2015/32110/m_3211002_se_12_1_20150530.tif
+   datetime  2015-05-30T00:00:00Z  {'gsd': 1.0, 'epsg': 26912, 'shape': [7570, 6490]}
+   downloading m_3211002_se_12_1_20150530.tif ...
+   downloaded and verified: /home/hice1/sjin308/scratch/clay/data/m_3211002_se_12_1_20150530.tif
+   sha256 4bd22adff7877ef333561620a0b0d8e9c5da25adb9c3e131b865849679ade567  m_3211002_se_12_1_20150530.tif
+== Reference embeddings (source.coop clay/clay-v1-5-naip-2)
+   downloading m_3211002_se_12_1_20150530.parquet ...
+   downloaded and verified: /home/hice1/sjin308/scratch/clay/data/m_3211002_se_12_1_20150530.parquet
+   sha256 a551efc22b3ab2e3f0317f9b97a821550baafcb1e0fa2bd5a36fc0c186bece54  m_3211002_se_12_1_20150530.parquet
+== DATA READY
+== Disk use
+   4.9G	/home/hice1/sjin308/scratch/clay/weights
+   181M	/home/hice1/sjin308/scratch/clay/data
+   1.2G	/home/hice1/sjin308/scratch/clay/cache/huggingface
+== DOWNLOAD COMPLETED  end=2026-10-11T16:30:49-04:00
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 16:30:49
+Job ID:        6188620
+User ID:       sjin308
+Account:       coc
+Job name:      clay-download
+Resources:     cpu=2,mem=8G,node=1
+Rsrc Used:     cput=00:04:30,vmem=0,walltime=00:02:15,mem=7888416K,energy_used=0
+Partition:     coc-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-3-1
+---------------------------------------

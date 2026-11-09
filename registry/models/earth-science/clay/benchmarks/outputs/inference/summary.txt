@@ -1,0 +1,2 @@
+clay-inference job 6194944, scripts tree 9d02664aa884486779f55a673c435b14e40b8e1b
+725 chips, ours vs Clay's published embeddings: mean cosine 0.99999995 (min 0.99999992), mismatched control 0.9017, retrieval 100.0%, relative L2 3.17e-04: PASS

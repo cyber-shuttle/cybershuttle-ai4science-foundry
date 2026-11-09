@@ -1,0 +1,152 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: clay-v1.5
+name: Clay v1.5
+version: "1.5"
+
+description: >
+  Clay is an open foundation model for satellite and aerial imagery. It takes
+  an image chip plus where and when it was taken and which sensor took it, and
+  returns a list of 1,024 numbers that summarizes the chip (an embedding).
+  Clay v1.5 is a Vision Transformer trained as a masked autoencoder, with a
+  DINOv2 teacher, on about 70 million chips from Sentinel-2, Landsat 8/9,
+  Sentinel-1, NAIP, LINZ and MODIS. This entry covers embedding inference on
+  NAIP aerial imagery, verified against Clay's own published embeddings.
+
+domain:
+  - earth-science
+  - remote-sensing
+
+model_family:
+  - vision-transformer
+  - masked-autoencoder
+  - foundation-model
+  - encoder
+
+tasks:
+  - inference
+  - evaluation
+  - fine-tuning   # upstream examples exist (docs/finetune); not verified here
+  - training      # upstream trainer.py + configs/config.yaml; not verified here
+
+upstream:
+  github: https://github.com/Clay-foundation/model
+  github_commit: f14e698f3c237cabf8d28dec669a362d66625381   # main, 2026-03-27
+  huggingface: made-with-clay/Clay
+  paper: https://clay-foundation.github.io/model/release-notes/specification.html  # no peer-reviewed paper; release notes are the primary reference
+  other:
+    - https://doi.org/10.57967/hf/1537                         # Hugging Face model DOI
+    - https://source.coop/clay/clay-v1-5-naip-2               # Clay's published NAIP embeddings (rev2), the validation reference
+    - https://github.com/Clay-foundation/stacchip/blob/5660f1a5cb0fbb77b5b2d1a56648e0027e119597/stacchip/processors/prechip.py  # time and lat/lon encoding used for the published embeddings
+  license: Apache-2.0 (source code and model weights)
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+    - fine-tuning
+    - training
+
+checkpoint:
+  file: clay-v1.5.ckpt
+  url: https://huggingface.co/made-with-clay/Clay/resolve/70200ebcccdf67bf2a0cb9984c77ddee26c10ed2/v1.5/clay-v1.5.ckpt
+  hf_revision: 70200ebcccdf67bf2a0cb9984c77ddee26c10ed2
+  bytes: 5158764629
+  sha256: 21432069250b9b3f9a65ffd0071c5ad56b793247285ab0604edf7f531d4798d0
+  teacher: vit_large_patch14_reg4_dinov2.lvd142m   # stored in the checkpoint's hyperparameters
+  teacher_source: timm/vit_large_patch14_reg4_dinov2.lvd142m @ f3c408e77602bb412aa65fb03dfa0d5f95cb3832 (model.safetensors sha256 c893d72294d4c327e631ff92f428dbc14c4f93cb5581b6c5f9d89bb5d17def27)
+
+architecture:
+  type: ViT-Large encoder (clay_mae_large), masked autoencoder, DINOv2 teacher
+  parameters: "632M total: encoder 311M, decoder 15M, teacher 304M (Clay release notes)"
+  encoder_dim: 1024
+  encoder_depth: 24
+  encoder_heads: 16
+  patch_size: 8
+  input_size: 256
+  mask_ratio_training: 0.75   # set to 0.0 for inference
+
+input:
+  format: 256 x 256 chip, any number of bands, plus metadata
+  naip:
+    bands: [red, green, blue, nir]
+    normalization: per-band mean/std from configs/metadata.yaml (naip block)
+    wavelengths_um: [0.65, 0.56, 0.48, 0.842]
+    gsd_m: 1.0
+    time: "[sin week, cos week, sin hour, cos hour]; ISO week of the acquisition date, hour 12"
+    latlon: "[sin lon, cos lon, sin lat, cos lat] of the chip center, as in Clay's data preparation"
+
+output:
+  inference:
+    format: class-token embedding, float32
+    shape: "[n_chips, 1024]"
+    description: >
+      scripts/clay_embed.py writes Parquet with chip_index, row_off, col_off,
+      geometry (WKB, lon/lat) and embeddings, plus run details in the file
+      metadata.
+
+datasets:
+  recommended:
+    - naip
+  evaluation:
+    - id: clay-v1-5-naip-2
+      description: Clay v1.5 class embeddings of NAIP, 256x256 chips (rev2)
+      url: https://source.coop/clay/clay-v1-5-naip-2
+      license: CC-BY-4.0
+      file_used: az/2015/100cm/rgbir_cog/32110/m_3211002_se_12_1_20150530.parquet (725 chips, sha256 a551efc22b3ab2e3f0317f9b97a821550baafcb1e0fa2bd5a36fc0c186bece54)
+    - id: naip
+      description: USDA NAIP 4-band aerial imagery, 1 m, Arizona 2015
+      url: https://planetarycomputer.microsoft.com/dataset/naip
+      item: az_m_3211002_se_12_1_20150530_20151022 (m_3211002_se_12_1_20150530.tif, sha256 4bd22adff7877ef333561620a0b0d8e9c5da25adb9c3e131b865849679ade567)
+      license: public domain (USDA); Clay's copy came from AWS naip-analytic, which is requester-pays
+
+software:
+  python: "3.11.17"
+  frameworks:
+    - torch==2.4.0+cu121
+    - torchvision==0.19.0+cu121
+    - lightning==2.4.0
+    - timm==1.0.11
+    - claymodel==1.5.0 (installed from the pinned commit)
+  environment_files:     # relative to this folder
+    - scripts/clay_environment.yml     # conda: python + pip
+    - scripts/clay_requirements.txt    # exact pip lock, 106 packages with sha256 hashes
+  container: null   # no container; conda environment only
+
+resource_profiles:
+  recommended:
+    - registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
+
+minimum_requirements:
+  gpu_memory_gb_observed_peak: 2.01   # 725 chips, batch 16, fp32 (job 6194944)
+  host_ram_gb_requested: 32           # peak 14.4 GiB RSS while loading the checkpoint (sacct, job 6194943)
+  scratch_gb: 16                      # 15 GiB measured with du after the reference run
+
+cybershuttle:
+  enabled: false
+  workflow_templates: []
+
+readiness:
+  registry_status: containerized   # reproducible conda environment, not a container image
+  nexus_validation: untested
+  benchmark_status: complete
+  optimization_status: not-started
+  workflow_status: validated
+  last_updated: "2026-10-11"
+  notes: >
+    Inference verified end to end on PACE ICE (not Nexus) on 1x NVIDIA L40S.
+    On the 725 chips of NAIP tile m_3211002_se_12_1_20150530, our embeddings
+    match Clay's published rev2 embeddings with mean cosine similarity
+    0.99999995 (job 6194944). See benchmarks/clay-pace-ice-inference.yaml.
+    Fine-tuning and training are not verified here.
+
+maintainers:
+  - name: Shi Jin
+    github: "@Andy216914"
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  Related to cyber-shuttle/cybershuttle-ai4science-foundry issue #8.
+  Setup, execution, verification, troubleshooting and cleanup:
+  registry/models/earth-science/clay/README.md. Recipe:
+  registry/models/earth-science/clay/recipes/clay-inference-embeddings.yaml.

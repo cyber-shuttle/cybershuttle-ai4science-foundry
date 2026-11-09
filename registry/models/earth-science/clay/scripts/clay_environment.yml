@@ -1,0 +1,17 @@
+# Conda part of the Clay v1.5 inference environment (PACE ICE, Linux x86_64).
+#
+# Conda supplies only Python and pip. Every other package is installed by pip
+# from scripts/clay_requirements.txt, an exact lock with sha256 hashes, so no
+# numpy/GDAL binaries are mixed between conda and pip.
+#
+# Clay's own environment.yml (Clay-foundation/model @ f14e698) asks for
+# python=3.11 and the same pip packages; the lock pins those to exact versions.
+#
+# Built by scripts/clay_build_env.sbatch:
+#   conda env create -p $CLAY_ENV -f scripts/clay_environment.yml
+name: clay
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11.17
+  - pip=26.2.1

@@ -1,0 +1,36 @@
+# First run of scripts/clay_preflight.sh on the ICE login node (login-ice-gnr-1),
+# 2026-10-11, foundry commit 836cb46. Copied verbatim from the terminal.
+#
+# What went wrong: the check for the Planetary Computer STAC API failed. The
+# network was fine. The check asked for a single byte (an HTTP range request),
+# and that API answers range requests with 502; a plain GET returns 200
+# (confirmed with curl from another machine the same day). The download job
+# uses the same check, so it would have failed too.
+# Fix (commit 0689db9 onward): clay_check_url in scripts/clay_common.sh retries
+# with a plain GET when the range request is refused. The next preflight passed.
+
+== Repo
+  ok    branch clay-assignment-2 at 836cb46
+== Slurm association (expect account coc, QOS coc-ice)
+        coc|coc-ice
+== Partitions used by the job scripts
+  ok    coc-cpu exists
+  ok    coc-gpu exists
+== Would Slurm accept the jobs? (sbatch --test-only, nothing is submitted)
+  ok    scripts/clay_build_env.sbatch: Job 6188574 to start at 2026-10-11T17:43:37 a using 4 processors on nodes atl1-1-01-005-2-2 in partition coc-cpu
+  ok    scripts/clay_download.sbatch: Job 6188575 to start at 2026-10-11T17:43:37 a using 2 processors on nodes atl1-1-01-005-2-1 in partition coc-cpu
+== Conda module
+  ok    miniforge/24.3.0-0
+== Scratch (/home/hice1/sjin308/scratch/clay)
+  ok    writable
+        172.27.64.26@o2ib,172.27.68.89@o2ib:172.27.64.27@o2ib,172.27.68.90@o2ib:/ice1  4.3P  200T  3.9P   5% /storage/ice1
+        needs roughly 20-25 GB (estimate): env + caches, checkpoint 5.2 GB, teacher 1.2 GB, data 0.2 GB
+== Download hosts (from the login node)
+   reachable (206)  https://github.com/Clay-foundation/model
+   reachable (206)  https://pypi.org/simple/pip/
+   reachable (206)  https://download.pytorch.org/whl/cu121/torch/
+  FAIL  unreachable: https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip
+   reachable (200)  https://huggingface.co/api/models/made-with-clay/Clay
+   reachable (206)  https://data.source.coop/clay/clay-v1-5-naip-2/az/2015/100cm/rgbir_cog/32110/m_3211002_se_12_1_20150530.parquet
+
+PREFLIGHT FOUND PROBLEMS (see FAIL lines)

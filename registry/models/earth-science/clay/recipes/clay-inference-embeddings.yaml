@@ -1,0 +1,170 @@
+# yaml-language-server: $schema=../../../../../schemas/execution_recipe.schema.json
+# Paths are relative to this model's folder, where every command is run,
+# except resource profiles, which use the foundry's repo-root convention.
+
+id: clay-inference-embeddings
+name: Clay v1.5 — NAIP chip embeddings, verified against Clay's published embeddings
+model: clay-v1.5
+task: inference
+description: >
+  Run the released Clay v1.5 checkpoint on one NAIP aerial tile, cut into the
+  same 725 chips of 256 x 256 pixels that Clay used, and write one 1,024-number
+  class embedding per chip. Then compare every chip with Clay's own published
+  embedding for that chip (source.coop clay-v1-5-naip-2, rev2). Verified on
+  PACE ICE: mean cosine similarity 0.99999995 over 725 chips. Inference only;
+  no training or fine-tuning.
+
+variants_supported:
+  - clay-v1.5   # clay-v1.5.ckpt, model_size large; the only checkpoint tested
+
+input:
+  imagery:
+    source: Microsoft Planetary Computer, collection naip (free, no account)
+    item: az_m_3211002_se_12_1_20150530_20151022
+    file: m_3211002_se_12_1_20150530.tif   # 4 bands red/green/blue/nir, uint8, 6490 x 7570 px, 1 m, EPSG:26912
+  chips: >
+    Taken from the geometry column of the reference parquet: 725 windows of
+    256 x 256 px on the tile grid (25 columns x 29 rows from the top-left
+    corner). scripts/clay_embed.py stops if any outline is off the grid.
+  metadata:
+    normalization: NAIP mean/std from Clay configs/metadata.yaml
+    time: ISO week of 2015-05-30 and hour 12, as [sin, cos, sin, cos]
+    latlon: chip center, ordered [sin lon, cos lon, sin lat, cos lat]
+    gsd: 1.0
+    wavelengths_um: [0.65, 0.56, 0.48, 0.842]
+
+output:
+  embeddings:
+    format: Parquet (chip_index, row_off, col_off, geometry WKB lon/lat, embeddings list<float32>[1024])
+    location: $CLAY_WORKDIR/results/inference-<jobid>/embeddings.parquet
+  evidence:
+    - benchmarks/outputs/inference/summary.txt
+    - benchmarks/outputs/inference/validation_report.json
+    - benchmarks/outputs/inference/validation_cosine.png
+    - benchmarks/outputs/inference/embeddings_sample.parquet   # first 16 chips
+    - benchmarks/logs/clay-*-<jobid>.{out,err}
+
+environment:
+  conda_module: miniforge/24.3.0-0 (conda 23.7.4)
+  environment_file: scripts/clay_environment.yml        # python 3.11.17, pip 26.2.1
+  pip_lock: scripts/clay_requirements.txt               # 106 packages, exact versions, sha256 hashes
+  upstream_code: https://github.com/Clay-foundation/model @ f14e698f3c237cabf8d28dec669a362d66625381
+  workdir: $CLAY_WORKDIR (default ~/scratch/clay) holds clay-model/, envs/, weights/, data/, cache/, results/
+  settings_file: scripts/clay_common.sh                 # every path, URL, version and checksum
+
+steps:
+  - name: preflight
+    description: Login-node checks (account/QOS, partitions, sbatch --test-only, module, scratch, network). Submits nothing.
+    script: scripts/clay_preflight.sh
+
+  - name: build_environment
+    description: >
+      CPU job. Clone Clay at the pinned commit, create the env (Python + pip),
+      install the hashed lock with --no-deps, install claymodel from source,
+      check every version against the lock, pip check, record the env.
+    script: scripts/clay_build_env.sbatch
+    partition: coc-cpu
+
+  - name: download
+    description: >
+      CPU job. Checkpoint (Hugging Face, pinned revision), DINOv2 teacher
+      (prefetched so GPU jobs run offline), NAIP tile (Planetary Computer),
+      Clay's published embeddings for the tile (source.coop). Every file is
+      checked against a pinned sha256; reruns skip verified files.
+    scripts:
+      - scripts/clay_download.sbatch
+      - scripts/clay_download_weights.sh
+      - scripts/clay_download_data.sh
+    partition: coc-cpu
+
+  - name: smoke_test
+    description: GPU job, first 8 chips twice. Shape [8, 1024], finite, identical runs, different chips differ.
+    script: scripts/clay_smoke_test.sbatch
+    uses: [scripts/clay_embed.py, scripts/clay_validate.py, scripts/clay_check_env.py]
+
+  - name: inference
+    description: >
+      GPU job, all 725 chips, compared chip by chip with Clay's published
+      embeddings (pass criterion), with a mismatched-chip control and a
+      retrieval check.
+    script: scripts/clay_inference.sbatch
+    uses: [scripts/clay_embed.py, scripts/clay_validate.py]
+    args:
+      batch-size: 16
+
+  - name: run_all
+    description: One command for all of the above, chained with Slurm dependencies.
+    script: scripts/clay_run_all.sh
+
+resource_requirements:
+  build_environment: {partition: coc-cpu, cpus: 4, mem: 16G, time: "01:00:00", observed_walltime: "00:10:05", observed_max_rss_gib: 12.0}
+  download:          {partition: coc-cpu, cpus: 2, mem: 16G, time: "01:00:00", observed_walltime: "00:02:48", observed_max_rss_gib: 7.8}
+  smoke_test:        {partition: coc-gpu, gres: "gpu:l40s:1", cpus: 4, mem: 32G, time: "00:30:00", observed_walltime: "00:01:01", observed_max_rss_gib: 14.4, observed_peak_gpu_gb: 1.63}
+  inference:         {partition: coc-gpu, gres: "gpu:l40s:1", cpus: 4, mem: 32G, time: "01:00:00", observed_walltime: "00:01:06", observed_max_rss_gib: 7.6, observed_peak_gpu_gb: 2.01, chips: 725, embed_seconds: 12.2}
+  storage_gib: 15   # du of $CLAY_WORKDIR after the reference run (env, checkpoint, teacher, data, caches, results)
+
+compatible_resource_profiles:
+  - registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
+
+compatible_optimization_profiles: []
+
+slurm_example: |
+  #!/bin/bash
+  #SBATCH --job-name=clay-inference
+  #SBATCH --account=coc
+  #SBATCH --partition=coc-gpu
+  #SBATCH --qos=coc-ice
+  #SBATCH --gres=gpu:l40s:1
+  #SBATCH --cpus-per-task=4
+  #SBATCH --mem=32G
+  #SBATCH --time=01:00:00
+  #SBATCH --output=benchmarks/logs/%x-%j.out
+
+  source scripts/clay_common.sh
+  clay_activate
+  export HF_HUB_OFFLINE=1
+  python scripts/clay_embed.py \
+    --tile "$CLAY_DATA/$NAIP_TILE_NAME" --reference "$CLAY_DATA/$REF_NAME" \
+    --checkpoint "$CLAY_WEIGHTS/clay-v1.5.ckpt" \
+    --metadata "$CLAY_REPO/configs/metadata.yaml" \
+    --out "$CLAY_RESULTS/embeddings.parquet"
+  python scripts/clay_validate.py --embeddings "$CLAY_RESULTS/embeddings.parquet" \
+    --reference "$CLAY_DATA/$REF_NAME" --out-dir "$CLAY_RESULTS/validation"
+
+  # The full job (GPU/version capture, embeddings sample, summary, sacct) is
+  # scripts/clay_inference.sbatch. Submit from this model's folder.
+
+verification:
+  criterion: mean cosine similarity >= 0.99 over all chips vs Clay's published embeddings (Shi Jin's own criterion from Assignment 1, not Clay's)
+  expected_mean_cosine: ">= 0.99"
+  observed:
+    job_id: 6194944
+    n_chips: 725
+    mean_cosine: 0.99999995
+    min_cosine: 0.99999992
+    retrieval_top1: 1.0
+    mismatched_control_mean_cosine: 0.9017
+    relative_l2_error_mean: 3.17e-4
+    result: PASS
+
+notes: >
+  Gotchas found while verifying this recipe on PACE ICE, each handled in the
+  scripts:
+
+  1. Clay's published embeddings were made with hour 12 and the location
+     ordered [sin lon, cos lon, sin lat, cos lat] (stacchip prechip.py
+     lines 152-158). Clay's example notebooks use the photo's hour and
+     latitude first, which gave 0.968 instead (job 6189009); clay_embed.py
+     uses Clay's settings.
+  2. Clay builds its DINOv2 teacher with timm pretrained=True even for
+     inference, which downloads 1.2 GB. The download job prefetches it and GPU
+     jobs run with HF_HUB_OFFLINE=1.
+  3. The checkpoint stores metadata_path as a relative path; clay_embed.py
+     passes the absolute path of the pinned checkout's configs/metadata.yaml.
+  4. claymodel sets torch.set_float32_matmul_precision("medium") on import.
+     It is left as Clay sets it and recorded in every run's details.
+  5. Planetary Computer's STAC API answers HTTP range requests with 502, so
+     the network check retries with a plain GET.
+
+  See registry/models/earth-science/clay/README.md for setup, execution,
+  verification, troubleshooting and cleanup.

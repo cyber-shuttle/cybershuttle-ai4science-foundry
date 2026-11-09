@@ -1,0 +1,90 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 20:43:04
+Job ID:    6194944
+User ID:   sjin308
+Account:   coc
+Job name:  clay-inference
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+== clay-inference  job=6194944  node=atl1-1-03-004-25-0.pace.gatech.edu  start=2026-10-11T20:43:04-04:00
+== foundry commit ddeb3ad  scripts tree 9d02664aa884486779f55a673c435b14e40b8e1b  uncommitted script changes: 0
+== GPU
+name, memory.total [MiB], driver_version, compute_cap
+NVIDIA L40S, 46068 MiB, 615.71.09, 8.9
+[lock] 106 pinned packages, 0 mismatched
+python                                             3.11.17
+platform                                           Linux-5.14.0-687.49.1.el9_8.x86_64-x86_64-with-glibc2.34
+lock_packages                                      106
+torch                                              2.4.0+cu121
+torchvision                                        0.19.0+cu121
+numpy                                              2.1.3
+timm                                               1.0.11
+lightning                                          2.4.0
+jsonargparse                                       4.34.0
+einops                                             0.7.0
+rasterio                                           1.4.2
+pyarrow                                            18.0.0
+shapely                                            2.0.6
+pyproj                                             3.7.0
+geopandas                                          1.0.1
+pystac-client                                      0.8.5
+planetary-computer                                 1.0.0
+huggingface-hub                                    0.26.2
+safetensors                                        0.4.5
+claymodel                                          1.5.0
+torch_cuda_build                                   12.1
+cudnn                                              90100
+gdal                                               3.9.3
+proj                                               9.4.1
+geos                                               3.11.4
+torch_arch_list                                    ['sm_50', 'sm_60', 'sm_70', 'sm_75', 'sm_80', 'sm_86', 'sm_90']
+float32_matmul_precision_after_claymodel_import    medium
+teacher                                            vit_large_patch14_reg4_dinov2.lvd142m
+teacher_num_features                               1024
+cuda_available                                     True
+gpu                                                NVIDIA L40S
+gpu_compute_capability                             8.9
+gpu_memory_gb                                      47.8
+gpu_matmul_ok                                      True
+ENV CHECK PASSED
+== Embedding all 725 chips
+chips: 725  grid error: 2.79e-09 px  geometry gap vs reference: 0.00e+00 deg
+inputs: {"date": "2015-05-30", "iso_week": 22, "hour": 12, "latlon": "[sin lon, cos lon, sin lat, cos lat] of the chip center", "normalized": true, "gsd": 1.0, "waves_um": [0.65, 0.56, 0.48, 0.842]}
+model: {"teacher": "vit_large_patch14_reg4_dinov2.lvd142m", "model_size": "large", "mask_ratio": 0.0, "checkpoint_load": "strict (no missing or unexpected keys)", "float32_matmul_precision": "medium", "checkpoint": "/storage/ice1/5/6/sjin308/clay-final/weights/clay-v1.5.ckpt"}
+wrote /home/hice1/sjin308/scratch/clay-final/results/inference-6194944/embeddings.parquet  shape (725, 1024)  {'inference_seconds': 12.224, 'peak_cuda_memory_gb': 2.01, 'gpu': 'NVIDIA L40S', 'gpu_compute_capability': '8.9'}
+EMBED COMPLETED
+== Validation against Clay's published embeddings
+[PASS] chip geometry matches reference: expected max outline gap < 1e-9 deg; observed 0.00e+00
+[PASS] finite: expected no NaN/Inf; observed True
+[PASS] mean matched cosine (Shi's criterion): expected >= 0.99; observed 0.99999995
+[PASS] matched above mismatched control: expected matched mean > mismatched mean; observed 0.99999995 vs 0.9017
+[PASS] retrieval top-1: expected >= 95% of chips find their own Clay embedding first; observed 100.0%
+wrote benchmarks/results/clay/outputs/inference/validation_cosine.png
+wrote benchmarks/results/clay/outputs/inference/validation_report.json
+VALIDATION PASS
+== Embeddings sample (first 16 chips, kept as an output artifact)
+   wrote benchmarks/results/clay/outputs/inference/embeddings_sample.parquet: 16 of 725 rows
+clay-inference job 6194944, scripts tree 9d02664aa884486779f55a673c435b14e40b8e1b
+725 chips, ours vs Clay's published embeddings: mean cosine 0.99999995 (min 0.99999992), mismatched control 0.9017, retrieval 100.0%, relative L2 3.17e-04: PASS
+== Scratch space used by the whole workflow
+   15G	/home/hice1/sjin308/scratch/clay-final
+== Slurm accounting
+JobID           JobName  Partition                                AllocTRES      State    Elapsed     MaxRSS 
+------------ ---------- ---------- ---------------------------------------- ---------- ---------- ---------- 
+6194944      clay-infe+    coc-gpu billing=4,cpu=4,gres/gpu:l40s=1,gres/gp+    RUNNING   00:01:06            
+6194944.bat+      batch            cpu=4,gres/gpu:l40s=1,gres/gpu=1,mem=32+    RUNNING   00:01:06            
+6194944.ext+     extern            billing=4,cpu=4,gres/gpu:l40s=1,gres/gp+    RUNNING   00:01:06            
+== WORKFLOW COMPLETED  validation: PASS  end=2026-10-11T20:44:10-04:00
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 20:44:10
+Job ID:        6194944
+User ID:       sjin308
+Account:       coc
+Job name:      clay-inference
+Resources:     cpu=4,gres/gpu:l40s=1,mem=32G,node=1
+Rsrc Used:     cput=00:04:24,vmem=0,walltime=00:01:06,mem=7965968K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-004-25-0
+---------------------------------------

@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=../../../../../schemas/benchmark.schema.json
+# Paths are relative to this model's folder, where every command is run,
+# except resource profiles, which use the foundry's repo-root convention.
+
+id: clay-v1.5-pace-ice-naip-inference
+name: Clay v1.5 — NAIP embedding inference on PACE ICE (1x L40S), checked against Clay's published embeddings
+model: clay-v1.5
+model_version: "1.5"
+status: complete
+date_run: "2026-10-11"
+submitted_by: Shi Jin (@Andy216914)
+
+description: >
+  Reference run of recipes/clay-inference-embeddings.yaml from a fresh clone
+  and an empty work folder, started with one command
+  (scripts/clay_run_all.sh). Clay v1.5 embedded the 725 chips (256 x 256 px)
+  of NAIP tile m_3211002_se_12_1_20150530, and each chip's embedding was
+  compared with Clay's published embedding for the same chip.
+
+environment:
+  resource_profile: registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
+  container: null
+  software:
+    python: "3.11.17"
+    pytorch: "2.4.0+cu121"
+    cuda_build: "12.1"
+    cudnn: "9.1.0 (90100)"
+    lightning: "2.4.0"
+    timm: "1.0.11"
+    numpy: "2.1.3"
+    rasterio: "1.4.2 (GDAL 3.9.3)"
+    claymodel: "1.5.0 @ f14e698f3c237cabf8d28dec669a362d66625381"
+    lock_file: scripts/clay_requirements.txt   # 106 packages; installed versions checked against it in every job
+  hardware_notes: >
+    NVIDIA L40S (46068 MiB, compute capability 8.9, driver 615.71.09), 4 CPU
+    cores, 32 GB requested RAM, RHEL 9.8. Env build and downloads on coc-cpu.
+  precision: fp32 inputs; torch float32 matmul precision "medium" (set by claymodel)
+  batch_size: 16
+
+runs:
+  submitted_by_script: benchmarks/logs/run_all-20261011T202904.txt
+  scripts_tree: 9d02664aa884486779f55a673c435b14e40b8e1b   # git rev-parse <commit>:scripts at run time
+  jobs:
+    - {step: build_env, job_id: 6194941, partition: coc-cpu, walltime: "00:10:05", max_rss_gib: 12.0, log: logs/clay-build-env-6194941.out}
+    - {step: download,  job_id: 6194942, partition: coc-cpu, walltime: "00:02:48", max_rss_gib: 7.8,  log: logs/clay-download-6194942.out}
+    - {step: smoke,     job_id: 6194943, partition: coc-gpu, walltime: "00:01:01", max_rss_gib: 14.4, log: logs/clay-smoke-6194943.out}
+    - {step: inference, job_id: 6194944, partition: coc-gpu, walltime: "00:01:06", max_rss_gib: 7.6,  log: logs/clay-inference-6194944.out}
+
+# ── Infrastructure ───────────────────────────────────────────────────────────
+infrastructure:
+  inference:
+    chips: 725
+    embed_seconds: 12.2            # model forward passes only, 725 chips, batch 16
+    throughput_chips_per_second: 59
+    peak_gpu_memory_gb: 2.01       # torch.cuda.max_memory_allocated
+    job_walltime_seconds: 66       # includes environment check, model loading and validation
+  smoke_test:
+    chips: 8
+    peak_gpu_memory_gb: 1.63
+  storage_gib: 15       # du of $CLAY_WORKDIR after the run (env, checkpoint, teacher, data, caches, results)
+  gpu_hours_used: 0.04   # smoke 1:01 + inference 1:06 = 127 s
+
+# ── Science / validation metrics ─────────────────────────────────────────────
+science_metrics:
+  reproduction_of_clay_published_embeddings:
+    reference: source.coop clay/clay-v1-5-naip-2 (Clay's published embeddings), m_3211002_se_12_1_20150530.parquet
+    metric: cosine similarity, ours vs Clay, same chip
+    criterion: mean >= 0.99 (Shi Jin's own criterion from Assignment 1, not Clay's)
+    result: PASS
+    mean: 0.99999995
+    min: 0.99999992
+    relative_l2_error_mean: 3.17e-4
+    norm_ratio_mean: 0.99999
+    retrieval_top1: 1.0                 # each chip's nearest Clay embedding is its own chip
+    control_mismatched_chips_mean: 0.9017
+    clay_vs_clay_different_chips_mean: 0.9017
+  smoke_test:
+    shape: [8, 1024]
+    finite: true
+    max_abs_diff_between_two_runs: 0.0
+    closest_different_chips_relative_l2: 0.169
+
+cost_and_energy:
+  notes: PACE ICE is an instructional cluster; no cost or energy figures are reported (Slurm epilog shows energy_used=0).
+
+notes: >
+  Evidence: benchmarks/logs/ (full Slurm stdout/stderr with the
+  PACE prolog and epilog) and benchmarks/outputs/ (environment
+  record, checksums, validation reports and plots, a 16-chip embeddings
+  sample). Earlier runs during development that showed real problems are kept in
+  logs/troubleshooting/ and explained in the README.

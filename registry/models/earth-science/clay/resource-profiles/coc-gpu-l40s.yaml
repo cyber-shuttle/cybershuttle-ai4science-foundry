@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu-l40s
+name: Georgia Tech PACE ICE — coc-gpu partition, 1x NVIDIA L40S
+system: pace-ice
+provider: Georgia Tech PACE (instructional cluster, AI Makerspace)
+
+description: >
+  One NVIDIA L40S GPU on the coc-gpu partition of PACE ICE (College of
+  Computing courses: account coc, QOS coc-ice). The values below are what the
+  Clay v1.5 inference jobs requested and what nvidia-smi and Slurm reported.
+  The partition also has A100, A40, RTX 6000, V100 and AMD MI210 nodes, so
+  always request the GPU type explicitly.
+
+partition: coc-gpu
+scheduler: slurm
+
+# gpu/cpu/storage are top-level fields in ResourceProfileSchema (tools/schemas/schemas.py).
+gpu:
+  model: NVIDIA L40S
+  count: 1
+  vram_gb: 45          # 46068 MiB reported by nvidia-smi (48 GB nominal)
+cpu:
+  cores: 4             # --cpus-per-task=4, as requested
+  ram_gb: 32           # --mem=32G, as requested
+storage:
+  scratch_gb: 300      # per-user scratch quota (~/scratch); home is 30 GB
+  parallel_fs: Lustre (/storage/ice1)
+
+# Not part of the schema; kept for people writing job scripts.
+slurm:
+  account: coc
+  qos: coc-ice
+  gres: gpu:l40s:1
+  gres_alternative: gpu:a100:1   # same partition; not tested with Clay
+  cpu_partition: coc-cpu         # used for the env build and downloads
+  example_directive: "#SBATCH --account=coc --partition=coc-gpu --qos=coc-ice --gres=gpu:l40s:1"
+
+measured:
+  gpu_compute_capability: "8.9"
+  nvidia_driver: "615.71.09"
+  os: Red Hat Enterprise Linux 9.8, glibc 2.34
+  conda_module: miniforge/24.3.0-0 (provides conda 23.7.4)
+  date: "2026-10-11"
+
+notes: >
+  Account, partition and QOS were confirmed with sacctmgr and sinfo, and
+  sbatch --test-only accepted every job (scripts/clay_preflight.sh).
+
+  Do not request gpu:mi210 (AMD, ROCm only; CUDA builds of PyTorch do not run)
+  or the RTX Pro 6000 Blackwell nodes on ice-bw-gpu (newer than the CUDA 12.1
+  build of torch 2.4.0 supports). torch 2.4.0+cu121 ships kernels for sm_50 to
+  sm_90; the L40S (compute capability 8.9) runs the sm_86 kernels.
+
+  ICE limits per user (PACE announcement, 2026-09-22): at most 50 GPU jobs in
+  the queue and 32 GPU-hours of running GPU work. Keep conda environments,
+  caches and data under ~/scratch, because home is 30 GB.
+
+  Batch jobs run from a spooled copy of the script, so ${BASH_SOURCE[0]} does
+  not point at the checkout; resolve paths from $SLURM_SUBMIT_DIR and submit
+  from the Clay model folder. Slurm does not create the --output directory.

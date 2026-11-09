@@ -34,8 +34,8 @@ The workflow runs within an isolated Conda environment () configured with Python
 ---
 
 3. Inference Workflow & Job Scripts
-- Slurm Batch Job (`job_infer.slurm`):** Configured for the `coc-gpu` partition. Submit with `sbatch job_infer.slurm`.
-- Inference Script (`infer_smoke_test.py`):** Executes forward pass with dummy EEG tensors.
+- Slurm Batch Job (`job_infer.slurm`):Configured for the `coc-gpu` partition. Submit with `sbatch job_infer.slurm`.
+- Inference Script (`infer_smoke_test.py`): Executes forward pass with dummy EEG tensors.
 
 ---
 
@@ -45,5 +45,5 @@ Sample execution logs are stored under `models/bendr/logs/` confirming successfu
 ---
 
 5. Validation of Results
-- Observed Output Tensor Shape:** `torch.Size([2, 512])`
+- Observed Output Tensor Shape:`torch.Size([2, 512])`
 - Conclusion:** Confirms Python 3.10 syntax compatibility and CUDA device execution.

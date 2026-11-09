@@ -15,11 +15,18 @@ This recipe reproduces OpenFold structure inference for the 191-residue 6KWC xyl
 
 Result: the prediction matches all 191 input residues, has a mean pLDDT of **97.72**, and a C-alpha RMSD of **0.961 Angstrom** over all 191 residues after optimal superposition on experimental 6KWC chain A.
 
-All commands below assume a PACE/ICE shell. `$RECIPE` is this directory:
+All commands below assume a PACE/ICE shell. First get this repository into scratch (login node); `$RECIPE` is this recipe's directory:
 
 ```bash
-export RECIPE=/path/to/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference
+cd ~/scratch
+git clone https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry.git
+cd cybershuttle-ai4science-foundry
+export RECIPE="$PWD/registry/models/biology/openfold/recipes/reproducible-inference"
 ```
+
+Until pull request #41 is merged, the recipe is only on the contributor's branch. Clone it with `git clone -b openfold-reproducible-inference https://github.com/Yuhwa-L/cybershuttle-ai4science-foundry.git` instead, then run the `cd` and `export` lines above.
+
+In a new shell (for example, inside a later allocation), set `RECIPE` again before running the commands below.
 
 ## 1. Setup
 

@@ -70,6 +70,7 @@ The job scripts request an A100 GPU using `--gres=gpu:a100:1`. Other users may n
 The original DNABERT-2 requirements are preserved in `requirements-upstream.txt`.
 
 The working software versions are recorded in `requirements.txt` and `evidence/versions.txt`. Conda package details are also recorded in `evidence/conda-explicit.txt`.
+The dependencies in `requirements.txt` use installable package versions rather than environment-specific local file paths, allowing others to recreate the environment.
 
 Key versions:
 - Python 3.10.22
@@ -80,13 +81,13 @@ Key versions:
 
 ### Create the environment
 
-Connect to PACE ICE, clone the repository into scratch storage, and enter the project directory.
+Connect to PACE ICE, and work from scratch storage from the beginning to avoid exceeding the home directory disk quota. Clone the DNABERT-2 contribution branch into scratch, then enter the project directory.
 
 For example:
 
 ```bash
 cd ~/scratch
-git clone https://github.com/athellis/cybershuttle-ai4science-foundry.git
+git clone --branch add-dnabert2-inference --single-branch https://github.com/athellis/cybershuttle-ai4science-foundry.git
 cd cybershuttle-ai4science-foundry/registry/models/biology/dnabert2
 ```
 

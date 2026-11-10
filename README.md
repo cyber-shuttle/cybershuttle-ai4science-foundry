@@ -4,18 +4,7 @@
 
 The [CHGNet reproduction guide](docs/tutorials/chgnet-pratham/README.md) is the primary guide for environment setup, artifact provenance, GPU allocation, inference, validation, troubleshooting, and cleanup. The contribution tracks [issue #21](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/21) and [Assignment 2 PR #39](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/pull/39).
 
-In an allocated Linux GPU session with Python 3.10, start from this branch and run:
-
-```bash
-cd docs/tutorials/chgnet-pratham
-module load anaconda3/2023.03
-TORCH_BACKEND=cu121 DEPENDENCY_LOCK=evidence/6199752/dependencies-lock.txt bash scripts/setup.sh
-DEVICE=cuda bash scripts/run.sh
-source .venv/bin/activate
-python -m unittest discover -s tests -v
-```
-
-The inference command exits successfully only when finite-value/shape checks, the official energy/force/stress/magnetic-moment comparisons, and rotation/translation/site-permutation checks pass. See the guide for Slurm submission and alternative Python setup. The [recorded H100 results](docs/tutorials/chgnet-pratham/evidence/6199752/results.json) and [run summary](docs/tutorials/chgnet-pratham/docs/run-summary.md) document successful job 6199752 on October 11, 2026. This small-input reproduction checks released-model behavior and physical consistency; it does not reproduce the paper's full held-out benchmark.
+Start with the guide’s scratch checkout and locked environment setup, then follow its inference and validation steps to check your own run. The [recorded H100 results](docs/tutorials/chgnet-pratham/evidence/6199752/results.json) and [independent H200 reproduction](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/pull/39#issuecomment-6407596978) document successful executions. This small-input reproduction checks released-model behavior and physical consistency.
 
 ---
 

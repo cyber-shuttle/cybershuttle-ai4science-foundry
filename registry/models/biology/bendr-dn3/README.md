@@ -48,13 +48,14 @@ Create the Conda environment from the recorded export:
 
 ```bash
 module load anaconda3
-conda env create -f environment-dn3-legacy.yml
-conda activate dn3_legacy
+conda env create -f environment.yml
+conda activate dn3_env
 ```
 
-And then install dn3 itself
+And then use pip to install other requirments and dn3
 
 ```bash
+python -m pip install -r requirements.txt
 python -m pip install -e ./dn3
 ```
 
@@ -164,7 +165,7 @@ Put the path to the dataset in this configuraiton file where it says toplevel
 
 The other fields are already filled out to the specifications of the example.
 
-In the Jupyter Notebook, select the dn3_legacy env as the kernel and run all cells.
+In the Jupyter Notebook, select the dn3_env as the kernel and run all cells.
 This should construct the model and run the training and inference.
 
 The example divides the data into five folds, with 60% of participants used for training, 20% used for validation, and 20% for testing. 

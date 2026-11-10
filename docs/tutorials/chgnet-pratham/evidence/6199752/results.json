@@ -1,0 +1,304 @@
+{
+  "passed": true,
+  "timestamp_utc": "2026-10-12T02:55:55.157765+00:00",
+  "workflow": {
+    "model": "CHGNet",
+    "source_repository": "https://github.com/CederGroupHub/chgnet",
+    "source_commit": "b9a6c15860237297a5a5169660e83b2e61a78e76",
+    "checkpoint": "0.3.0",
+    "input_relative_path": "examples/mp-18767-LiMnO2.cif",
+    "reference_relative_path": "tests/test_model.py",
+    "threads": 4,
+    "seed": 42,
+    "symmetry_absolute_tolerance": {
+      "e": 0.0001,
+      "f": 0.0001,
+      "s": 0.001,
+      "m": 0.0001
+    }
+  },
+  "reference_source": "https://github.com/CederGroupHub/chgnet/blob/b9a6c15860237297a5a5169660e83b2e61a78e76/tests/test_model.py",
+  "smoke": {
+    "e": true,
+    "f": true,
+    "s": true,
+    "m": true
+  },
+  "reference_checks": {
+    "e": {
+      "passed": true,
+      "max_abs_error": 1.040039062871756e-06,
+      "rtol": 0.0001,
+      "atol": 0.0001,
+      "unit": "eV/atom"
+    },
+    "f": {
+      "passed": true,
+      "max_abs_error": 3.3285266405093383e-06,
+      "rtol": 0.001,
+      "atol": 0.0001,
+      "unit": "eV/angstrom"
+    },
+    "s": {
+      "passed": true,
+      "max_abs_error": 0.0005375757032776152,
+      "rtol": 0.005,
+      "atol": 0.0001,
+      "unit": "GPa"
+    },
+    "m": {
+      "passed": true,
+      "max_abs_error": 6.710296629464096e-07,
+      "rtol": 0.001,
+      "atol": 0.0001,
+      "unit": "mu_B"
+    }
+  },
+  "symmetry_checks": {
+    "rotation_30": {
+      "e": {
+        "passed": true,
+        "max_abs_error": 4.76837158203125e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "f": {
+        "passed": true,
+        "max_abs_error": 6.687595943787386e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "s": {
+        "passed": true,
+        "max_abs_error": 0.00017059158471557923,
+        "rtol": 0,
+        "atol": 0.001
+      },
+      "m": {
+        "passed": true,
+        "max_abs_error": 9.5367431640625e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      }
+    },
+    "rotation_60": {
+      "e": {
+        "passed": true,
+        "max_abs_error": 4.76837158203125e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "f": {
+        "passed": true,
+        "max_abs_error": 9.928711758151553e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "s": {
+        "passed": true,
+        "max_abs_error": 0.00012942938575122298,
+        "rtol": 0,
+        "atol": 0.001
+      },
+      "m": {
+        "passed": true,
+        "max_abs_error": 1.1920928955078125e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      }
+    },
+    "rotation_120": {
+      "e": {
+        "passed": true,
+        "max_abs_error": 4.76837158203125e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "f": {
+        "passed": true,
+        "max_abs_error": 3.6907075245725535e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "s": {
+        "passed": true,
+        "max_abs_error": 0.00011721277500942318,
+        "rtol": 0,
+        "atol": 0.001
+      },
+      "m": {
+        "passed": true,
+        "max_abs_error": 9.5367431640625e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      }
+    },
+    "translation": {
+      "e": {
+        "passed": true,
+        "max_abs_error": 0.0,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "f": {
+        "passed": true,
+        "max_abs_error": 8.024275302886963e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "s": {
+        "passed": true,
+        "max_abs_error": 7.393956184387207e-05,
+        "rtol": 0,
+        "atol": 0.001
+      },
+      "m": {
+        "passed": true,
+        "max_abs_error": 1.430511474609375e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      }
+    },
+    "permutation": {
+      "e": {
+        "passed": true,
+        "max_abs_error": 0.0,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "f": {
+        "passed": true,
+        "max_abs_error": 2.868473529815674e-06,
+        "rtol": 0,
+        "atol": 0.0001
+      },
+      "s": {
+        "passed": true,
+        "max_abs_error": 1.4603137969970703e-05,
+        "rtol": 0,
+        "atol": 0.001
+      },
+      "m": {
+        "passed": true,
+        "max_abs_error": 4.76837158203125e-07,
+        "rtol": 0,
+        "atol": 0.0001
+      }
+    }
+  },
+  "predictions": {
+    "e": -7.3676910400390625,
+    "f": [
+      [
+        1.4901161193847656e-07,
+        -1.3189855962991714e-07,
+        0.02381688542664051
+      ],
+      [
+        1.4901161193847656e-08,
+        1.476728357374668e-07,
+        -0.023816213011741638
+      ],
+      [
+        -0.0,
+        1.471489667892456e-07,
+        0.09258532524108887
+      ],
+      [
+        -1.1920928955078125e-07,
+        2.2351741790771484e-07,
+        -0.09258566051721573
+      ],
+      [
+        -0.0,
+        1.3224780559539795e-07,
+        -0.0024338960647583008
+      ],
+      [
+        -1.341104507446289e-06,
+        1.8710270524024963e-06,
+        -0.013070940971374512
+      ],
+      [
+        1.3113021850585938e-06,
+        -2.1513551473617554e-06,
+        0.013070642948150635
+      ],
+      [
+        5.960464477539063e-08,
+        -1.6624107956886292e-07,
+        0.0024340972304344177
+      ]
+    ],
+    "s": [
+      [
+        -0.3042011857032776,
+        -1.7526155716041103e-05,
+        -7.949085443215154e-07
+      ],
+      [
+        -1.686964969849214e-05,
+        0.2229870855808258,
+        2.1402740912890295e-07
+      ],
+      [
+        1.9663864350150106e-06,
+        1.6998043861349288e-07,
+        -0.10730882734060287
+      ]
+    ],
+    "m": [
+      0.0030492842197418213,
+      0.0030494630336761475,
+      3.869417428970337,
+      3.869417428970337,
+      0.04413574934005737,
+      0.03862223029136658,
+      0.03862196207046509,
+      0.04413574934005737
+    ]
+  },
+  "timing": {
+    "inference_seconds": 1.316932569956407,
+    "load_inference_validation_seconds": 1.8109822160331532
+  },
+  "resources": {
+    "hostname": "atl1-1-03-012-18-0.pace.gatech.edu",
+    "device": "cuda",
+    "threads": 4,
+    "peak_process_RSS_MiB": 1417.6171875,
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "gpu_peak_allocated_MiB": 175.974609375,
+    "gpu_peak_reserved_MiB": 180.0
+  },
+  "python": "3.10.13",
+  "packages": {
+    "chgnet": "0.4.1",
+    "torch": "2.5.1+cu121",
+    "numpy": "2.2.6",
+    "pymatgen": "2025.10.7"
+  },
+  "artifacts": {
+    "sha256": {
+      "LICENSE": "a06789a2624485a9de5903d3d4cceeec6127a36042dd7364999ff994587a4a41",
+      "chgnet/pretrained/0.3.0/chgnet_0.3.0_e29f68s314m37.pth.tar": "d14ab7c0f093efe64b60a7bcd540bca10e74fb7f46c86108a079af60524659d1",
+      "examples/mp-18767-LiMnO2.cif": "a3cf7f903ba5d2932c82ed70316a34cbe50cf852ec2c1edd59872721953ffaae",
+      "tests/test_model.py": "79a7aa359ff49f0e46f5d69ace1d994b557ca604fa989670cf4139945037eb72",
+      "build/lib.linux-x86_64-cpython-310/chgnet/pretrained/0.3.0/chgnet_0.3.0_e29f68s314m37.pth.tar": "d14ab7c0f093efe64b60a7bcd540bca10e74fb7f46c86108a079af60524659d1"
+    },
+    "packages": {
+      "chgnet": "0.4.1",
+      "torch": "2.5.1+cu121",
+      "numpy": "2.2.6",
+      "pymatgen": "2025.10.7"
+    }
+  },
+  "script_sha256": "2faccd1c3c761384ca730bc5bff76c28c79a1f96eb128f87056ca23728d42cc3",
+  "reference_sha256": "f6001c8db54fbc36c709d45c56c0075d3d761ac4ccc65361987fc333d87c43c8",
+  "slurm": {
+    "SLURM_JOB_PARTITION": "ice-gpu",
+    "SLURM_MEM_PER_NODE": "16384",
+    "SLURM_JOB_ACCOUNT": "coc",
+    "SLURM_JOB_ID": "6199752"
+  }
+}

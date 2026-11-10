@@ -1,0 +1,5 @@
+JobID             State ExitCode    Elapsed  AllocCPUS     ReqMem     MaxRSS 
+------------ ---------- -------- ---------- ---------- ---------- ---------- 
+6199752         RUNNING      0:0   00:09:07          4        16G            
+6199752.bat+    RUNNING      0:0   00:09:07          4                       
+6199752.ext+    RUNNING      0:0   00:09:07          4                       

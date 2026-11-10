@@ -1,0 +1,15 @@
+{
+  "sha256": {
+    "LICENSE": "a06789a2624485a9de5903d3d4cceeec6127a36042dd7364999ff994587a4a41",
+    "chgnet/pretrained/0.3.0/chgnet_0.3.0_e29f68s314m37.pth.tar": "d14ab7c0f093efe64b60a7bcd540bca10e74fb7f46c86108a079af60524659d1",
+    "examples/mp-18767-LiMnO2.cif": "a3cf7f903ba5d2932c82ed70316a34cbe50cf852ec2c1edd59872721953ffaae",
+    "tests/test_model.py": "79a7aa359ff49f0e46f5d69ace1d994b557ca604fa989670cf4139945037eb72",
+    "build/lib.linux-x86_64-cpython-310/chgnet/pretrained/0.3.0/chgnet_0.3.0_e29f68s314m37.pth.tar": "d14ab7c0f093efe64b60a7bcd540bca10e74fb7f46c86108a079af60524659d1"
+  },
+  "packages": {
+    "chgnet": "0.4.1",
+    "torch": "2.5.1+cu121",
+    "numpy": "2.2.6",
+    "pymatgen": "2025.10.7"
+  }
+}

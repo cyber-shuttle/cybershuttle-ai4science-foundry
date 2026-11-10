@@ -1,0 +1,11 @@
+{
+  "model": "CHGNet",
+  "source_repository": "https://github.com/CederGroupHub/chgnet",
+  "source_commit": "b9a6c15860237297a5a5169660e83b2e61a78e76",
+  "checkpoint": "0.3.0",
+  "input_relative_path": "examples/mp-18767-LiMnO2.cif",
+  "reference_relative_path": "tests/test_model.py",
+  "threads": 4,
+  "seed": 42,
+  "symmetry_absolute_tolerance": {"e": 0.0001, "f": 0.0001, "s": 0.001, "m": 0.0001}
+}

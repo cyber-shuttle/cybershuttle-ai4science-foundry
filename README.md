@@ -1,5 +1,13 @@
 # Cybershuttle AI Model Foundry
 
+## CHGNet Assignment 2 reproduction — Pratham Patel
+
+The [CHGNet reproduction guide](docs/tutorials/chgnet-pratham/README.md) is the primary guide for environment setup, artifact provenance, GPU allocation, inference, validation, troubleshooting, and cleanup. The contribution tracks [issue #21](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/21) and [Assignment 2 PR #39](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/pull/39).
+
+Start with the guide’s scratch checkout and locked environment setup, then follow its inference and validation steps to check your own run. The [recorded H100 results](docs/tutorials/chgnet-pratham/evidence/6199752/results.json) and [independent H200 reproduction](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/pull/39#issuecomment-6407596978) document successful executions. This small-input reproduction checks released-model behavior and physical consistency.
+
+---
+
 **A community registry for curating, benchmarking, and running AI4Science models on Nexus and other advanced cyberinfrastructure. The goal is to turn AI4Science models into portable, optimized, reproducible, and executable scientific workflows.**
 
 [Goals](#goals) · [Model lifecycle](#how-a-model-moves-through-the-foundry) · [Get involved](#get-involved) · [Repository structure](#repository-structure) · [Key concepts](#key-concepts) · [Example model entry](#example-model-entry) · [Issue template](#issue-template-add-ai4science-model) · [Optimization tracks](#optimization-tracks) · [Roadmap](#roadmap) · [Contributing](#contributing)

@@ -1,0 +1,30 @@
+JobId=6199752 JobName=sys/dashboard/sys/bc_ms_vs_code_rh9
+   UserId=ppatel686(3317587) GroupId=gtperson(2626) MCS_label=N/A
+   Priority=583340 Nice=0 Account=coc QOS=coc-ice
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:07:52 TimeLimit=01:00:00 TimeMin=N/A
+   SubmitTime=2026-10-11T22:47:30 EligibleTime=2026-10-11T22:47:30
+   AccrueTime=2026-10-11T22:47:33
+   StartTime=2026-10-11T22:47:51 EndTime=2026-10-11T23:47:51 Deadline=N/A
+   PreemptEligibleTime=2026-10-11T23:17:51 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-11T22:47:51 Scheduler=Backfill
+   Partition=ice-gpu AllocNode:Sid=ondemand-ice:1432002
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=atl1-1-03-012-18-0
+   BatchHost=atl1-1-03-012-18-0
+   NumNodes=1 NumCPUs=4 NumTasks=4 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=4,mem=16G,node=1,billing=4,gres/gpu=1,gres/gpu:h100=1
+   AllocTRES=cpu=4,mem=16G,node=1,billing=4,gres/gpu=1,gres/gpu:h100=1
+   Socks/Node=* NtasksPerN:B:S:C=4:0:*:* CoreSpec=*
+   MinCPUsNode=4 MinMemoryNode=16G MinTmpDiskNode=0
+   Features=cuda13 DelayBoot=00:00:00
+   OverSubscribe=NO Exclusive=NO Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=(null)
+   SubmitLine=/opt/slurm/current/bin/sbatch -D /home/hice1/ppatel686/ondemand/data/sys/dashboard/batch_connect/sys/bc_ms_vs_code_rh9/output/e13e72ef-05ff-4356-865c-3e2f13f865b7 -J sys/dashboard/sys/bc_ms_vs_code_rh9 -o /home/hice1/ppatel686/ondemand/data/sys/dashboard/batch_connect/sys/bc_ms_vs_code_rh9/output/e13e72ef-05ff-4356-865c-3e2f13f865b7/output.log -t 01:00:00 --export NONE --nodes=1 --ntasks-per-node=4 --mem=16G --gres=gpu:H100:1 --parsable
+   WorkDir=/home/hice1/ppatel686/ondemand/data/sys/dashboard/batch_connect/sys/bc_ms_vs_code_rh9/output/e13e72ef-05ff-4356-865c-3e2f13f865b7
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/home/hice1/ppatel686/ondemand/data/sys/dashboard/batch_connect/sys/bc_ms_vs_code_rh9/output/e13e72ef-05ff-4356-865c-3e2f13f865b7/output.log
+   TresPerNode=gres/gpu:h100:1
+

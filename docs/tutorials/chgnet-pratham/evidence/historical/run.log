@@ -1,0 +1,9 @@
+CHGNet v0.3.0 initialized with 412,525 parameters
+CHGNet will run on cpu
+e: PASS; max abs error = 1.5168762e-06 eV/atom
+f: PASS; max abs error = 3.8147152e-06 eV/angstrom
+s: PASS; max abs error = 0.00040909789 GPa
+m: PASS; max abs error = 4.6226459e-07 mu_B
+Energy: -7.36769152 eV/atom
+Load + inference: 0.164 s; peak process RSS: 486.0 MiB
+Saved results.json

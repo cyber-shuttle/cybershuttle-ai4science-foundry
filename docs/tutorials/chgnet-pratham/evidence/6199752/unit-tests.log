@@ -1,0 +1,9 @@
+test_material_error_fails (test_validation.ValidationChecks) ... ok
+test_smoke_rejects_wrong_force_shape (test_validation.ValidationChecks) ... ok
+test_tolerance_uses_max_not_sum (test_validation.ValidationChecks) ... ok
+test_wrong_shapes_and_nan_fail (test_validation.ValidationChecks) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK

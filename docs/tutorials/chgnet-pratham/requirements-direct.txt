@@ -1,0 +1,4 @@
+# Direct versions from the September CPU baseline.
+# PyTorch must be installed separately from the appropriate official wheel index.
+numpy==2.2.6
+pymatgen==2025.10.7

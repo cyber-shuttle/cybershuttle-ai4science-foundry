@@ -1,0 +1,85 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-08-2026 23:30:58
+Job ID:    6884808
+User ID:   ylee3055
+Account:   coc
+Job name:  bash
+Partition: coc-gpu
+QOS:       
+---------------------------------------
+=== SLURM execution metadata ===
+Date: 2026-11-08T23:31:04-05:00
+Job ID: 6884808
+Node: atl1-1-01-005-15-0.pace.gatech.edu
+Conda env: /home/hice1/ylee3055/scratch/.conda/envs/openfold-env
+
+Sun Nov  8 23:31:04 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:25:00.0 Off |                    0 |
+| N/A   40C    P0             45W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+=== OpenFold reproducible inference ===
+OpenFold:       /home/hice1/ylee3055/scratch/openfold
+Input:          /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/inputs
+Alignments:     /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments
+Parameters:     /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+Templates:      /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/pdb_mmcif/mmcif_files
+Output:         /home/hice1/ylee3055/scratch/openfold-final-check
+
+[2026-11-08 23:33:27,263] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Inference time: 18.834883406059816
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Output written to /home/hice1/ylee3055/scratch/openfold-final-check/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+=== OpenFold prediction validation ===
+FASTA length: 191
+Prediction residues: 191
+Prediction sequence exact match: True
+
+Mean pLDDT: 97.72
+Median pLDDT: 98.57
+Min pLDDT: 58.91
+Max pLDDT: 98.92
+
+Confidence bins:
+Very high (>=90): 188
+Confident (70-90): 2
+Low (50-70): 1
+Very low (<50): 0
+
+=== Experimental structure comparison ===
+Experimental residues: 191
+Experimental sequence exact match: True
+Aligned C-alpha residues: 191
+C-alpha RMSD after optimal superposition: 0.961 Angstrom
+Aligned prediction written to: /home/hice1/ylee3055/scratch/openfold-final-check/aligned.pdb
+eca9dedb426047a781658bf8679e5f99d26fcb007e8f4c5a7929bfd15cd48b69  /home/hice1/ylee3055/scratch/openfold-final-check/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb

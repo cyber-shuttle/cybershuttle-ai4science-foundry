@@ -1,0 +1,5 @@
+JobID           JobName  Partition  AllocCPUS    Elapsed   TotalCPU     MaxRSS      State 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- 
+6157931       fno_infer    coc-gpu          4   00:00:13  00:09.089             COMPLETED 
+6157931.bat+      batch                     4   00:00:13  00:09.089    981552K  COMPLETED 
+6157931.ext+     extern                     4   00:00:13   00:00:00             COMPLETED 

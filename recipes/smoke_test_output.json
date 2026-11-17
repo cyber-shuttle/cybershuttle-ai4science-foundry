@@ -1,0 +1,29 @@
+{
+  "execution_device": "cuda",
+  "gpu_hardware": "NVIDIA A40",
+  "cuda_version": "13.0",
+  "smoke_test": {
+    "status": "PASSED",
+    "latency_ms": 190.39,
+    "expected_shape": [
+      1,
+      1,
+      16,
+      16
+    ],
+    "observed_shape": [
+      1,
+      1,
+      16,
+      16
+    ]
+  },
+  "substantive_validation": {
+    "test_samples": 16,
+    "mean_relative_l2_error": 0.0777,
+    "std_relative_l2_error": 0.01828,
+    "mean_squared_error": 0.001452,
+    "threshold_applied": 0.2,
+    "status": "PASSED"
+  }
+}

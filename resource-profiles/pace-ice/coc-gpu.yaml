@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu
+name: Georgia Tech PACE ICE — coc-gpu partition
+system: pace-ice
+provider: Georgia Tech PACE (campus cluster)
+
+description: >
+  GPU partition on Georgia Tech's PACE ICE instructional cluster (account
+  `coc`, QOS `coc-ice`). The partition mixes
+  NVIDIA L40S, NVIDIA A100, and AMD MI210 nodes; request a GPU type
+  explicitly with --gres, because the MI210 nodes are ROCm-only and will
+  not run CUDA builds of PyTorch.
+
+partition: coc-gpu
+scheduler: slurm
+# max_walltime_hours: TODO — partition limit not recorded; the longest job
+# verified here requested 04:00:00.
+
+# gpu/cpu/storage are top-level fields in ResourceProfileSchema
+# (tools/schemas/schemas.py); values below are what SatMAE inference
+# actually requested and observed.
+gpu:
+  model: NVIDIA L40S
+  count: 1
+  vram_gb: 46        # 46068 MiB reported by nvidia-smi
+  interconnect: null # single-GPU jobs only; not recorded
+cpu:
+  cores: 8           # as requested (--cpus-per-task=8)
+  ram_gb: 96         # as requested; 64G OOM'd on full fMoW-Sentinel val, see notes
+storage:
+  scratch_gb: 300    # per-user scratch quota (~/scratch -> /storage/ice1/...); home is 30 GB
+
+slurm:
+  account: coc
+  qos: coc-ice
+  gres: gpu:l40s:1
+  gres_alternatives:
+    - gpu:a100:1     # same partition; untested for SatMAE
+  example_directive: "#SBATCH -A coc -p coc-gpu --qos=coc-ice --gres=gpu:l40s:1"
+  cpu_partition: coc-cpu  # used for CPU-only env builds and data downloads
+
+notes: >
+  Association values confirmed via sacctmgr/sinfo: account `coc`, partition
+  `coc-gpu`, QOS `coc-ice`. Submitting with `-A coe-gpu` fails with
+  "Invalid qos specification".
+
+  Do not request `gpu:mi210:1`: MI210 nodes are AMD/ROCm and cannot run
+  CUDA builds of PyTorch.
+
+  Home quota is 30 GB. Build conda envs and keep data under ~/scratch
+  (300 GB). Building a conda env interactively on the login node was killed
+  by login-node resource limits, so run env builds as a batch job on
+  `coc-cpu` instead.
+
+  Host RAM, not GPU memory, is the binding limit for DataLoader-heavy
+  evaluation: SatMAE ViT-Base on all 84,939 fMoW-Sentinel validation images
+  peaked at ~1.84 GB GPU memory but was OOM-killed at --mem=64G (job
+  6114969) and passed at --mem=96G, with Slurm reporting ~84 GiB host RAM
+  used (job 6115115, 8 DataLoader workers).
+
+  In jobs that use `set -u`, wrap `conda activate` in `set +u; ...; set -u`.
+  Conda's MKL activation hook references an unset MKL_INTERFACE_LAYER.
+
+  Slurm job scripts on this cluster run from a spooled copy, so
+  `${BASH_SOURCE[0]}` does not point at your checkout. Resolve paths from
+  `$SLURM_SUBMIT_DIR` and submit from the repo root.

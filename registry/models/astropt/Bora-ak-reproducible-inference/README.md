@@ -38,10 +38,10 @@ The three short `logs/*.log` files are auxiliary standalone runs. The authoritat
 
 ## ICE setup
 
-On ICE, clone the correct PR branch into your scratch directory:
+On ICE, clone the Assignment 5 branch into your scratch directory after it is available on the remote:
 
     cd ~/scratch
-    git clone --branch recipe-astropt-inference --single-branch https://github.com/Bora-ak/cybershuttle-ai4science-foundry.git
+    git clone --branch assignment5-multitask-probes --single-branch https://github.com/Bora-ak/cybershuttle-ai4science-foundry.git
     cd cybershuttle-ai4science-foundry
 
 Run these commands after copying or cloning this repository into a storage location with adequate quota (scratch is recommended). No user-specific absolute path is required.
@@ -50,7 +50,7 @@ Because creating the Conda environment can be resource-intensive, use an interac
 
 ```bash
 salloc -A YOUR_ACCOUNT -q YOUR_QOS -p ice-cpu -N 1 --cpus-per-task=4 --mem=32G -t 01:00:00
-cd registry/models/astronomy/astropt/recipes/reproducible-inference
+cd registry/models/astropt/Bora-ak-reproducible-inference
 module purge
 module load miniforge/24.3.0-0
 eval "$(conda shell.bash hook)"
@@ -179,6 +179,49 @@ PY
 Successful job `6133484` used an NVIDIA H100 80GB HBM3 GPU, four CPUs, and 32 GB requested RAM. The SLURM epilog reports 1:30 wall time, 6:00 CPU time, and 3,392,784 KiB maximum resident memory. Its stdout contains the complete environment, parameters, results, and completion marker; stderr contains only the documented activation, anonymous-Hub, and dataset formatting warnings.
 
 Failed job `6133445` ran on a Tesla V100 (compute capability 7.0) and stopped during the small inference with `CUBLAS_STATUS_ARCH_MISMATCH`. PyTorch 2.14.1+cu130 was built for compute capability 7.5 or newer. The failure is preserved in `logs/astropt_a2_6133445.out` and `logs/astropt_a2_6133445.err`; the corrected SLURM request explicitly selects an H100.
+
+## Assignment 5 — Multi-Task AstroPT Embedding Probe
+
+### Research question
+
+What galaxy properties are encoded in frozen AstroPT embeddings beyond brightness?
+
+### Experiment and why it matters
+
+`scripts/validate_multitask.py` uses the same AstroPT v2.0 95M checkpoint, image normalization, `GalaxyImageDataset` preprocessing, and streamed `test` split as Assignment 4. It embeds the first 3,000 galaxies once (configurable) and reuses the 768-dimensional vectors for three simple downstream tasks: redshift regression, stellar mass regression, and smooth versus featured/disk classification. AstroPT remains frozen throughout. This tests whether its learned image representation contains physical and morphological information beyond the validated `mag_g` brightness probe.
+
+The [v2.0 dataset schema](https://huggingface.co/datasets/Smith42/galaxies/blob/v2.0/README.md) lists the exact fields `redshift`, `elpetro_mass_log`, `smooth-or-featured_smooth_fraction`, and `smooth-or-featured_featured-or-disk_fraction`. The script checks that they exist before inference. `elpetro_mass_log` is already logarithmic stellar mass; the experiment does not apply another logarithm. Regression excludes missing, non-finite, and non-positive values. The JSON records the usable and excluded counts for each target.
+
+### Morphology labeling
+
+The script inspects the selected rows' vote fractions before finalizing the confidence threshold. It uses **0.7** if at least 20 galaxies remain in each class and at least 20% of selected rows remain overall. Otherwise it tries **0.6** with the same requirements. If neither threshold qualifies, it keeps 0.7 and skips classification if either class has fewer than four examples. At the chosen threshold, smooth is class 0 when `smooth-or-featured_smooth_fraction` reaches the threshold and exceeds the featured fraction; featured/disk is class 1 when `smooth-or-featured_featured-or-disk_fraction` reaches the threshold and exceeds the smooth fraction. Ties, lower-confidence cases, and invalid fractions are excluded. The run prints distributions for the candidates and the chosen threshold before embedding; JSON records the exact rule, counts, and retained fraction. The published schema verifies the fields but does not establish the distribution in the selected 3,000 test rows. Inspect the reported counts before interpreting classification results.
+
+### Running the experiment on Georgia Tech ICE
+
+From the repository root on ICE, with the validated `env/` environment already installed, submit the new job:
+
+```bash
+cd registry/models/astropt/Bora-ak-reproducible-inference
+conda deactivate  # only if a Conda environment such as (base) is active
+JOB_ID=$(sbatch --parsable slurm/astropt_multitask.slurm)
+echo "Submitted job: $JOB_ID"
+squeue -j "$JOB_ID"
+```
+
+To change the sample size, submit with `NUM_EXAMPLES=5000 sbatch slurm/astropt_multitask.slurm`. In an activated H100 allocation, the equivalent direct command is `python scripts/validate_multitask.py --num-examples 3000 --seed 42`. The script requires CUDA, so it is intended for the ICE/H100 workflow.
+
+After the job finishes, check `sacct -j "$JOB_ID" --format=JobID,State,Elapsed,MaxRSS` and read `logs/astropt_a5_${JOB_ID}.out` and `logs/astropt_a5_${JOB_ID}.err`. Successful stdout ends with `=== MULTITASK VALIDATION COMPLETE ===` and the SLURM wrapper ends with `ASSIGNMENT 5 WORKFLOW COMPLETED SUCCESSFULLY`.
+
+### Outputs and metrics
+
+- `outputs/multitask_results.json`: model, dataset, hardware, runtime, filtering, class counts, split sizes, probe metrics, baselines, and any skipped reason.
+- `outputs/multitask_embeddings.npz`: the embedding matrix, all four selected target arrays, number of examples, and embedding dimension. It is ignored by Git and can be reused without another GPU pass.
+- `outputs/multitask_redshift_predicted_vs_actual.png` and `outputs/multitask_elpetro_mass_log_predicted_vs_actual.png`: diagnostic plots when those probes have enough usable targets.
+- `logs/astropt_a5_<jobid>.out` and `.err`: SLURM evidence and errors.
+
+Each regression uses an independently seeded 75/25 train/test split, training-only feature scaling, and ordinary least squares. It reports mean squared error (MSE), mean absolute error (MAE), and R² beside a baseline that predicts the training-set mean. Morphology uses a seeded stratified 75/25 split, training-only scaling, and logistic regression. It reports accuracy, balanced accuracy, featured/disk F1, and ROC-AUC when both test classes are present; a training-set majority-class predictor supplies baseline accuracy, balanced accuracy, and F1. The seed defaults to 42.
+
+Performance above the corresponding baselines would support the claim that the frozen embeddings encode information about those properties. No Assignment 5 measurements are claimed until an ICE job runs. Linear probes measure only linearly recoverable information; morphology votes can be noisy, and missing targets reduce each usable sample. Follow-up work could test nonlinear probes, larger samples, or other foundation models.
 
 ## Troubleshooting
 

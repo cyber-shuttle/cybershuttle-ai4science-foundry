@@ -1,0 +1,12 @@
+===== /storage/ice1/0/5/ityagi8/FNO_ERT/data/evalV.mat
+keys: ['II', 'coeff', 'sol']
+coeff: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min 113 max 9997 mean 4921 NaNs 0
+II: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min -16 max 16 mean -0.06593 NaNs 0
+sol: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min -0.008405 max 4193 mean 23.36 NaNs 0
+II unique values (first 10): [-16. -15. -14. -13. -12. -11. -10.  -9.  -8.  -7.] | nonzero pixels in sample 0: 4000
+===== /storage/ice1/0/5/ityagi8/FNO_ERT/data/testV.mat
+keys: ['II', 'coeff', 'sol']
+coeff: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min 131 max 9995 mean 5040 NaNs 0
+II: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min -16 max 16 mean 0.07692 NaNs 0
+sol: file shape (100, 40, 1001) -> per-sample layout (1001, 40, 100), min 0.003626 max 4356 mean 25.33 NaNs 0
+II unique values (first 10): [-16. -15. -14. -13. -12. -11. -10.  -9.  -8.  -7.] | nonzero pixels in sample 0: 4000

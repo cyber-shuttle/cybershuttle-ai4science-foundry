@@ -1,0 +1,12 @@
+{
+  "device": "NVIDIA L40S",
+  "torch": "2.14.1+cu130",
+  "params": 2108001,
+  "epochs": 300,
+  "train_samples": 901,
+  "val_samples": 100,
+  "best_epoch": 295,
+  "best_val_rel_l2": 0.10034003853797913,
+  "train_time_s": 91.05221557617188,
+  "checkpoint": "outputs/fno_ert.pt"
+}

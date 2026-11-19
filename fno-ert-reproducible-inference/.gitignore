@@ -1,0 +1,4 @@
+outputs/predictions.npy
+outputs/*.npz
+__pycache__/
+*.pyc

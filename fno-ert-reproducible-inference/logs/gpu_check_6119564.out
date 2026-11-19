@@ -1,0 +1,42 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-09-2026 02:40:18
+Job ID:    6119564
+User ID:   ityagi8
+Account:   coc
+Job name:  gpu-check
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Fri Oct  9 02:40:24 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L40S                    On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   35C    P8             33W /  350W |       0MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+2.14.1+cu130 True 2.0.0
+---------------------------------------
+Begin Slurm Epilog: Oct-09-2026 02:40:32
+Job ID:        6119564
+User ID:       ityagi8
+Account:       coc
+Job name:      gpu-check
+Resources:     cpu=4,gres/gpu:l40s=1,mem=16G,node=1
+Rsrc Used:     cput=00:00:56,vmem=0,walltime=00:00:14,mem=876588K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-004-21-0
+---------------------------------------

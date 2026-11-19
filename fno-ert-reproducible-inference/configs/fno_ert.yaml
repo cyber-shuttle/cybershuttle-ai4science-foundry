@@ -1,0 +1,16 @@
+data:
+  fno_ert_dir: /storage/ice1/0/5/ityagi8/FNO_ERT
+  eval_path: /storage/ice1/0/5/ityagi8/FNO_ERT/data/evalV.mat
+  test_path: /storage/ice1/0/5/ityagi8/FNO_ERT/data/testV.mat
+  val_frac: 0.1
+  split_seed: 0
+model:
+  modes1: 16
+  modes2: 16
+  width: 32
+train:
+  epochs: 300
+  batch_size: 50
+  lr: 0.01
+  weight_decay: 0.0009
+  seed: 0

@@ -1,0 +1,41 @@
+Begin Slurm Prolog: Oct-11-2026 23:40:57
+Job ID:    6200737
+User ID:   bgong36
+Account:   coc
+Job name:  openfold-setup
+Partition: ice-cpu
+QOS:       coc-ice
+openfold_params/finetuning_ptm_2.pt: OK
+openfold_params/finetuning_no_templ_ptm_1.pt: OK
+params/params_model_1_ptm.npz: OK
+params/params_model_3_ptm.npz: OK
+73cf5d547cfcb291bbd3aa9f4c2f35aa5c030d663da0622f4312ca3b6a1657d8 duplicate_pdb_chains.txt
+ab8a3ad21a8cfcde0570793288f6a1a8f23a0cb3f78e4bf89884c2f23d773ff9 mmcif_cache.json
+[2026-10-11 23:41:14,876] [WARNING] [real_accelerator.py:162:get_accelerator] Setting accelerator to CPU. If you have GPU or other accelerator, we were unable to detect it.
+[2026-10-11 23:41:14,894] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cpu (auto detect)
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/Bio/PDB/StructureBuilder.py:100: PDBConstructionWarning: WARNING: Chain A is discontinuous at line 3254.
+  warnings.warn(
+/home/hice1/bgong36/scratch/openfold-repro/env/lib/python3.10/site-packages/Bio/PDB/StructureBuilder.py:100: PDBConstructionWarning: WARNING: Chain B is discontinuous at line 3257.
+  warnings.warn(
+8 excluded: > 700 residues
+72 excluded: no OpenProteinSet alignment
+110 ok
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+df: /home/hice1/bgong36/.triton/autotune: No such file or directory
+openfold v2.2.0 (e938c184a291bf053af3b14c1e3e8bb29aee57e2)
+python 3.10.22 | torch 2.5.1 | cuda 12.4
+Build cuda_12.4.r12.4/compiler.34097967_0
+Begin Slurm Epilog: Oct-11-2026 23:53:09
+Job ID:        6200737
+User ID:       bgong36
+Account:       coc
+Job name:      openfold-setup
+Resources:     cpu=8,mem=32G,node=1
+Rsrc Used:     cput=01:37:44,vmem=0,walltime=00:12:13,mem=5778976K,energy_used=0
+Partition:     ice-cpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-010-5-1

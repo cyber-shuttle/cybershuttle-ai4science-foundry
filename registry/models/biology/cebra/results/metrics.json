@@ -1,0 +1,14 @@
+{
+  "behavior": {
+    "r2_position_and_direction": 0.6342322826385498,
+    "r2_position": 0.8012364506721497,
+    "median_absolute_error_position": 0.07628566026687622,
+    "median_absolute_error_position_cm": 7.628565788269043
+  },
+  "shuffled": {
+    "r2_position_and_direction": -0.03458636999130249,
+    "r2_position": -0.02101922035217285,
+    "median_absolute_error_position": 0.4768734574317932,
+    "median_absolute_error_position_cm": 47.687347412109375
+  }
+}

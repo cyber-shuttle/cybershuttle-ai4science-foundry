@@ -1,0 +1,36 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-21-2026 17:57:13
+Job ID:    7231320
+User ID:   kranjan7
+Account:   coc
+Job name:  cebra-robustness
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+GPU 0: NVIDIA H200 (UUID: GPU-9746ad3e-3187-e01a-a32c-475af15ac00d)
+Python 3.12.5
+2.14.1+cu130 True
+cebra 0.6.1
+torch 2.14.1+cu130
+neural shape (10178, 120)
+split train 8142 test 2036
+fitting clean model for 5000 iterations on cuda
+baseline r2_position=0.802634 median_abs_error_cm=7.691783
+noise_0.25 r2_position=0.762026 median_abs_error_cm=7.970351
+noise_0.5 r2_position=0.711166 median_abs_error_cm=9.573442
+zero_0.25 r2_position=0.716549 median_abs_error_cm=8.714398
+zero_0.5 r2_position=0.726485 median_abs_error_cm=10.604095
+wrote /storage/ice1/8/3/kranjan7/cebra-achilles/results/robustness/metrics.json
+ROBUSTNESS PASS
+---------------------------------------
+Begin Slurm Epilog: Nov-21-2026 18:01:55
+Job ID:        7231320
+User ID:       kranjan7
+Account:       coc
+Job name:      cebra-robustness
+Resources:     cpu=8,gres/gpu:h200=1,mem=32G,node=1
+Rsrc Used:     cput=00:37:44,vmem=0,walltime=00:04:43,mem=2987100K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-017-2-0
+---------------------------------------

@@ -1,0 +1,91 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 00:04:09
+Job ID:    6166048
+User ID:   kranjan7
+Account:   coc
+Job name:  cebra-achilles
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+job 6166048 on atl1-1-02-011-31-0.pace.gatech.edu
+2026-10-11T00:04:11-04:00
+GPU 0: Tesla V100-PCIE-16GB (UUID: GPU-db61004e-8b06-5568-f1c1-ca8332d04b20)
+Python 3.12.5
+torch 2.14.1+cu130
+cuda True
+cebra==0.6.1
+certifi==2026.7.22
+charset-normalizer==3.5.2
+cloudpickle==3.1.2
+contourpy==1.4.0
+cuda-bindings==13.4.3
+cuda-pathfinder==1.8.3
+cuda-toolkit==13.0.3.0
+cycler==0.12.1
+filelock==4.1.0
+fonttools==4.66.1
+fsspec==2026.9.0
+idna==3.20
+Jinja2==3.1.6
+joblib==1.6.0
+kiwisolver==1.5.1
+literate-dataclasses==0.0.6
+MarkupSafe==3.0.4
+matplotlib==3.11.2
+mpmath==1.3.0
+narwhals==2.27.1
+networkx==3.7
+numpy==2.5.4
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.24.0.43
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-nccl-cu13==2.30.7
+nvidia-nvjitlink==13.4.92
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+packaging==26.3
+pandas==3.0.6
+pillow==12.3.0
+pyparsing==3.3.3
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+requests==2.34.2
+scikit-learn==1.9.1
+scipy==1.18.1
+setuptools==84.0.0
+six==1.17.0
+sympy==1.14.0
+threadpoolctl==3.7.0
+torch==2.14.1
+tqdm==4.70.1
+triton==3.8.0
+typing_extensions==4.16.0
+urllib3==2.8.0
+cebra 0.6.1
+torch 2.14.1+cu130
+numpy 2.5.4
+loading rat-hippocampus-single-achilles from /storage/ice1/8/3/kranjan7/cebra-achilles/data
+neural shape (10178, 120), dtype float32
+label shape (10178, 3), dtype float32
+split train 8142 test 2036
+fitting 5 iterations on cuda_if_available
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 00:04:34
+Job ID:        6166048
+User ID:       kranjan7
+Account:       coc
+Job name:      cebra-achilles
+Resources:     cpu=8,gres/gpu:v100=1,mem=32G,node=1
+Rsrc Used:     cput=00:03:28,vmem=0,walltime=00:00:26,mem=1067096K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-011-31-0
+---------------------------------------

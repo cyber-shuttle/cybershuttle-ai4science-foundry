@@ -1,0 +1,14 @@
+{
+  "model": "LongSafari/hyenadna-small-32k-seqlen-hf",
+  "revision": "8fe770c78eb13fe33bf81501612faeddf4d6f331",
+  "sequence": "ACTGACTGACTGACTG",
+  "logits_shape": [
+    1,
+    17,
+    16
+  ],
+  "inference_seconds": 6.1836488246917725,
+  "torch": "2.5.1+cu121",
+  "transformers": "5.17.0",
+  "gpu": "Tesla V100-PCIE-16GB"
+}

@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: hyenadna-small-32k
+name: HyenaDNA small (32k context)
+description: >
+  Genomic foundation model using Hyena long-convolution layers for
+  single-nucleotide-resolution DNA modeling. The small-32k checkpoint was
+  pretrained on the human reference genome (hg38) and handles sequences of up
+  to 32,768 bases. Used here for next-base prediction with a validation check
+  against shuffled sequence and a random-guess baseline.
+
+domain:
+  - biology
+  - genomics
+
+model_family:
+  - hyena
+  - foundation-model
+  - dna-language-model
+
+tasks:
+  - inference
+  - evaluation
+
+upstream:
+  huggingface: LongSafari/hyenadna-small-32k-seqlen-hf
+  github: https://github.com/HazyResearch/hyena-dna
+  paper: https://arxiv.org/abs/2306.15794
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+
+datasets:
+  recommended:
+    - hg38
+  supported: []
+
+resource_profiles:
+  recommended:
+    - resource-profiles/pace-ice/coc-gpu-mixed.yaml
+
+readiness:
+  registry_status: candidate
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: candidate
+
+notes: >
+  Weights are BSD-3-Clause; the upstream code repo is Apache-2.0. Loading the
+  checkpoint needs trust_remote_code=True. Validated on PACE ICE (V100, A100,
+  L40S) at HF commit 8fe770c78eb13fe33bf81501612faeddf4d6f331. Mean next-base
+  loss was 1.0944 nats/base on 8 real hg38 regions vs 1.3909 on shuffled copies
+  (random-guess baseline 1.3863). Workflow and logs are in this folder; see
+  README.md

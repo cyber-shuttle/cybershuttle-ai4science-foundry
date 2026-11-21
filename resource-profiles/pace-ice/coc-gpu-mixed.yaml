@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu-mixed
+name: Georgia Tech PACE ICE - coc-gpu partition
+system: pace-ice
+provider: Georgia Tech PACE (instructional cluster)
+
+description: >
+  Single-GPU Slurm jobs on account coc, partition coc-gpu. The scheduler gave
+  V100 (16 GB), A100, L40S, and RTX 6000 nodes across HyenaDNA small-32k runs, so
+  recipes should not assume one GPU type.
+
+hardware:
+  gpu:
+    model: "mixed: V100-PCIE-16GB, A100, L40S, RTX 6000 (varies by allocation)"
+    count: 1
+    vram_gb: 16  # smallest GPU seen (V100)
+  cpu:
+    cores: 4     # as requested
+    ram_gb: 32   # as requested
+
+scheduler: slurm
+partition: coc-gpu
+
+notes: >
+  Request with `-A coc -p coc-gpu --gres=gpu:1 -C nvidia-gpu`. The partition also
+  has AMD MI210 nodes, so a bare GPU request can land on one and fail when the
+  job calls nvidia-smi; the constraint avoids them. The home quota is 30 GB and
+  conda's package cache can fill it, so keep conda and pip caches on scratch
+  (~/scratch). The torch 2.5.1+cu121 wheel worked on nodes reporting CUDA
+  drivers 12.9 to 13.4. Logits from V100 and L40S runs matched to 1.05e-5.

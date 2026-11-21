@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: hyenadna-small-32k-inference-validation
+name: HyenaDNA small-32k - inference and validation
+model: hyenadna-small-32k
+task: inference
+description: >
+  Run a smoke test on the pretrained HyenaDNA small-32k checkpoint, then
+  validate that its predictions reflect DNA structure: mean next-base loss on
+  real hg38 regions vs shuffled copies vs the random-guess baseline ln(4).
+
+input:
+  format: DNA string (smoke test); FASTA of hg38 regions (validation)
+  tokenization: single-nucleotide tokenizer from the checkpoint (A=7, C=8, G=9, T=10)
+  max_length: 32768
+  example_file: registry/models/biology/hyenadna-small-32k/data/hg38_regions.fasta
+  notes: >
+    Validation uses 8 regions of 1,000 bp from hg38, committed in the repo, so
+    it needs no network access to UCSC.
+
+output:
+  format: logits saved under outputs/run_<jobid>/; metrics in outputs/run_<jobid>/validation_results.json
+  description: >
+    Smoke-test logits have shape [1, n_bases + 1, 16]. validate.py writes mean
+    real, shuffled and ln(4) losses and exits 1 if any of three pre-set checks
+    fails: mean real below ln(4), mean real below mean shuffled, and real below
+    shuffled in most regions.
+
+environment:
+  conda_env: hyenadna_env (Python 3.10)
+  pytorch: "2.5.1+cu121; transformers 5.17.0; every package pinned in requirements.txt"
+  setup_script: registry/models/biology/hyenadna-small-32k/setup_env.sh
+
+steps:
+  - name: setup_environment
+    description: Build the conda env on scratch from the pinned requirements.txt (once, on a login node).
+    script: registry/models/biology/hyenadna-small-32k/setup_env.sh
+
+  - name: infer
+    description: Smoke test on a 16-base sequence; checks logits shape and saves them.
+    script: registry/models/biology/hyenadna-small-32k/infer.py
+
+  - name: validate
+    description: Real vs shuffled vs random-guess loss on 8 hg38 regions.
+    script: registry/models/biology/hyenadna-small-32k/validate.py
+
+resource_requirements:
+  gpu_memory_gb: 16   # ran on a 16 GB V100; peak usage not measured
+  gpu_count: 1
+  recommended_gpu: any NVIDIA GPU on coc-gpu (ran on V100, A100, L40S)
+  host_ram_gb: 1.25   # observed
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/coc-gpu-mixed.yaml
+
+compatible_optimization_profiles: []
+
+slurm_example: |
+  # run from registry/models/biology/hyenadna-small-32k/
+  bash setup_env.sh
+  mkdir -p logs
+  export SBATCH_ACCOUNT=<account> SBATCH_PARTITION=<partition>
+  sbatch run_inference.sbatch
+  # the job requests: --gres=gpu:1 -C nvidia-gpu --mem=32G -c 4
+
+notes: >
+  Gotchas found while verifying: logs/ must exist before sbatch or no log is
+  written; do not use `set -u` in the job script because conda's activation
+  scripts reference unset variables; export ENV_PREFIX before sbatch if the env
+  is not at the default path; install from requirements.txt, not from
+  logs/pip_freeze_*.txt. Full steps: registry/models/biology/hyenadna-small-32k/README.md

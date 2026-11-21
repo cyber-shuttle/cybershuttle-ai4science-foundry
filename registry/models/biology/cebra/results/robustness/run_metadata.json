@@ -1,0 +1,20 @@
+{
+  "started_at_utc": "2026-11-21T23:01:52.384800+00:00",
+  "hostname": "atl1-1-03-017-2-0.pace.gatech.edu",
+  "python_version": "3.12.5",
+  "cebra_version": "0.6.1",
+  "torch_version": "2.14.1+cu130",
+  "cuda_available": true,
+  "device": "cuda",
+  "seed": 0,
+  "dataset_name": "rat-hippocampus-single-achilles",
+  "split_index": 8142,
+  "noise_scales": [
+    0.25,
+    0.5
+  ],
+  "zero_fractions": [
+    0.25,
+    0.5
+  ]
+}

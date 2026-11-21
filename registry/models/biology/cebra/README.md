@@ -73,6 +73,22 @@ If the Achilles dataset is `not found in options`, pandas is missing. CEBRA impo
 
 If the job prints `CEBRA virtual environment was not found`, the activate script was not at `../cebra-venv`, or not at the path in `CEBRA_VENV`. Create the environment on the login node before `sbatch`.
 
+## Robustness
+
+I wanted to see if position decoding still works when the test neurons are noisy, or when some of them are missing. ICE job 7231320, one H200, seed 0. Same 80/20 split as the original run. `scripts/robustness.py` trains one model on the clean training data and fits the 36-neighbor kNN on those embeddings. After that, the test neural input is the only thing that changes.
+
+Noise is Gaussian, 0.25x and 0.5x each training neuron's standard deviation. For missing neurons I set 25% or 50% of the test columns to 0 for the whole test window. Seed 0 picks which columns.
+
+Scores are in `results/robustness/metrics.json`. The plot is `results/robustness/median_error.png`.
+
+- clean test: R² 0.803, median error 7.69 cm
+- noise 0.25: R² 0.762, 7.97 cm
+- noise 0.5: R² 0.711, 9.57 cm
+- 25% zeroed: R² 0.717, 8.71 cm
+- 50% zeroed: R² 0.726, 10.60 cm
+
+The error goes up as the test input gets worse. At 50% zeroed the R² is a bit higher than at 25%, but the median error is worse, 10.6 cm vs 8.7 cm.
+
 ## Cleanup
 
 ```bash

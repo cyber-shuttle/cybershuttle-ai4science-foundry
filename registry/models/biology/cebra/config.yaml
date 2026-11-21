@@ -33,3 +33,7 @@ decoder:
 
 shuffle_control:
   enabled: true
+
+robustness:
+  noise_scales: [0.25, 0.5]
+  zero_fractions: [0.25, 0.5]

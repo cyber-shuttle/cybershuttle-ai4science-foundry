@@ -1,0 +1,80 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-19-2026 19:10:28
+Job ID:    7180725
+User ID:   bak8
+Account:   ece
+Job name:  astropt-a5
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+========================================
+AstroPT Assignment 5 Multi-Task Probe
+========================================
+Date: Thu Nov 19 07:10:32 PM EST 2026
+Hostname: atl1-1-03-013-13-0.pace.gatech.edu
+SLURM Job ID: 7180725
+
+=== GPU ===
+NVIDIA H100 80GB HBM3, 81559 MiB, 615.71.09
+
+=== Software ===
+Python 3.10.22
+AstroPT: 2.0.5
+PyTorch: 2.14.1+cu130
+CUDA available: True
+
+=== Multi-Task Validation ===
+=== AstroPT Multi-Task Validation ===
+GPU: NVIDIA H100 80GB HBM3; requested galaxies: 3000
+Morphology candidates: 0.7, then 0.6 if retention is insufficient
+Loading frozen AstroPT model...
+number of parameters: 95.18M
+model loaded successfully from Smith42/astroPT_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Vote distribution by threshold: {"0.7": {"smooth": 1977, "featured_or_disk": 127, "ambiguous": 896, "invalid": 0}}
+Chosen threshold 0.7: smooth=1977, featured/disk=127, ambiguous=896, invalid=0
+
+=== Multi-Task Results ===
+Embedding shape: (3000, 768)
+Embedding runtime: 7.35 s
+Total runtime: 38.98 s
+
+redshift (redshift): 2789 usable
+Train/test: 2091/698
+Linear probe: MSE=0.003527, MAE=0.046650, R²=0.449117
+Mean baseline: MSE=0.006422, MAE=0.065762, R²=-0.003009
+
+stellar_mass (elpetro_mass_log): 209 usable
+Train/test: 156/53
+Linear probe: MSE=0.309633, MAE=0.425654, R²=-0.010884
+Mean baseline: MSE=0.306694, MAE=0.434797, R²=-0.001292
+
+Morphology threshold: 0.7
+Smooth=1977, featured/disk=127, excluded=896 (ambiguous=896, invalid=0)
+Train/test: 1578/526
+Logistic probe: accuracy=0.960076, balanced accuracy=0.788778, F1=0.644068
+ROC-AUC=0.943763
+Majority baseline: accuracy=0.939163, balanced accuracy=0.500000
+
+JSON results: outputs/multitask_results.json
+Embeddings NPZ: outputs/multitask_embeddings.npz
+Plot: outputs/multitask_redshift_predicted_vs_actual.png
+Plot: outputs/multitask_elpetro_mass_log_predicted_vs_actual.png
+=== MULTITASK VALIDATION COMPLETE ===
+
+========================================
+ASSIGNMENT 5 WORKFLOW COMPLETED SUCCESSFULLY
+Finished: Thu Nov 19 07:13:01 PM EST 2026
+========================================
+---------------------------------------
+Begin Slurm Epilog: Nov-19-2026 19:13:01
+Job ID:        7180725
+User ID:       bak8
+Account:       ece
+Job name:      astropt-a5
+Resources:     cpu=4,gres/gpu:h100=1,mem=32G,node=1
+Rsrc Used:     cput=00:10:12,vmem=0,walltime=00:02:33,mem=10451088K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-013-13-0
+---------------------------------------

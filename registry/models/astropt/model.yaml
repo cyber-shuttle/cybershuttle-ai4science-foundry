@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schemas/model.schema.json
+
+id: astropt
+name: AstroPT v2.0
+description: >
+  Autoregressive transformer for astronomical images. The released 95M-parameter
+  checkpoint produces galaxy-image embeddings used by the reproducible recipe.
+
+domain:
+  - astronomy
+  - astrophysics
+
+model_family:
+  - transformer
+  - foundation-model
+  - autoregressive-model
+
+tasks:
+  - inference
+  - evaluation
+
+upstream:
+  huggingface: Smith42/astroPT_v2.0
+  github: https://github.com/Smith42/astroPT
+  paper: https://arxiv.org/abs/2405.14930
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+
+datasets:
+  recommended:
+    - Smith42/galaxies@v2.0
+
+resource_profiles:
+  recommended:
+    - resource-profiles/georgia-tech-ice/ice-h100.yaml
+
+readiness:
+  registry_status: candidate
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: validated
+
+maintainers:
+  - name: Bora Ak
+    github: Bora-ak
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  The reproducible-inference workflow was validated on Georgia Tech ICE/H100.
+  Assignment 5 multi-task probes have not been run. See
+  Bora-ak-reproducible-inference/recipe.yaml for execution details and evidence.

@@ -1,0 +1,25 @@
+{
+  "model": "Smith42/astroPT_v2.0",
+  "checkpoint": "astropt/095M",
+  "dataset": "Smith42/galaxies",
+  "dataset_revision": "v2.0",
+  "split": "test",
+  "target": "mag_g",
+  "num_examples": 1000,
+  "train_examples": 500,
+  "test_examples": 500,
+  "embedding_dimension": 768,
+  "embedding_runtime_seconds": 46.49877521299641,
+  "peak_cuda_memory_gb": 0.9777636528015137,
+  "linear_probe": {
+    "mse": 0.9652325510978699,
+    "mae": 0.7315179109573364,
+    "r2": 0.16768014430999756
+  },
+  "mean_baseline": {
+    "value": 17.443418502807617,
+    "mse": 1.1604853868484497,
+    "mae": 0.7727935910224915,
+    "r2": -0.0006862878799438477
+  }
+}

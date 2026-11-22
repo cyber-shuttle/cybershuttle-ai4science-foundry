@@ -1,0 +1,57 @@
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU0 Tesla V100-PCIE-16GB which is of compute capability (CC) 7.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/cuda/__init__.py:484: UserWarning: Found GPU0 Tesla V100-PCIE-16GB which is of compute capability (CC) 7.0.
+The following list shows the CCs this version of PyTorch was built for and the hardware CCs it supports:
+- 7.5 which supports hardware CC >=7.5,<8.0
+- 8.0 which supports hardware CC >=8.0,<9.0 except {8.7}
+- 8.6 which supports hardware CC >=8.6,<9.0 except {8.7}
+- 9.0 which supports hardware CC >=9.0,<10.0
+- 10.0 which supports hardware CC >=10.0,<11.0 except {10.1}
+- 12.0 which supports hardware CC >=12.0,<13.0
+Your installed torch==2.14.1+cu130 does not include kernels for this GPU. Reinstall the same version against a CUDA build that does, e.g.:
+  For CUDA 12.6 use pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+  _warn_unsupported_code(d, device_cc, code_ccs)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/datasets/formatting/torch_formatter.py:93: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return torch.tensor(value, **{**default_dtype, **self.torch_tensor_kwargs})
+Traceback (most recent call last):
+  File "/storage/ice1/7/7/bak8/vip/astropt-a2/scripts/inference_small.py", line 98, in <module>
+    embeddings = model.generate_embeddings(batch)["images"]
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/astropt/model.py", line 699, in generate_embeddings
+    embeddings_dict = self.get_embeddings(inputs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/astropt/model.py", line 531, in get_embeddings
+    embeddings.append(self.transformer.wte[mod_name](input_tensor))
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1783, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1794, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/astropt/model.py", line 277, in forward
+    x = self.c_fc(x)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1783, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1794, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/hice1/bak8/scratch/vip/astropt-a2/env/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: CUDA error: CUBLAS_STATUS_ARCH_MISMATCH when calling `cublasCreate(handle)`
+Fatal Python error: PyGILState_Release: thread state 0x1553f00036b0 must be current when releasing
+Python runtime state: finalizing (tstate=0x0000555555905310)
+
+Thread 0x0000155555410c40 (most recent call first):
+  <no Python frame>
+/var/lib/slurm/slurmd/job6133445/slurm_script: line 57: 369274 Aborted                 python scripts/inference_small.py

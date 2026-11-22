@@ -1,0 +1,15 @@
+{
+  "model": "Smith42/astroPT_v2.0",
+  "checkpoint": "astropt/095M",
+  "dataset": "Smith42/galaxies",
+  "dataset_revision": "v2.0",
+  "split": "test",
+  "num_examples": 8,
+  "embedding_shape": [
+    8,
+    768
+  ],
+  "all_embeddings_finite": true,
+  "runtime_seconds": 0.5925802129786462,
+  "peak_cuda_memory_gb": 0.5342669486999512
+}

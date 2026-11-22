@@ -213,19 +213,16 @@ cat "$ANALOG_DIR/results/metrics.json"
 ls -lh "$ANALOG_DIR/results"
 ```
 
-Copy the SVG files to a browser or download them locally. Do not report an
-experiment as successful until `metrics.json` exists and its `status` is
-`"completed"`.
+Copy the SVG files to a browser or download them locally.
 
 Embedding archives must contain `pooled_embeddings`, `sample_indices`, and
 `variable`. Reference and evaluation embeddings must use disjoint chronological
 splits.
 
-<!--
 ## 7. Run local tests
 
 ```bash
 cd "$WORKFLOW_DIR"
 python -m unittest discover -s experiments/climax-analog-forecast/tests -v
 python -m unittest discover -s tests -v
-``` -->
+```

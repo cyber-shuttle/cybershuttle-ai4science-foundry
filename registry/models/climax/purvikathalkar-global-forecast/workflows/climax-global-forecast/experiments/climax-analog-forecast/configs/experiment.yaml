@@ -1,0 +1,10 @@
+variable: geopotential_500
+lead_hours: 72
+time_step_hours: 6
+reference_split: train
+evaluation_split: test
+time_index: 0
+num_samples: 32
+sample_stride_hours: 24
+k_values: [1, 3, 5]
+seed: 0

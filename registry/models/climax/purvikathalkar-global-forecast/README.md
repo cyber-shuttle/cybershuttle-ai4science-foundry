@@ -382,6 +382,11 @@ ls -lh "$BASELINE_DIR"
 
 The output includes `baseline-forecast.npz`, `metrics.json`, and `baseline-forecast.svg`. The SVG shows the first input, observed 72-hour target, persistence forecast, and training climatology on one shared color scale. Open the SVG in a browser or copy it to your computer. The metrics aggregate 32 daily-spaced examples from the test shard. A lower latitude-weighted RMSE is better; compare each baseline to the same target period. This baseline path is the quicker forecast demonstration and does not require the fine-tuning section later in the README.
 
+To continue with the downstream analog experiment, follow the
+[copy-paste PACE ICE procedure](workflows/climax-global-forecast/experiments/climax-analog-forecast/README.md).
+It adds raw ERA5 and frozen pooled-ClimaX analog retrieval while preserving the same
+chronological split and 72-hour target used by this baseline.
+
 ### 6. Run frozen pretrained embedding inference
 
 Return to the login shell, initialize Miniforge there, and submit:

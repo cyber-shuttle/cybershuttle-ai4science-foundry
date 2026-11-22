@@ -223,23 +223,27 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, object]:
                     eval_embedding_indices.tolist(), evaluation_indices.tolist()
                 )
             )
-        # Reference archive indices are initial-state indices in the reference shard.
+        # Reference archives may intentionally contain only a subset of states.
         ref_map = {int(index): position for position, index in enumerate(ref_embedding_indices)}
         if len(ref_map) != len(ref_embedding_indices):
             raise ValueError("Reference embedding indices contain duplicates")
-        ref_positions = [ref_map[int(index)] for index in reference_initial]
-        missing = [int(index) for index in reference_initial if int(index) not in ref_map]
-        if missing:
-            raise ValueError("Reference embeddings are missing indices {}".format(missing[:10]))
-        ref_embedding_vectors = ref_embeddings[ref_positions]
+        available_initial_indices = np.asarray(
+            [int(index) for index in reference_initial if int(index) in ref_map],
+            dtype=np.int64,
+        )
+        if available_initial_indices.size == 0:
+            raise ValueError("Reference embedding archive has no usable initial-state indices")
+        ref_embedding_vectors = ref_embeddings[
+            [ref_map[int(index)] for index in available_initial_indices]
+        ]
         for k in args.k_values:
             indices, scores = cosine_retrieve(eval_embeddings, ref_embedding_vectors, k)
-            retrieved_initial_indices = reference_initial[indices]
+            retrieved_initial_indices = available_initial_indices[indices]
             forecast = np.mean(reference[retrieved_initial_indices + lead_steps], axis=1)
             forecasts["climax_k{}".format(k)] = forecast
             retrieval["climax"][str(k)] = {
                 "indices": indices.tolist(),
-                "reference_initial_indices": reference_initial[indices].tolist(),
+                "reference_initial_indices": retrieved_initial_indices.tolist(),
                 "scores": scores.tolist(),
             }
             table.append({"method": "ClimaX embedding analog", "k": k,

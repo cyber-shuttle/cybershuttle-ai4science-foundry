@@ -84,7 +84,7 @@ $HOME/scratch/climax-reproduction/runs/embeddings-<job-id>/
 Submit from the workflow directory after creating the log directory:
 
 ```bash
-cd "$HOME/scratch/climax-inference/workflows/climax-global-forecast"
+cd "$HOME/scratch/climax-inference/registry/models/climax/purvikathalkar-global-forecast/workflows/climax-global-forecast"
 mkdir -p logs
 sbatch --account="<YOUR_PACE_ACCOUNT>" slurm/embed.sbatch
 squeue --me
@@ -105,7 +105,7 @@ Successful PACE job `6209978` (`climax-embed`) completed with state `COMPLETED` 
 | GPU | 1 × NVIDIA Tesla V100-PCIE-16GB |
 | CPUs | 4 |
 | Host memory reported by SLURM | 32768 MiB |
-| SLURM output location | `/storage/ice1/9/2/pkathalkar3/climax-inference/workflows/climax-global-forecast` |
+| SLURM output location | `/storage/ice1/9/2/pkathalkar3/climax-inference/registry/models/climax/purvikathalkar-global-forecast/workflows/climax-global-forecast` |
 | Successful run directory | `~/scratch/climax-reproduction/runs/embeddings-6209978/` |
 
 Repository evidence:

@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-WORKFLOW_DIR="${WORKFLOW_DIR:-$HOME/scratch/climax-inference/workflows/climax-global-forecast}"
+WORKFLOW_DIR="${WORKFLOW_DIR:-$HOME/scratch/climax-inference/registry/models/climax/purvikathalkar-global-forecast/workflows/climax-global-forecast}"
 PROJECT_DIR="${PROJECT_DIR:-$HOME/scratch/climax-reproduction}"
 ENV_NAME="${ENV_NAME:-climax-inference}"
 CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"

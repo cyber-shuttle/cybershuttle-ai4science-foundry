@@ -1,0 +1,32 @@
+# Environments and local settings
+.venv/
+venv/
+env/
+cebra-env/
+.env
+.env.*
+!.env.example
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Downloaded data and large generated artifacts
+data/
+.cache/
+results/**/*.pt
+results/**/*.pth
+results/**/*.ckpt
+results/**/*.npy
+results/**/*.npz
+
+# macOS and editor files
+.DS_Store
+._*
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Small logs, figures and JSON evidence remain available for version control.

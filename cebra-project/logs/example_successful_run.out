@@ -1,0 +1,27 @@
+Identifying infrastructure details were removed from this example execution log.
+
+Python: 3.10.13
+CEBRA: 0.6.1
+NumPy: 2.2.6
+scikit-learn: 1.7.2
+SciPy: 1.15.3
+matplotlib: 3.10.9
+PyTorch: 2.14.1
+CUDA available: True
+PyTorch CUDA build: 13.0
+GPU: NVIDIA A100 80GB PCIe
+
+Neural shape: (10178, 120)
+Behavior shape: (10178, 3)
+Finite neural/behavior: True
+Training iterations: 5000
+Training time: 42.7069088559947 seconds
+Checkpoint successfully saved and reloaded
+Embedding shape: (10178, 3)
+Embedding finite: True
+Inference time: 0.20638958297786303 seconds
+Total workflow time: 54.49295109999366 seconds
+
+Validation numeric checks passed
+Sample count: 10178
+Job exit status: 0

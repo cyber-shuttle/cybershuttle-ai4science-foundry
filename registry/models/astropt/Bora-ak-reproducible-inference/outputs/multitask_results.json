@@ -1,0 +1,111 @@
+{
+  "model": "Smith42/astroPT_v2.0",
+  "checkpoint": "astropt/095M",
+  "astropt_package_version": "2.0.5",
+  "dataset": "Smith42/galaxies",
+  "dataset_revision": "v2.0",
+  "split": "test",
+  "requested_examples": 3000,
+  "embedded_examples": 3000,
+  "embedding_dimension": 768,
+  "seed": 42,
+  "test_fraction": 0.25,
+  "embedding_runtime_seconds": 7.348619880853221,
+  "total_runtime_seconds": 38.9792118340265,
+  "hardware": {
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "cuda_version": "13.0",
+    "pytorch_version": "2.14.1+cu130",
+    "peak_cuda_memory_gb": 0.9719038009643555
+  },
+  "tasks": {
+    "redshift": {
+      "target_field": "redshift",
+      "usable_examples": 2789,
+      "excluded_examples": 211,
+      "filter": "finite and > 0",
+      "train_examples": 2091,
+      "test_examples": 698,
+      "linear_probe": {
+        "mse": 0.003527324170489575,
+        "mae": 0.04664997883257891,
+        "r2": 0.44911656306470615
+      },
+      "mean_baseline": {
+        "value": 0.17510751430793922,
+        "mse": 0.006422300444504643,
+        "mae": 0.06576246565669372,
+        "r2": -0.0030092985212457624
+      },
+      "plot": "multitask_redshift_predicted_vs_actual.png"
+    },
+    "stellar_mass": {
+      "target_field": "elpetro_mass_log",
+      "usable_examples": 209,
+      "excluded_examples": 2791,
+      "filter": "finite and > 0",
+      "train_examples": 156,
+      "test_examples": 53,
+      "linear_probe": {
+        "mse": 0.30963258674956656,
+        "mae": 0.4256537095555719,
+        "r2": -0.010884085304763147
+      },
+      "mean_baseline": {
+        "value": 10.076523469044613,
+        "mse": 0.3066944508672475,
+        "mae": 0.4347973274734783,
+        "r2": -0.00129170087559638
+      },
+      "plot": "multitask_elpetro_mass_log_predicted_vs_actual.png"
+    },
+    "morphology": {
+      "target_fields": [
+        "smooth-or-featured_smooth_fraction",
+        "smooth-or-featured_featured-or-disk_fraction"
+      ],
+      "threshold": 0.7,
+      "threshold_selection": "Use 0.7 if both classes have >=20 and >=20% of all selected rows are retained; otherwise try 0.6 with the same criteria; if neither qualifies, retain 0.7 and skip classification if either class has <4",
+      "threshold_diagnostics": {
+        "0.7": {
+          "smooth": 1977,
+          "featured_or_disk": 127,
+          "ambiguous": 896,
+          "invalid": 0
+        }
+      },
+      "label_rule": "smooth=0 if smooth fraction >= 0.7 and > featured fraction; featured/disk=1 if featured fraction >= 0.7 and > smooth fraction; otherwise exclude",
+      "class_counts": {
+        "smooth": 1977,
+        "featured_or_disk": 127,
+        "ambiguous_excluded": 896,
+        "invalid_vote_fractions_excluded": 0
+      },
+      "usable_examples": 2104,
+      "excluded_examples": 896,
+      "retained_fraction": 0.7013333333333334,
+      "train_examples": 1578,
+      "test_examples": 526,
+      "train_class_counts": {
+        "smooth": 1483,
+        "featured_or_disk": 95
+      },
+      "test_class_counts": {
+        "smooth": 494,
+        "featured_or_disk": 32
+      },
+      "logistic_probe": {
+        "accuracy": 0.9600760456273765,
+        "balanced_accuracy": 0.7887778340080971,
+        "f1_featured_or_disk": 0.6440677966101694,
+        "roc_auc": 0.9437626518218623
+      },
+      "majority_baseline": {
+        "class": "smooth",
+        "accuracy": 0.9391634980988594,
+        "balanced_accuracy": 0.5,
+        "f1_featured_or_disk": 0.0
+      }
+    }
+  }
+}

@@ -194,11 +194,11 @@ The [v2.0 dataset schema](https://huggingface.co/datasets/Smith42/galaxies/blob/
 
 ### Morphology labeling
 
-The script inspects the selected rows' vote fractions before finalizing the confidence threshold. It uses **0.7** if at least 20 galaxies remain in each class and at least 20% of selected rows remain overall. Otherwise it tries **0.6** with the same requirements. If neither threshold qualifies, it keeps 0.7 and skips classification if either class has fewer than four examples. At the chosen threshold, smooth is class 0 when `smooth-or-featured_smooth_fraction` reaches the threshold and exceeds the featured fraction; featured/disk is class 1 when `smooth-or-featured_featured-or-disk_fraction` reaches the threshold and exceeds the smooth fraction. Ties, lower-confidence cases, and invalid fractions are excluded. The run prints distributions for the candidates and the chosen threshold before embedding; JSON records the exact rule, counts, and retained fraction. The published schema verifies the fields but does not establish the distribution in the selected 3,000 test rows. Inspect the reported counts before interpreting classification results.
+The script inspects the selected rows' vote fractions before finalizing the confidence threshold. It uses **0.7** if at least 20 galaxies remain in each class and at least 20% of selected rows remain overall. Otherwise it tries **0.6** with the same requirements. If neither threshold qualifies, it keeps 0.7 and skips classification if either class has fewer than four examples. At the chosen threshold, smooth is class 0 when `smooth-or-featured_smooth_fraction` reaches the threshold and exceeds the featured fraction; featured/disk is class 1 when `smooth-or-featured_featured-or-disk_fraction` reaches the threshold and exceeds the smooth fraction. Ties, lower-confidence cases, and invalid fractions are excluded. The run prints distributions for the candidates and the chosen threshold before embedding; JSON records the exact rule, counts, and retained fraction. Job `7180725` selected 0.7; its class counts are reported below.
 
 ### Running the experiment on Georgia Tech ICE
 
-From the repository root on ICE, with the validated `env/` environment already installed, submit the new job:
+From the repository root on ICE, with the validated `env/` environment already installed, reproduce the job with:
 
 ```bash
 cd registry/models/astropt/Bora-ak-reproducible-inference
@@ -214,14 +214,36 @@ After the job finishes, check `sacct -j "$JOB_ID" --format=JobID,State,Elapsed,M
 
 ### Outputs and metrics
 
-- `outputs/multitask_results.json`: model, dataset, hardware, runtime, filtering, class counts, split sizes, probe metrics, baselines, and any skipped reason.
+- `outputs/multitask_results.json`: measured model, dataset, hardware, runtime, filtering, class counts, split sizes, probe metrics, and baselines from job `7180725`.
 - `outputs/multitask_embeddings.npz`: the embedding matrix, all four selected target arrays, number of examples, and embedding dimension. It is ignored by Git and can be reused without another GPU pass.
-- `outputs/multitask_redshift_predicted_vs_actual.png` and `outputs/multitask_elpetro_mass_log_predicted_vs_actual.png`: diagnostic plots when those probes have enough usable targets.
-- `logs/astropt_a5_<jobid>.out` and `.err`: SLURM evidence and errors.
+- `outputs/multitask_redshift_predicted_vs_actual.png` and `outputs/multitask_elpetro_mass_log_predicted_vs_actual.png`: diagnostic plots from the completed run.
+- `logs/astropt_a5_7180725.out`: SLURM stdout, metrics, completion markers, and resource epilog.
 
 Each regression uses an independently seeded 75/25 train/test split, training-only feature scaling, and ordinary least squares. It reports mean squared error (MSE), mean absolute error (MAE), and R² beside a baseline that predicts the training-set mean. Morphology uses a seeded stratified 75/25 split, training-only scaling, and logistic regression. It reports accuracy, balanced accuracy, featured/disk F1, and ROC-AUC when both test classes are present; a training-set majority-class predictor supplies baseline accuracy, balanced accuracy, and F1. The seed defaults to 42.
 
-Performance above the corresponding baselines would support the claim that the frozen embeddings encode information about those properties. No Assignment 5 measurements are claimed until an ICE job runs. Linear probes measure only linearly recoverable information; morphology votes can be noisy, and missing targets reduce each usable sample. Follow-up work could test nonlinear probes, larger samples, or other foundation models.
+### Results — ICE job 7180725
+
+The run used `Smith42/astroPT_v2.0` (`astropt/095M`) on an NVIDIA H100 80GB HBM3. It requested and embedded 3,000 galaxies from the `Smith42/galaxies` v2.0 `test` split with seed 42, producing an embedding matrix of **(3000, 768)**. Embedding generation took **7.35 s** and the experiment runtime was **38.98 s**. SLURM reported state **COMPLETED**, exit code **0:0**, and elapsed time **00:02:33**.
+
+| Regression task | Usable | Train/test | Predictor | MSE | MAE | R² |
+| --- | ---: | ---: | --- | ---: | ---: | ---: |
+| Redshift | 2,789 | 2,091 / 698 | Linear probe | 0.003527 | 0.046650 | 0.449117 |
+| Redshift | 2,789 | 2,091 / 698 | Mean baseline | 0.006422 | 0.065762 | -0.003009 |
+| Stellar mass (`elpetro_mass_log`) | 209 | 156 / 53 | Linear probe | 0.309633 | 0.425654 | -0.010884 |
+| Stellar mass (`elpetro_mass_log`) | 209 | 156 / 53 | Mean baseline | 0.306694 | 0.434797 | -0.001292 |
+
+Morphology used threshold **0.7**. Of the 3,000 galaxies, **1,977** were labeled smooth and **127** featured/disk; **896** ambiguous galaxies were excluded and **0** had invalid vote fractions. The stratified split contained **1,578 training** and **526 test** examples.
+
+| Morphology predictor | Accuracy | Balanced accuracy | Featured/disk F1 | ROC-AUC |
+| --- | ---: | ---: | ---: | ---: |
+| Logistic probe | 0.960076 | 0.788778 | 0.644068 | 0.943763 |
+| Majority-class baseline | 0.939163 | 0.500000 | — | — |
+
+**Interpretation.** Redshift improves substantially over the mean baseline on MSE, MAE, and R². This supports meaningful linearly accessible redshift information in the frozen embeddings. Stellar mass does **not** clearly beat its mean baseline: its MSE is higher, its MAE is slightly lower, and its R² is negative. Only 209 galaxies had usable mass labels. Morphology is strongly imbalanced, so raw accuracy alone is misleading; balanced accuracy of 0.788778 versus 0.500000 for the majority baseline, together with ROC-AUC of 0.943763, supports meaningful morphology information in the embeddings.
+
+**Limitations.** Frozen linear probes test only linearly accessible information. Stellar mass has few usable labels; morphology classes are strongly imbalanced and their labels are confidence-thresholded vote fractions. Only 3,000 galaxies, one AstroPT checkpoint, and one fixed split were evaluated.
+
+**Next steps.** Use larger labeled samples, test nonlinear probes, try class balancing or weighting for morphology, probe additional galaxy properties, and compare against another astronomy representation or model.
 
 ## Troubleshooting
 

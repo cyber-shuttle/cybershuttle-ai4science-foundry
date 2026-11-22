@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="358" viewBox="0 0 760 358">
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="10" y="53" font-family="sans-serif" font-size="13">Persistence</text>
+<rect x="190" y="40" width="162.77" height="18" fill="#3a86a8"/>
+<text x="358.77" y="54" font-family="sans-serif" font-size="12">370.1439</text>
+<text x="10" y="89" font-family="sans-serif" font-size="13">Climatology</text>
+<rect x="190" y="76" width="540.00" height="18" fill="#3a86a8"/>
+<text x="736.00" y="90" font-family="sans-serif" font-size="12">1227.9955</text>
+<text x="10" y="125" font-family="sans-serif" font-size="13">Raw ERA5 analog k=1</text>
+<rect x="190" y="112" width="501.32" height="18" fill="#3a86a8"/>
+<text x="697.32" y="126" font-family="sans-serif" font-size="12">1140.0294</text>
+<text x="10" y="161" font-family="sans-serif" font-size="13">Raw ERA5 analog k=3</text>
+<rect x="190" y="148" width="478.94" height="18" fill="#3a86a8"/>
+<text x="674.94" y="162" font-family="sans-serif" font-size="12">1089.1329</text>
+<text x="10" y="197" font-family="sans-serif" font-size="13">Raw ERA5 analog k=5</text>
+<rect x="190" y="184" width="467.65" height="18" fill="#3a86a8"/>
+<text x="663.65" y="198" font-family="sans-serif" font-size="12">1063.4670</text>
+<text x="10" y="233" font-family="sans-serif" font-size="13">ClimaX embedding analog k=1</text>
+<rect x="190" y="220" width="477.38" height="18" fill="#3a86a8"/>
+<text x="673.38" y="234" font-family="sans-serif" font-size="12">1085.5848</text>
+<text x="10" y="269" font-family="sans-serif" font-size="13">ClimaX embedding analog k=3</text>
+<rect x="190" y="256" width="476.27" height="18" fill="#3a86a8"/>
+<text x="672.27" y="270" font-family="sans-serif" font-size="12">1083.0639</text>
+<text x="10" y="305" font-family="sans-serif" font-size="13">ClimaX embedding analog k=5</text>
+<rect x="190" y="292" width="475.93" height="18" fill="#3a86a8"/>
+<text x="671.93" y="306" font-family="sans-serif" font-size="12">1082.2973</text>
+</svg>

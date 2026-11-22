@@ -83,7 +83,7 @@ def load_embedding_archive(path: Path, variable: str) -> Tuple[np.ndarray, np.nd
 
 
 def write_svg(output_path: Path, panels: Sequence[Tuple[str, np.ndarray]]) -> None:
-    workflow_scripts = Path(__file__).resolve().parents[2] / "scripts"
+    workflow_scripts = Path(__file__).resolve().parents[3] / "scripts"
     if str(workflow_scripts) not in sys.path:
         sys.path.insert(0, str(workflow_scripts))
     from forecast_visualization import write_forecast_svg

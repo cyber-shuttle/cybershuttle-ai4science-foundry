@@ -1,6 +1,6 @@
 #!/bin/bash
 # One command for the whole Clay workflow on PACE ICE. Run on a login node
-# from the Clay model folder:
+# from the recipe folder:
 #
 #   bash scripts/clay_run_all.sh
 #

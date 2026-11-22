@@ -58,4 +58,4 @@ notes: >
 
   Batch jobs run from a spooled copy of the script, so ${BASH_SOURCE[0]} does
   not point at the checkout; resolve paths from $SLURM_SUBMIT_DIR and submit
-  from the Clay model folder. Slurm does not create the --output directory.
+  from the recipe folder. Slurm does not create the --output directory.

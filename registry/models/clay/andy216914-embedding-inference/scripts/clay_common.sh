@@ -4,7 +4,7 @@
 #
 # This is the single place for paths, pinned versions, URLs, and checksums.
 # Every value marked "verified" was checked against the upstream source on
-# 2026-10-11 (see registry/models/earth-science/clay/README.md).
+# 2026-10-11 (see registry/models/clay/andy216914-embedding-inference/README.md).
 
 # ---- Where things go -------------------------------------------------------
 # Everything large lives under $CLAY_WORKDIR (scratch), never in this repo or
@@ -16,7 +16,7 @@ CLAY_WEIGHTS="$CLAY_WORKDIR/weights"       # clay-v1.5.ckpt
 CLAY_DATA="$CLAY_WORKDIR/data"             # NAIP tile + reference parquet
 CLAY_RESULTS="$CLAY_WORKDIR/results"       # embeddings written by jobs
 
-# Evidence that gets committed (relative to the Clay model folder).
+# Evidence that gets committed (relative to the recipe folder).
 CLAY_EVIDENCE="benchmarks"
 
 # ---- Pinned upstream artifacts (verified) ----------------------------------
@@ -68,10 +68,10 @@ clay_make_dirs() {
         "$XDG_CACHE_HOME" "$MPLCONFIGDIR" "$TMPDIR"
 }
 
-# Stop unless we are in the Clay model folder (sbatch jobs cd to $SLURM_SUBMIT_DIR).
+# Stop unless we are in the recipe folder (sbatch jobs cd to $SLURM_SUBMIT_DIR).
 clay_require_repo_root() {
     if [[ ! -f scripts/clay_common.sh || ! -d "$CLAY_EVIDENCE/logs" ]]; then
-        echo "ERROR: run this from registry/models/earth-science/clay (the folder with scripts/ and benchmarks/)." >&2
+        echo "ERROR: run this from registry/models/clay/andy216914-embedding-inference (the folder with scripts/ and benchmarks/)." >&2
         exit 1
     fi
 }
@@ -184,7 +184,7 @@ clay_check_url() {
     else
         echo "ERROR: cannot reach $url (HTTP '${code:-none}') from $(hostname)." >&2
         echo "       Compute nodes may not have internet access. See Troubleshooting in" >&2
-        echo "       registry/models/earth-science/clay/README.md." >&2
+        echo "       registry/models/clay/andy216914-embedding-inference/README.md." >&2
         exit 1
     fi
 }

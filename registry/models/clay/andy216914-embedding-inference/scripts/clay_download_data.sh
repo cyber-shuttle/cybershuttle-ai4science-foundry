@@ -3,7 +3,7 @@
 # Safe to rerun: files already present with the right checksum are skipped.
 #
 # Normally run by: sbatch scripts/clay_download.sbatch
-# Can also be run from the Clay model folder after the env is built:
+# Can also be run from the recipe folder after the env is built:
 #   bash scripts/clay_download_data.sh
 #
 # Inputs (pinned in scripts/clay_common.sh):

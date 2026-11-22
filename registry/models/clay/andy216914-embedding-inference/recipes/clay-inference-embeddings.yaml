@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../../../schemas/execution_recipe.schema.json
-# Paths are relative to this model's folder, where every command is run,
+# Paths are relative to this recipe's folder, where every command is run,
 # except resource profiles, which use the foundry's repo-root convention.
 
 id: clay-inference-embeddings
@@ -104,7 +104,7 @@ resource_requirements:
   storage_gib: 15   # du of $CLAY_WORKDIR after the reference run (env, checkpoint, teacher, data, caches, results)
 
 compatible_resource_profiles:
-  - registry/models/earth-science/clay/resource-profiles/coc-gpu-l40s.yaml
+  - registry/models/clay/andy216914-embedding-inference/resource-profiles/coc-gpu-l40s.yaml
 
 compatible_optimization_profiles: []
 
@@ -132,7 +132,7 @@ slurm_example: |
     --reference "$CLAY_DATA/$REF_NAME" --out-dir "$CLAY_RESULTS/validation"
 
   # The full job (GPU/version capture, embeddings sample, summary, sacct) is
-  # scripts/clay_inference.sbatch. Submit from this model's folder.
+  # scripts/clay_inference.sbatch. Submit from this recipe's folder.
 
 verification:
   criterion: mean cosine similarity >= 0.99 over all chips vs Clay's published embeddings (Shi Jin's own criterion from Assignment 1, not Clay's)
@@ -166,5 +166,5 @@ notes: >
   5. Planetary Computer's STAC API answers HTTP range requests with 502, so
      the network check retries with a plain GET.
 
-  See registry/models/earth-science/clay/README.md for setup, execution,
+  See registry/models/clay/andy216914-embedding-inference/README.md for setup, execution,
   verification, troubleshooting and cleanup.

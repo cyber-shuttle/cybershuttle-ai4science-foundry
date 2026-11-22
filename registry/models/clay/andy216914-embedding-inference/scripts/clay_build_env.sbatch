@@ -14,7 +14,7 @@
 # Step 1 of the Clay workflow: build the conda environment on a CPU node
 # (login nodes kill large installs) and record exactly what was installed.
 #
-# Submit from the Clay model folder:
+# Submit from the recipe folder:
 #   sbatch scripts/clay_build_env.sbatch
 #
 # What it does:
@@ -34,7 +34,7 @@
 set -euo pipefail
 trap 'echo "== clay-build-env FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the recipe folder, registry/models/clay/andy216914-embedding-inference.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

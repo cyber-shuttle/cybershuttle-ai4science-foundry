@@ -17,7 +17,7 @@ mean of at least 0.99.
 | Reference | Clay's published v1.5 NAIP embeddings for the same image ([source.coop](https://source.coop/clay/clay-v1-5-naip-2)) |
 | Platform | PACE ICE, Slurm; 1× NVIDIA L40S for inference |
 | Reference run | 2026-10-11, Slurm jobs 6194941–6194944; logs and outputs in [`benchmarks/`](benchmarks/) |
-| Related files | [`model.yaml`](model.yaml) · [recipe](recipes/clay-inference-embeddings.yaml) · [resource profile](resource-profiles/coc-gpu-l40s.yaml) · [run record](benchmarks/clay-pace-ice-inference.yaml) · tracking issue [#8](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/8) |
+| Related files | [`model.yaml`](../model.yaml) · [recipe](recipes/clay-inference-embeddings.yaml) · [resource profile](resource-profiles/coc-gpu-l40s.yaml) · [run record](benchmarks/clay-pace-ice-inference.yaml) · tracking issue [#8](https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/8) |
 
 ## Contents
 
@@ -72,7 +72,7 @@ the embeddings are for a downstream task.
 ## 2. Repository layout
 
 All files below were added by this contribution and live in this folder
-(`registry/models/earth-science/clay/`); paths are relative to it. Large files (environment,
+(`registry/models/clay/andy216914-embedding-inference/`); paths are relative to it. Large files (environment,
 model weights, imagery, embeddings) are not stored in the repository; they are
 created in a work folder on scratch storage (Section 2.2).
 
@@ -81,7 +81,7 @@ created in a work folder on scratch storage (Section 2.2).
 | Path | Role |
 |---|---|
 | `README.md` | this guide |
-| `model.yaml` | registry entry for Clay v1.5 (foundry model schema) |
+| `../model.yaml` | registry entry for Clay v1.5 (foundry model schema); one level up, because it describes the model rather than this recipe |
 | `recipes/clay-inference-embeddings.yaml` | machine-readable recipe: steps, scripts, inputs, outputs, resources, verification |
 | `resource-profiles/coc-gpu-l40s.yaml` | hardware and Slurm settings of the PACE ICE GPU used |
 | **Scripts** (`scripts/`) | |
@@ -152,7 +152,7 @@ Sections 5–7.
 ```bash
 ssh <gt-username>@login-ice.pace.gatech.edu      # from your computer
 git clone --branch clay-assignment-2 https://github.com/Andy216914/cybershuttle-ai4science-foundry.git ~/clay-repro
-cd ~/clay-repro/registry/models/earth-science/clay
+cd ~/clay-repro/registry/models/clay/andy216914-embedding-inference
 bash scripts/clay_preflight.sh                   # must end with "PREFLIGHT PASSED"
 bash scripts/clay_run_all.sh                     # submits 4 jobs and returns
 squeue -u $USER                                  # repeat until no clay-* jobs are listed (~15 min plus queue)
@@ -221,7 +221,7 @@ node. Run all following commands there.
 ```bash
 cd ~
 git clone --branch clay-assignment-2 https://github.com/Andy216914/cybershuttle-ai4science-foundry.git clay-repro
-cd clay-repro/registry/models/earth-science/clay
+cd clay-repro/registry/models/clay/andy216914-embedding-inference
 ```
 
 The final argument names the folder `clay-repro`, so the clone does not
@@ -230,7 +230,7 @@ needed. After the pull request is merged, the same files are on the `main`
 branch of `cyber-shuttle/cybershuttle-ai4science-foundry`.
 
 **Run every command in this guide from this folder
-(`registry/models/earth-science/clay`).**
+(`registry/models/clay/andy216914-embedding-inference`).**
 The job scripts locate their files relative to it.
 
 ### 5.3 Configure the Slurm account and run the preflight check
@@ -492,7 +492,7 @@ following on your own computer (Terminal or PowerShell, VPN connected); it
 copies the file into the current folder:
 
 ```bash
-scp <gt-username>@login-ice.pace.gatech.edu:clay-repro/registry/models/earth-science/clay/benchmarks/outputs/inference/validation_cosine.png .
+scp <gt-username>@login-ice.pace.gatech.edu:clay-repro/registry/models/clay/andy216914-embedding-inference/benchmarks/outputs/inference/validation_cosine.png .
 ```
 
 ## 8. Validation of the reference run
@@ -631,7 +631,7 @@ same ground area as reference row *i*.
 | Hardware | PACE ICE; CPU jobs on `coc-cpu`; GPU jobs on `coc-gpu` with 1× NVIDIA L40S (46068 MiB, compute capability 8.9, driver 615.71.09), 4 CPU cores, 32 GiB; RHEL 9.8, glibc 2.34; `module load miniforge/24.3.0-0` (conda 23.7.4) |
 | Reference run | 2026-10-11; jobs 6194941 (build), 6194942 (download), 6194943 (smoke test), 6194944 (inference); started by [`logs/run_all-20261011T202904.txt`](benchmarks/logs/run_all-20261011T202904.txt) from a fresh clone and an empty work folder |
 | Resources used | peak memory from Slurm, peak GPU memory from PyTorch: job 1 10:05, 12.0 GiB; job 2 2:48, 7.8 GiB; job 3 1:01, 14.4 GiB, 1.63 GB GPU; job 4 1:06, 7.6 GiB, 2.01 GB GPU, 12.2 s to embed 725 chips (about 59 chips/s). 0.04 GPU-hours in total; 15 GiB of scratch |
-| Code version | every log prints the Git hash of the `scripts/` folder; compare with `git rev-parse HEAD:./scripts`. The reference run predates the move of these files into this folder: its logs show the old locations (`scripts/`, `benchmarks/results/clay/`) and the tree hash `9d02664…` (commit `37e02f1`). The move changed only paths inside the scripts, so newer runs print a different hash |
+| Code version | every log prints the Git hash of the `scripts/` folder; compare with `git rev-parse HEAD:./scripts`. The reference run predates the moves of these files into this folder: its logs show the original locations (`scripts/`, `benchmarks/results/clay/`) and the tree hash `9d02664…` (commit `37e02f1`). The moves changed only paths and messages inside the scripts, so newer runs print a different hash |
 
 ## 10. Running the embedding script directly
 

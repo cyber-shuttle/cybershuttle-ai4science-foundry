@@ -16,7 +16,7 @@
 # Clay v1.5 and compare each chip with Clay's published embedding of the same
 # chip (pass criterion: mean cosine similarity >= 0.99). Needs steps 1-3.
 #
-# Submit from the Clay model folder:
+# Submit from the recipe folder:
 #   sbatch scripts/clay_inference.sbatch
 #
 # Writes:
@@ -30,7 +30,7 @@
 set -euo pipefail
 trap 'echo "== clay-inference FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the recipe folder, registry/models/clay/andy216914-embedding-inference.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

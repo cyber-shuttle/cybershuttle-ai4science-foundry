@@ -15,7 +15,7 @@
 # DINOv2 teacher, the NAIP tile, and Clay's reference embeddings (~6.6 GB in
 # total, all under $CLAY_WORKDIR). Needs the env from step 1.
 #
-# Submit from the Clay model folder:
+# Submit from the recipe folder:
 #   sbatch scripts/clay_download.sbatch
 # or chain it after the env build:
 #   sbatch --dependency=afterok:<build job id> scripts/clay_download.sbatch
@@ -23,7 +23,7 @@
 set -euo pipefail
 trap 'echo "== clay-download FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the recipe folder, registry/models/clay/andy216914-embedding-inference.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

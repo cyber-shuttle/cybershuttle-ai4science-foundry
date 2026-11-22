@@ -29,7 +29,7 @@ file metadata under "clay_run" and in <out>.json.
 --dry-run prepares every input without importing torch or loading the model,
 so the chip matching and preprocessing can be tested on any machine.
 
-Example (GPU node, env active, from the Clay model folder):
+Example (GPU node, env active, from the recipe folder):
   python scripts/clay_embed.py \\
       --tile $CLAY_WORKDIR/data/m_3211002_se_12_1_20150530.tif \\
       --reference $CLAY_WORKDIR/data/m_3211002_se_12_1_20150530.parquet \\

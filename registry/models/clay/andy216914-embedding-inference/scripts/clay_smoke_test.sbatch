@@ -17,7 +17,7 @@
 # finite, two identical runs agree, and different chips differ.
 # Needs steps 1-2 (env build and downloads).
 #
-# Submit from the Clay model folder:
+# Submit from the recipe folder:
 #   sbatch scripts/clay_smoke_test.sbatch
 #
 # Writes:
@@ -27,7 +27,7 @@
 set -euo pipefail
 trap 'echo "== clay-smoke FAILED at line $LINENO (exit $?)  $(date -Is)" >&2' ERR
 
-: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the Clay model folder.}"
+: "${SLURM_SUBMIT_DIR:?Submit with sbatch from the recipe folder, registry/models/clay/andy216914-embedding-inference.}"
 cd "$SLURM_SUBMIT_DIR"
 # shellcheck source=scripts/clay_common.sh
 source scripts/clay_common.sh

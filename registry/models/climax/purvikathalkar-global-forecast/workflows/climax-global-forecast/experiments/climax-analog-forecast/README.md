@@ -93,7 +93,7 @@ export EMBEDDING_DATA="$PROJECT_DIR/data/geopotential_npz_2016_test"
 export EMBED_SPLIT=train
 export EMBED_TIME_INDEX=0
 export EMBED_NUM_SAMPLES=32
-export EMBED_SAMPLE_STRIDE=24
+export EMBED_SAMPLE_STRIDE=4
 export OUTPUT_DIR="$PROJECT_DIR/runs/climax-analog-reference-embeddings"
 mkdir -p logs "$OUTPUT_DIR"
 
@@ -117,7 +117,7 @@ Submit another GPU job for the test split:
 export EMBED_SPLIT=test
 export EMBED_TIME_INDEX=0
 export EMBED_NUM_SAMPLES=32
-export EMBED_SAMPLE_STRIDE=24
+export EMBED_SAMPLE_STRIDE=4
 export OUTPUT_DIR="$PROJECT_DIR/runs/climax-analog-evaluation-embeddings"
 mkdir -p logs "$OUTPUT_DIR"
 
@@ -136,6 +136,16 @@ cat "$OUTPUT_DIR/metrics.json"
 The evaluation embedding indices must match the analog experiment's
 `--time-index` and `--sample-stride-hours` values. The commands below use
 index 0 and 24-hour spacing.
+
+These paths use 6-hour prepared data arrays. Therefore:
+
+- `EMBED_SAMPLE_STRIDE=4` produces embedding indices `[0, 4, 8, ...]`,
+  corresponding to 24-hour spacing;
+- `EMBED_SAMPLE_STRIDE=24` produces `[0, 24, 48, ...]`, corresponding to
+  144-hour spacing.
+
+Do not reuse the existing embedding archive from a job that used
+`EMBED_SAMPLE_STRIDE=24` as the evaluation archive for the command in step 5.
 
 ## 5. Run the analog experiment
 
@@ -211,10 +221,11 @@ Embedding archives must contain `pooled_embeddings`, `sample_indices`, and
 `variable`. Reference and evaluation embeddings must use disjoint chronological
 splits.
 
+<!--
 ## 7. Run local tests
 
 ```bash
 cd "$WORKFLOW_DIR"
 python -m unittest discover -s experiments/climax-analog-forecast/tests -v
 python -m unittest discover -s tests -v
-```
+``` -->

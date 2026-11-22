@@ -219,7 +219,9 @@ def run_experiment(args: argparse.Namespace) -> Dict[str, object]:
         )
         if not np.array_equal(eval_embedding_indices, evaluation_indices):
             raise ValueError(
-                "Evaluation embedding indices {} do not match requested indices {}".format(
+                "Evaluation embedding indices {} do not match requested indices {}. "
+                "For --time-step-hours 6, --sample-stride-hours 24 means 4 array steps; "
+                "set EMBED_SAMPLE_STRIDE=4 in the embedding SLURM job.".format(
                     eval_embedding_indices.tolist(), evaluation_indices.tolist()
                 )
             )

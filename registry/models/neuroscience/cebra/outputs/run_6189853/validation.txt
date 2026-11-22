@@ -1,0 +1,23 @@
+[PASS] output files present
+        expected: all of cebra_posdir.pt, embedding_train.npy, embedding_test.npy, pred_test.npy, labels_test.npy, metrics.json, run_info.json
+        observed: missing: none
+[PASS] embedding shapes and values
+        expected: train (8142, 3), test (2036, 3), all finite
+        observed: train (8142, 3), test (2036, 3), finite=True
+[PASS] checkpoint SHA-256 matches run_info.json
+        expected: d518814af68e03bf...
+        observed: d518814af68e03bf...
+[PASS] re-running inference from checkpoint reproduces saved embedding
+        expected: max |diff| < 1e-4
+        observed: max |diff| = 0.00e+00
+[PASS] position decoding median error
+        expected: < 0.2 m
+        observed: 0.0775 m (R2=0.816)
+[PASS] real model beats shuffled-label control
+        expected: real err < 0.5 x control err, and real R2 > control R2
+        observed: real err 0.0775 m vs control 0.4469 m; R2 0.816 vs -0.001
+[PASS] InfoNCE goodness of fit: real < shuffled
+        expected: real < shuffled (notebook: ~5.53 vs ~6.16)
+        observed: real 5.529789378166199 vs shuffled 6.156787582397461
+
+SUMMARY: 7/7 checks passed

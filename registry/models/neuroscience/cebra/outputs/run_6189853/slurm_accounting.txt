@@ -1,0 +1,9 @@
+# sacct
+JobID           JobName  Partition                                     AllocTRES    Elapsed   TotalCPU     MaxRSS      State ExitCode 
+------------ ---------- ---------- --------------------------------------------- ---------- ---------- ---------- ---------- -------- 
+6189853      cebra-hip+    ice-gpu billing=2,cpu=2,gres/gpu:h100=1,gres/gpu=1,m+   00:01:16  01:08.711             COMPLETED      0:0 
+6189853.bat+      batch            cpu=2,gres/gpu:h100=1,gres/gpu=1,mem=16G,nod+   00:01:16  01:08.711   1929856K  COMPLETED      0:0 
+6189853.ext+     extern            billing=2,cpu=2,gres/gpu:h100=1,gres/gpu=1,m+   00:01:16   00:00:00             COMPLETED      0:0 
+
+# seff
+seff not available

@@ -1,0 +1,5 @@
+CEBRA_DATADIR = /storage/ice1/5/9/zprager3/cebra-test/data
+Gzipped file checksum verified. Extracting...
+Extraction complete. Dataset saved in '/storage/ice1/5/9/zprager3/cebra-test/data/rat_hippocampus/achilles.jl'
+Loaded 'rat-hippocampus-single-achilles': neural (10178, 120), labels (10178, 3)
+/storage/ice1/5/9/zprager3/cebra-test/data/rat_hippocampus/achilles.jl  10015448 bytes  sha256=7465aee97ae607557d037731d840516e7925bd846b40487b1a9a82061dc40f5a

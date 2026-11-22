@@ -1,0 +1,100 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 17:27:27
+Job ID:    6189853
+User ID:   zprager3
+Account:   ece
+Job name:  cebra-hippocampus
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+===== JOB INFO =====
+job_id=6189853 name=cebra-hippocampus partition=ice-gpu
+node=atl1-1-03-013-3-0.pace.gatech.edu start=2026-10-11T17:27:33-04:00
+cpus=2 mem_per_node=16384MB gpus=0
+git_commit=f9c3e7213268a03bc460eb72945b13828ceffa92
+python=/home/hice1/zprager3/scratch/.conda/envs/cebra/bin/python
+Sun Oct 11 17:27:33 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:48:00.0 Off |                    0 |
+| N/A   33C    P0            102W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+====================
+[17:27:39 +     5s] cebra 0.6.1 torch 2.14.0+cu130 CUDA=True GPU=NVIDIA H100 80GB HBM3
+[17:27:39 +     5s] data: neural (10178, 120), labels (10178, 3)
+[17:27:39 +     5s] fit cebra_posdir3_split
+[17:28:07 +    33s] goodness of fit - train: 5.529789378166199
+[17:28:08 +    34s] fit cebra_posdir3_shuffled_split
+[17:28:31 +    57s] goodness of fit - shuffle train: 6.156787582397461
+[17:28:32 +    58s] done: 5 figures, 2 checkpoints -> /storage/ice1/5/9/zprager3/cebra-test/outputs/run_6189853
+[PASS] output files present
+        expected: all of cebra_posdir.pt, embedding_train.npy, embedding_test.npy, pred_test.npy, labels_test.npy, metrics.json, run_info.json
+        observed: missing: none
+[PASS] embedding shapes and values
+        expected: train (8142, 3), test (2036, 3), all finite
+        observed: train (8142, 3), test (2036, 3), finite=True
+[PASS] checkpoint SHA-256 matches run_info.json
+        expected: d518814af68e03bf...
+        observed: d518814af68e03bf...
+[PASS] re-running inference from checkpoint reproduces saved embedding
+        expected: max |diff| < 1e-4
+        observed: max |diff| = 0.00e+00
+[PASS] position decoding median error
+        expected: < 0.2 m
+        observed: 0.0775 m (R2=0.816)
+[PASS] real model beats shuffled-label control
+        expected: real err < 0.5 x control err, and real R2 > control R2
+        observed: real err 0.0775 m vs control 0.4469 m; R2 0.816 vs -0.001
+[PASS] InfoNCE goodness of fit: real < shuffled
+        expected: real < shuffled (notebook: ~5.53 vs ~6.16)
+        observed: real 5.529789378166199 vs shuffled 6.156787582397461
+
+SUMMARY: 7/7 checks passed
+===== JOB DONE =====
+end=2026-10-11T17:28:42-04:00 wall_seconds=69
+outputs in outputs/run_6189853:
+total 582
+drwxr-xr-x. 4 zprager3 gtperson   4096 Oct 11 17:28 .
+drwxr-xr-x. 3 zprager3 gtperson   4096 Oct 11 17:27 ..
+-rw-r--r--. 1 zprager3 gtperson 388124 Oct 11 17:28 cebra_posdir.pt
+drwxr-xr-x. 2 zprager3 gtperson   4096 Oct 11 17:28 checkpoints
+-rw-r--r--. 1 zprager3 gtperson  24560 Oct 11 17:28 embedding_test.npy
+-rw-r--r--. 1 zprager3 gtperson  97832 Oct 11 17:28 embedding_train.npy
+drwxr-xr-x. 2 zprager3 gtperson   4096 Oct 11 17:28 figures
+-rw-r--r--. 1 zprager3 gtperson    586 Oct 11 17:28 gpu_6189853.csv
+-rw-r--r--. 1 zprager3 gtperson  24560 Oct 11 17:28 labels_test.npy
+-rw-r--r--. 1 zprager3 gtperson    303 Oct 11 17:28 metrics.json
+-rw-r--r--. 1 zprager3 gtperson  16416 Oct 11 17:28 pred_test.npy
+-rw-r--r--. 1 zprager3 gtperson   1737 Oct 11 17:28 run_info.json
+-rw-r--r--. 1 zprager3 gtperson  20128 Oct 11 17:28 train_loss.npy
+-rw-r--r--. 1 zprager3 gtperson   1140 Oct 11 17:28 validation.txt
+After the job ends, record final accounting with:
+  sacct -j 6189853 --format=JobID,JobName,Partition,AllocTRES%40,Elapsed,MaxRSS,State,ExitCode
+  seff 6189853
+validation_exit_code=0 (0 = all checks passed)
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 17:28:43
+Job ID:        6189853
+User ID:       zprager3
+Account:       ece
+Job name:      cebra-hippocampus
+Resources:     cpu=2,gres/gpu:h100=1,mem=16G,node=1
+Rsrc Used:     cput=00:02:32,vmem=0,walltime=00:01:16,mem=1929856K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-013-3-0
+---------------------------------------

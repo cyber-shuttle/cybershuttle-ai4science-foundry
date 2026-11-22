@@ -1,0 +1,58 @@
+{
+  "notebook": "https://cebra.ai/docs/demo_notebooks/Demo_hippocampus.html",
+  "args": {
+    "out_dir": "outputs/run_6189853",
+    "max_iterations": 5000,
+    "seed": 0,
+    "device": "cuda_if_available",
+    "infonce_batches": 500,
+    "dataset": "rat-hippocampus-single-achilles",
+    "output_dimension": 3
+  },
+  "sections": "cells 0-30 (experiment 1 + shuffle control)",
+  "python": "3.11.17",
+  "platform": "Linux-5.14.0-687.49.1.el9_8.x86_64-x86_64-with-glibc2.34",
+  "hostname": "atl1-1-03-013-3-0.pace.gatech.edu",
+  "versions": {
+    "cebra": "0.6.1",
+    "torch": "2.14.0+cu130",
+    "numpy": "2.4.6",
+    "sklearn": "1.9.1"
+  },
+  "cuda_available": true,
+  "torch_cuda_version": "13.0",
+  "gpu_name": "NVIDIA H100 80GB HBM3",
+  "gpu_peak_mem_mb": 230.2,
+  "slurm_job_id": "6189853",
+  "data": {
+    "n_timesteps": 10178,
+    "n_neurons": 120,
+    "n_train": 8142,
+    "n_test": 2036,
+    "label_columns": [
+      "position_m",
+      "right_running",
+      "left_running"
+    ]
+  },
+  "checkpoint": {
+    "path": "outputs/run_6189853/cebra_posdir.pt",
+    "sha256": "d518814af68e03bfb8b9f510dbfba5ca4a4581984dd05b928bd74d61b50c6e13"
+  },
+  "all_checkpoints": {
+    "cebra_posdir3_split": {
+      "path": "outputs/run_6189853/checkpoints/cebra_posdir3_split.pt",
+      "sha256": "d518814af68e03bfb8b9f510dbfba5ca4a4581984dd05b928bd74d61b50c6e13"
+    },
+    "cebra_posdir3_shuffled_split": {
+      "path": "outputs/run_6189853/checkpoints/cebra_posdir3_shuffled_split.pt",
+      "sha256": "13caf9a09cfa66d15e2147289bddd5969b335d1ea33ddf707522d916f216add4"
+    }
+  },
+  "timing_s": {
+    "fit_cebra_posdir3_split": 26.4,
+    "inference_posdir3_split": 0.048,
+    "fit_cebra_posdir3_shuffled_split": 23.02,
+    "total": 58.1
+  }
+}

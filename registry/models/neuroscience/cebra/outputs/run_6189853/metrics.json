@@ -1,0 +1,12 @@
+{
+  "cebra_posdir": {
+    "infonce_train": 5.529789378166199,
+    "pos_median_abs_err_m": 0.07745155692100525,
+    "pos_r2": 0.8162814378738403
+  },
+  "shuffled_control": {
+    "infonce_train": 6.156787582397461,
+    "pos_median_abs_err_m": 0.4468705952167511,
+    "pos_r2": -0.0013065338134765625
+  }
+}

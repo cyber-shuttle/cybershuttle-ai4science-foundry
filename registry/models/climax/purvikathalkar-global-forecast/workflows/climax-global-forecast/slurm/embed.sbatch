@@ -17,6 +17,11 @@ CLIMAX_SOURCE="${CLIMAX_SOURCE:-$PROJECT_DIR/ClimaX}"
 CHECKPOINT="${CHECKPOINT:-$PROJECT_DIR/checkpoints/5.625deg.ckpt}"
 ERA5_NPZ="${HOME}/scratch/climax-reproduction/data/geopotential_npz_2016_test"
 OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_DIR/runs/embeddings-${SLURM_JOB_ID:-manual}}"
+EMBEDDING_DATA="${EMBEDDING_DATA:-$ERA5_NPZ}"
+EMBED_SPLIT="${EMBED_SPLIT:-test}"
+EMBED_TIME_INDEX="${EMBED_TIME_INDEX:-0}"
+EMBED_NUM_SAMPLES="${EMBED_NUM_SAMPLES:-32}"
+EMBED_SAMPLE_STRIDE="${EMBED_SAMPLE_STRIDE:-24}"
 
 cd "$WORKFLOW_DIR"
 mkdir -p logs "$OUTPUT_DIR"
@@ -41,20 +46,24 @@ echo "node=$(hostname)"
 echo "climax_commit=$(git -C "$CLIMAX_SOURCE" rev-parse HEAD)"
 echo "workflow_commit=$(git -C "$WORKFLOW_DIR/../.." rev-parse HEAD)"
 echo "checkpoint=$CHECKPOINT"
-echo "data=$ERA5_NPZ"
+echo "data=$EMBEDDING_DATA"
+echo "split=$EMBED_SPLIT"
+echo "time_index=$EMBED_TIME_INDEX"
+echo "num_samples=$EMBED_NUM_SAMPLES"
+echo "sample_stride=$EMBED_SAMPLE_STRIDE"
 nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv,noheader
 
 "$CLIMAX_PYTHON" scripts/embed.py \
   --climax-source "$CLIMAX_SOURCE" \
   --config "$CLIMAX_SOURCE/configs/pretrain_climax.yaml" \
   --checkpoint "$CHECKPOINT" \
-  --data-dir "$ERA5_NPZ" \
+  --data-dir "$EMBEDDING_DATA" \
   --output-dir "$OUTPUT_DIR" \
   --variable geopotential_500 \
-  --split test \
-  --time-index 0 \
-  --num-samples 32 \
-  --sample-stride 24 \
+  --split "$EMBED_SPLIT" \
+  --time-index "$EMBED_TIME_INDEX" \
+  --num-samples "$EMBED_NUM_SAMPLES" \
+  --sample-stride "$EMBED_SAMPLE_STRIDE" \
   --device cuda
 
 nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv,noheader

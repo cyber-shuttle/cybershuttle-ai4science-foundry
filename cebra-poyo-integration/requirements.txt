@@ -1,0 +1,9 @@
+# Official POYO requirements, including torch_brain@ca3cfb and brainsets@4ccee58.
+-r https://raw.githubusercontent.com/nerdslab/poyo/6b052f1/requirements.txt
+# Adapter/inspection imports; versions are delegated to upstream dependency resolution.
+cebra
+h5py
+hydra-core
+joblib
+pandas
+rich

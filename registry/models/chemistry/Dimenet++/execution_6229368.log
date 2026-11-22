@@ -1,0 +1,48 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-12-2026 22:50:38
+Job ID:    6229368
+User ID:   asrivastava405
+Account:   coc
+Job name:  dimenet_inference
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Starting DimeNet++ Job on PACE ICE
+Node: atl1-1-01-005-9-0
+GPU Allocated: 0
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+--- RUNNING SMOKE TEST ---
+Executing on device: cuda
+Loading QM9 dataset...
+Initializing DimeNet++ architecture...
+Starting inference... (Smoke Test: True)
+Evaluating Batches:   0%|          | 0/313 [00:00<?, ?it/s]Evaluating Batches:   0%|          | 0/313 [00:00<?, ?it/s]
+
+[SMOKE TEST PASSED] Processed 1 batch.
+Input shape: 724 atoms
+Output shape expected: [32, 1], got: torch.Size([32, 1])
+--- RUNNING FULL INFERENCE ---
+Executing on device: cuda
+Loading QM9 dataset...
+Initializing DimeNet++ architecture...
+Starting inference... (Smoke Test: False)
+Evaluating Batches:   0%|          | 0/313 [00:00<?, ?it/s]Evaluating Batches:   0%|          | 1/313 [00:00<01:02,  5.02it/s]Evaluating Batches:   2%|▏         | 5/313 [00:00<00:16, 19.16it/s]Evaluating Batches:   3%|▎         | 10/313 [00:00<00:10, 29.11it/s]Evaluating Batches:   5%|▍         | 15/313 [00:00<00:08, 35.06it/s]Evaluating Batches:   6%|▋         | 20/313 [00:00<00:07, 38.73it/s]Evaluating Batches:   8%|▊         | 25/313 [00:00<00:07, 40.74it/s]Evaluating Batches:  10%|▉         | 30/313 [00:00<00:06, 42.30it/s]Evaluating Batches:  11%|█         | 35/313 [00:00<00:06, 43.67it/s]Evaluating Batches:  13%|█▎        | 40/313 [00:01<00:06, 44.63it/s]Evaluating Batches:  14%|█▍        | 45/313 [00:01<00:06, 44.01it/s]Evaluating Batches:  16%|█▌        | 50/313 [00:01<00:06, 43.61it/s]Evaluating Batches:  18%|█▊        | 55/313 [00:01<00:05, 43.72it/s]Evaluating Batches:  19%|█▉        | 60/313 [00:01<00:05, 44.12it/s]Evaluating Batches:  21%|██        | 65/313 [00:01<00:05, 44.60it/s]Evaluating Batches:  22%|██▏       | 70/313 [00:01<00:05, 44.99it/s]Evaluating Batches:  24%|██▍       | 75/313 [00:01<00:05, 45.45it/s]Evaluating Batches:  26%|██▌       | 80/313 [00:01<00:05, 45.70it/s]Evaluating Batches:  27%|██▋       | 85/313 [00:02<00:04, 45.68it/s]Evaluating Batches:  29%|██▉       | 90/313 [00:02<00:04, 45.13it/s]Evaluating Batches:  30%|███       | 95/313 [00:02<00:04, 44.88it/s]Evaluating Batches:  32%|███▏      | 100/313 [00:02<00:04, 44.57it/s]Evaluating Batches:  34%|███▎      | 105/313 [00:02<00:04, 44.34it/s]Evaluating Batches:  35%|███▌      | 110/313 [00:02<00:04, 43.97it/s]Evaluating Batches:  37%|███▋      | 115/313 [00:02<00:04, 44.12it/s]Evaluating Batches:  38%|███▊      | 120/313 [00:02<00:04, 44.22it/s]Evaluating Batches:  40%|███▉      | 125/313 [00:02<00:04, 44.31it/s]Evaluating Batches:  42%|████▏     | 130/313 [00:03<00:04, 44.83it/s]Evaluating Batches:  43%|████▎     | 135/313 [00:03<00:03, 45.06it/s]Evaluating Batches:  45%|████▍     | 140/313 [00:03<00:03, 45.39it/s]Evaluating Batches:  46%|████▋     | 145/313 [00:03<00:03, 45.74it/s]Evaluating Batches:  48%|████▊     | 150/313 [00:03<00:03, 46.00it/s]Evaluating Batches:  50%|████▉     | 155/313 [00:03<00:04, 36.00it/s]Evaluating Batches:  51%|█████     | 160/313 [00:03<00:03, 38.52it/s]Evaluating Batches:  53%|█████▎    | 165/313 [00:03<00:03, 40.47it/s]Evaluating Batches:  54%|█████▍    | 170/313 [00:04<00:03, 42.05it/s]Evaluating Batches:  56%|█████▌    | 175/313 [00:04<00:03, 43.10it/s]Evaluating Batches:  58%|█████▊    | 180/313 [00:04<00:03, 44.21it/s]Evaluating Batches:  59%|█████▉    | 185/313 [00:04<00:02, 44.96it/s]Evaluating Batches:  61%|██████    | 190/313 [00:04<00:02, 45.50it/s]Evaluating Batches:  62%|██████▏   | 195/313 [00:04<00:02, 45.71it/s]Evaluating Batches:  64%|██████▍   | 200/313 [00:04<00:02, 46.01it/s]Evaluating Batches:  65%|██████▌   | 205/313 [00:04<00:02, 46.24it/s]Evaluating Batches:  67%|██████▋   | 210/313 [00:04<00:02, 46.31it/s]Evaluating Batches:  69%|██████▊   | 215/313 [00:05<00:02, 46.53it/s]Evaluating Batches:  70%|███████   | 220/313 [00:05<00:01, 46.60it/s]Evaluating Batches:  72%|███████▏  | 225/313 [00:05<00:01, 46.70it/s]Evaluating Batches:  73%|███████▎  | 230/313 [00:05<00:01, 46.65it/s]Evaluating Batches:  75%|███████▌  | 235/313 [00:05<00:01, 46.71it/s]Evaluating Batches:  77%|███████▋  | 240/313 [00:05<00:01, 46.75it/s]Evaluating Batches:  78%|███████▊  | 245/313 [00:05<00:01, 46.70it/s]Evaluating Batches:  80%|███████▉  | 250/313 [00:05<00:01, 46.56it/s]Evaluating Batches:  81%|████████▏ | 255/313 [00:05<00:01, 46.59it/s]Evaluating Batches:  83%|████████▎ | 260/313 [00:05<00:01, 46.47it/s]Evaluating Batches:  85%|████████▍ | 265/313 [00:06<00:01, 46.49it/s]Evaluating Batches:  86%|████████▋ | 270/313 [00:06<00:00, 46.61it/s]Evaluating Batches:  88%|████████▊ | 275/313 [00:06<00:00, 46.62it/s]Evaluating Batches:  89%|████████▉ | 280/313 [00:06<00:00, 46.64it/s]Evaluating Batches:  91%|█████████ | 285/313 [00:06<00:00, 46.54it/s]Evaluating Batches:  93%|█████████▎| 290/313 [00:06<00:00, 46.59it/s]Evaluating Batches:  94%|█████████▍| 295/313 [00:06<00:00, 46.67it/s]Evaluating Batches:  96%|█████████▌| 300/313 [00:06<00:00, 46.62it/s]Evaluating Batches:  97%|█████████▋| 305/313 [00:06<00:00, 46.71it/s]Evaluating Batches:  99%|█████████▉| 310/313 [00:07<00:00, 46.05it/s]Evaluating Batches: 100%|██████████| 313/313 [00:07<00:00, 43.91it/s]
+
+[SUBSTANTIVE VALIDATION] Inference Complete.
+Evaluated 10000 molecules.
+Mean Absolute Error (Target 7): 12197.0133
+Job completed successfully.
+---------------------------------------
+Begin Slurm Epilog: Oct-12-2026 22:51:31
+Job ID:        6229368
+User ID:       asrivastava405
+Account:       coc
+Job name:      dimenet_inference
+Resources:     cpu=4,gres/gpu:a40=1,mem=16G,node=1
+Rsrc Used:     cput=00:03:32,vmem=0,walltime=00:00:53,mem=1026368K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-9-0
+---------------------------------------

@@ -139,9 +139,9 @@ class CrossModelBridge(nn.Module):
     """Projects DNABERT-2 hidden states into HyenaDNA's embedding space and
     runs them through HyenaDNA's own Hyena-operator layers -- bypassing
     HyenaDNA's native nn.Embedding(vocab_size=12, ...) lookup entirely.
-    HyenaDNA's own learned positional embeddings are kept (added on top of
-    the projected DNABERT-2 features) since Hyena has no other source of
-    position information (see standalone_hyenadna.py's GPT2Embeddings).
+    No position embedding needs adding back: HyenaDNA is built with
+    max_position_embeddings=0 (position information comes implicitly from
+    the Hyena convolution filters), so GPT2Embeddings never instantiates one.
     """
 
     def __init__(self, hyenadna_backbone, d_model):
@@ -152,10 +152,12 @@ class CrossModelBridge(nn.Module):
     def forward(self, dnabert2_hidden_states, target_len):
         resampled = resample_to_length(dnabert2_hidden_states, target_len)
         hidden_states = self.project(resampled)
-
-        position_ids = torch.arange(target_len, dtype=torch.long, device=hidden_states.device)
-        pos_emb = self.backbone.embeddings.position_embeddings(position_ids)
-        hidden_states = hidden_states + pos_emb
+        # No explicit position embedding to add back: HyenaDNA's own
+        # GPT2Embeddings is constructed with max_position_embeddings=0 (Hyena
+        # gets its position information implicitly from the convolution
+        # filters, not a learned position table), so it never even
+        # instantiates a `position_embeddings` submodule -- confirmed live,
+        # this was the first thing tried and it doesn't exist on this model.
 
         residual = None
         for layer in self.backbone.layers:

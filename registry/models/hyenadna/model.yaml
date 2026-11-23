@@ -153,3 +153,9 @@ notes: >
   See recipes/hyenadna-inference-embeddings.yaml for the inference recipe
   and registry/models/hyenadna/vishram1123-genomics/README.md for full setup,
   execution, verification, troubleshooting, and cleanup instructions.
+
+  Assignment 5 research proof of concept: recipes/hyenadna-dnabert2-bridge.yaml
+  feeds DNABERT-2's per-token embeddings into HyenaDNA's backbone through a
+  trainable projection, bypassing HyenaDNA's own per-nucleotide embedding
+  lookup -- verified live on PACE ICE (shape/determinism/sensitivity checks
+  all passed). See the README's "Research proof of concept" section.

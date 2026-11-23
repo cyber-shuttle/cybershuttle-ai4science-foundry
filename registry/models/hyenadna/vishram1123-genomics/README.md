@@ -1,16 +1,19 @@
 # HyenaDNA — reproducible inference and training on PACE ICE
 
-This README covers two tasks for [HyenaDNA](https://github.com/HazyResearch/hyena-dna)
+This README covers three things for [HyenaDNA](https://github.com/HazyResearch/hyena-dna)
 on Georgia Tech's PACE ICE cluster (`ice-gpu` partition / AI Makerspace):
 loading a pretrained checkpoint to extract DNA sequence embeddings
-([Inference](#inference)), and training a small model from scratch
-([Training](#training)). Everything here was run and verified on that
-cluster, not assumed from the upstream docs — see
-[Troubleshooting](#troubleshooting) for the gaps found along the way.
+([Inference](#inference)), training a small model from scratch
+([Training](#training)), and a cross-model research proof of concept
+([Research proof of concept: HyenaDNA consuming DNABERT-2 embeddings](#research-proof-of-concept-hyenadna-consuming-dnabert-2-embeddings)).
+Everything here was run and verified on that cluster, not assumed from the
+upstream docs — see [Troubleshooting](#troubleshooting) for the gaps found
+along the way.
 
-Model metadata: [`model.yaml`](model.yaml) · Recipes:
+Model metadata: [`../model.yaml`](../model.yaml) · Recipes:
 [`../../../../recipes/hyenadna-inference-embeddings.yaml`](../../../../recipes/hyenadna-inference-embeddings.yaml),
-[`../../../../recipes/hyenadna-training-quickstart.yaml`](../../../../recipes/hyenadna-training-quickstart.yaml) ·
+[`../../../../recipes/hyenadna-training-quickstart.yaml`](../../../../recipes/hyenadna-training-quickstart.yaml),
+[`../../../../recipes/hyenadna-dnabert2-bridge.yaml`](../../../../recipes/hyenadna-dnabert2-bridge.yaml) ·
 Resource profile: [`../../../../resource-profiles/pace-ice/ice-gpu.yaml`](../../../../resource-profiles/pace-ice/ice-gpu.yaml)
 
 ## Inference
@@ -323,6 +326,44 @@ through importing `pytorch_lightning`, before any training code runs.
 Fix: `scripts/hyenadna_train.sbatch` also redirects `MPLCONFIGDIR` (and
 `HF_HOME`, for the GenomicBenchmarks dataset download) to scratch.
 
+**A separate conda env's own `conda create` can hit the `$HOME` quota,
+even with every cache already redirected to scratch.** Setting up the
+`dna-bridge` env (for the DNABERT-2/HyenaDNA bridge, below) failed with the
+same `OSError: [Errno 122] Disk quota exceeded` as the matplotlib/pip/HF
+cache bugs above, despite `HF_HOME`, `PIP_CACHE_DIR`, and `TMPDIR` all
+already pointing at scratch — because conda's own package cache
+(`CONDA_PKGS_DIRS`) defaults to `~/.conda/pkgs` regardless of those, and
+leftover partial downloads from earlier attempts had already filled it to
+7.4GB inside a 30GB home quota. Fix: `export CONDA_PKGS_DIRS=~/scratch/.conda/pkgs`
+before any `conda create`, and periodically check `du -sh ~/.conda` — this
+cache does not clean itself up.
+
+**A conda env is not isolated from `~/.local`'s user-site packages.**
+Running the bridge script against a freshly-created, minimal `dna-bridge`
+env (deliberately without `triton` installed) still pulled in a `triton`
+whose API (`tl.dot(..., trans_b=...)`) didn't match DNABERT-2's bundled
+Triton kernel, because Python by default also searches
+`~/.local/lib/python3.X/site-packages` — a leftover from an unrelated,
+non-conda `pip install --user` done at some earlier point — ahead of
+nothing distinguishing it from the conda env's own packages. The same
+leak then silently satisfied `pip install`'s dependency checks for
+`huggingface_hub` and `regex` (pip saw them "already installed" in
+user-site and skipped them), so each got discovered missing one at a time,
+in the wrong order, once the leak was plugged. Fix:
+`export PYTHONNOUSERSITE=1` before running anything in a new env meant to
+be reproducible in isolation, and install every dependency explicitly
+rather than relying on "it's probably already there."
+
+**Don't assume a submodule exists without checking the source.** The
+bridge script's first version added `backbone.embeddings.position_embeddings(position_ids)`
+on top of the projected DNABERT-2 features, by analogy to a typical
+transformer. HyenaDNA has no such submodule — `standalone_hyenadna.py`'s
+`GPT2Embeddings.__init__` only creates `self.position_embeddings` when
+`max_position_embeddings > 0`, and HyenaDNA's config sets it to `0` (Hyena
+gets position information implicitly from its convolution filters).
+`AttributeError: 'GPT2Embeddings' object has no attribute
+'position_embeddings'` caught this immediately on the first live run.
+
 **`${BASH_SOURCE[0]}` doesn't point where you'd expect under `sbatch`.**
 SLURM copies a submitted batch script into a per-job spool directory on
 the compute node and runs it from there, so deriving a script's own
@@ -333,6 +374,157 @@ files (here, `hyenadna_train_validate.py`). Fix: both sbatch scripts use
 falling back to the `${BASH_SOURCE[0]}` form only for direct, non-`sbatch`
 invocation.
 
+## Research proof of concept: HyenaDNA consuming DNABERT-2 embeddings
+
+Assignment 5's research proof of concept. The pattern asked for is the one
+the professor described in class: one model trained or run on a *different*
+model's output representations (e.g. BENDR trained on CEBRA's latents),
+rather than its own native input encoding. Applied here to two DNA
+foundation models already in this Foundry: [DNABERT-2](https://huggingface.co/zhihan1996/DNABERT-2-117M)
+(117M params, BPE tokenization + ALiBi, verified reproducible on PACE ICE in
+PR #43 of this course's Foundry) and HyenaDNA.
+
+**Why DNABERT-2 and not Evo 2** (the model originally planned on the Future
+Direction slide): Evo 2's smallest released checkpoint (1B params,
+StripedHyena2) needs `transformer-engine` and GPU/kernel support that
+could not be reliably stood up in the time this assignment allows. DNABERT-2
+is a verified, already-reproducible Foundry recipe that runs on a single
+GPU in under a minute, which made it possible to actually execute this live
+end to end instead of only describing it on paper. The extraction →
+resample → project → feed-through pattern implemented here is the same
+pattern an Evo 2 version would need — only the source checkpoint id and
+hidden size would change (see Next Steps).
+
+### What it does
+
+`scripts/dnabert2_hyenadna_bridge.py`:
+
+1. Runs DNABERT-2 on the input sequence and keeps its **per-token hidden
+   states** (`[1, L_bpe, 768]`), not just the mean-pooled embedding PR #43
+   validated.
+2. **Resamples** that token sequence to HyenaDNA's per-nucleotide sequence
+   length via linear interpolation (`resample_to_length`). This is the core
+   technical mismatch between the two models: HyenaDNA operates at
+   single-nucleotide resolution (one embedding per A/C/G/T/N), while
+   DNABERT-2's byte-pair tokenizer produces a *variable* number of
+   nucleotides per token. Resampling treats the token embedding sequence as
+   a continuous signal and is a coarse approximation — it assumes tokens
+   are evenly spaced across the sequence, which they are not. Exact
+   alignment would need the tokenizer's character-to-token offsets, which
+   this tokenizer (loaded via `trust_remote_code=True`, so it is not
+   guaranteed to implement the fast-tokenizer `offset_mapping` API) does
+   not expose.
+3. **Projects** the resampled 768-dim DNABERT-2 features down to HyenaDNA's
+   128-dim embedding space with a trainable `nn.Linear` (randomly
+   initialized here; a real downstream task would train it jointly with a
+   task head — see Next Steps).
+4. Feeds the result through HyenaDNA's own Hyena-operator layers
+   (`backbone.layers`, `drop_f`, `ln_f`), **bypassing HyenaDNA's native
+   `nn.Embedding(vocab_size=12, ...)` lookup entirely.** No position
+   embedding needs adding back: HyenaDNA is built with
+   `max_position_embeddings=0` — it gets positional information implicitly
+   from the Hyena convolution filters, not a learned position table, so
+   `standalone_hyenadna.py`'s `GPT2Embeddings` never even instantiates a
+   `position_embeddings` submodule for this model. (Confirmed live: this
+   was the first thing tried, against the actual attribute, and it does
+   not exist — see Troubleshooting.)
+
+### Running it
+
+```bash
+# one-time: a separate conda env from hyena-dna's, see Troubleshooting for why
+module load miniforge
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda create -y -p ~/scratch/.conda/envs/dna-bridge python=3.10
+conda activate ~/scratch/.conda/envs/dna-bridge
+pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 \
+    --extra-index-url https://download.pytorch.org/whl/cu117
+pip install transformers==4.29.2 tokenizers==0.13.3 huggingface_hub==0.16.4 \
+    einops==0.6.1 numpy==1.24.4 omegaconf scikit-learn scipy regex
+
+export PYTHONNOUSERSITE=1   # see Troubleshooting -- do not skip this
+export HYENADNA_REPO=~/scratch/hyena-dna
+export HF_HOME=~/scratch/.cache/huggingface
+python scripts/dnabert2_hyenadna_bridge.py --fasta data/example.fasta \
+    --output results/bridge-embedding.pt
+```
+
+### Execution evidence (real, live PACE-ICE run)
+
+Job output: [`logs/dnabert2-hyenadna-bridge-7248423.out`](logs/dnabert2-hyenadna-bridge-7248423.out).
+Saved tensors (bridged + native embeddings for comparison):
+[`results/bridge-embedding.pt`](results/bridge-embedding.pt).
+
+```
+input length: 628 nt
+[bridge] DNABERT-2 tokens: 127  ->  resampled to HyenaDNA length: 630
+[bridge] output shape: (1, 630, 128)  nan=False  inf=False
+[determinism] L2 distance across repeated runs: 0.00e+00
+[sensitivity] L2 distance, real vs shuffled sequence: 152.23
+[comparison] L2 distance, DNABERT-2-bridged vs HyenaDNA-native embedding
+  (same sequence): 163.57  (native norm scale: 243.00, bridged norm scale: 247.68)
+BRIDGE VALIDATION PASSED
+```
+
+Reading this: the bridged pathway is deterministic (identical repeated
+runs), responds to the actual sequence content (a shuffled sequence
+produces a very different output — L2 152.23 vs. 0 for determinism), and
+produces finite, correctly-shaped output. The comparison line shows the
+bridged (DNABERT-2-conditioned) embedding and HyenaDNA's own native
+embedding of the *same* sequence are at a comparable norm scale
+(247.68 vs. 243.00) but represent genuinely different points in embedding
+space (L2 distance 163.57, on the same order as the sensitivity check) —
+i.e. HyenaDNA's layers do something non-degenerate with a foreign model's
+representations; they don't just pass them through or collapse them.
+
+### Observations
+
+- **Getting the environment right took far more iteration than the model
+  code itself.** Six consecutive job failures before the first clean run,
+  none of them in the actual bridging logic (see Troubleshooting) — every
+  one was a reproducibility/shared-infrastructure problem: a stray
+  `~/.local` user-site install leaking into a supposedly clean conda
+  environment, a conda package-cache default pointed at a nearly-full
+  `$HOME` quota, and one real design bug (assuming a position-embedding
+  submodule existed without checking). This is itself direct, lived
+  evidence for the Future Direction slide's "make inference/training
+  GPU-architecture-agnostic, not special-cased" and general
+  shared-infrastructure goals — two independently-reproducible single-model
+  recipes (HyenaDNA's and DNABERT-2's) did not combine cleanly on the first
+  several attempts even though each works perfectly alone.
+- **The resampling step is a real approximation, not a detail.** Treating
+  127 BPE tokens as evenly spaced across 628 nucleotides is almost
+  certainly wrong at the level of individual tokens (DNABERT-2's BPE
+  vocabulary has variable-length tokens), so any signal this pathway
+  carries is at the resolution of "roughly this region of the sequence,"
+  not single-nucleotide precision. HyenaDNA's own single-nucleotide
+  resolution is arguably its main selling point relative to other genomic
+  models, so this bridge sacrifices some of exactly what makes HyenaDNA
+  useful as the receiving model.
+- **No labeled downstream task was run.** This proof of concept validates
+  that the pathway is well-behaved (deterministic, content-sensitive,
+  finite, non-degenerate) — it does not show whether DNABERT-2-conditioned
+  embeddings are *better or worse* than HyenaDNA's native ones for an
+  actual classification task. That requires training the projection layer
+  (and likely a task head) against labeled data, which this proof of
+  concept's time budget did not include.
+
+### Next steps
+
+- Train the projection layer (and a small classification head) against a
+  GenomicBenchmarks task — reusing the infrastructure already verified in
+  [Training](#training) — and compare accuracy against the from-scratch
+  baseline already recorded there (val/accuracy 0.711), to get an actual
+  performance signal rather than only a well-behavedness check.
+- Replace the linear-interpolation resampling with exact character-to-token
+  alignment (would need a tokenizer that exposes `offset_mapping`, or
+  manually re-deriving it from DNABERT-2's BPE merge rules).
+- The same script structure generalizes directly to Evo 2 once its
+  infrastructure is tractable within a course assignment's time budget:
+  swap `DNABERT2_MODEL_ID`/`DNABERT2_HIDDEN` for Evo 2's checkpoint id and
+  hidden size, and everything from `resample_to_length` onward is
+  unchanged.
+
 ## Cleanup
 
 ```bash
@@ -341,6 +533,8 @@ rm -rf ~/scratch/hyena-dna/hyena_train_runs     # training run outputs (checkpoi
 rm -rf ~/scratch/hyena-dna/data                 # auto-downloaded GenomicBenchmarks data
 rm -rf ~/scratch/.conda/envs/hyena-dna           # conda environment
 rm -rf ~/scratch/.cache/huggingface ~/scratch/.cache/pip  # redirected caches
+rm -rf ~/scratch/.conda/envs/dna-bridge         # bridge experiment's separate env
+rm -rf ~/scratch/.conda/pkgs                    # conda's package cache (see Troubleshooting)
 ```
 
 The cloned repo at `~/scratch/hyena-dna` can stay — re-running

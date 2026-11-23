@@ -143,38 +143,58 @@ def correlations(rows):
 
 
 def svg_plot(rows, path):
-    w, h, left, right, top, bottom = 640, 440, 70, 190, 30, 60
-    xs = [r["mean_plddt"] for r in rows]
-    ys = [r["ca_rmsd"] for r in rows]
-    x0, x1 = min(30.0, min(xs) - 2), 100.0
-    y0, y1 = 0.0, max(4.0, max(ys) * 1.1)
-    px = lambda v: left + (v - x0) / (x1 - x0) * (w - left - right)
-    py = lambda v: h - bottom - (v - y0) / (y1 - y0) * (h - top - bottom)
+    """Two panels: every prediction, and a zoom on the predictions that have an MSA."""
+    w, h, top, bottom = 1120, 470, 50, 60
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" font-family="sans-serif" font-size="12">',
-           f'<rect width="{w}" height="{h}" fill="white"/>',
-           f'<line x1="{left}" y1="{h-bottom}" x2="{w-right}" y2="{h-bottom}" stroke="black"/>',
-           f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h-bottom}" stroke="black"/>']
-    for t in range(int(x0 // 10 * 10), 101, 10):
-        if t >= x0:
-            out.append(f'<text x="{px(t):.1f}" y="{h-bottom+18}" text-anchor="middle">{t}</text>')
-    step = 1.0 if y1 <= 8 else 2.0 if y1 <= 16 else 5.0
-    t = 0.0
-    while t <= y1:
-        out.append(f'<text x="{left-8}" y="{py(t)+4:.1f}" text-anchor="end">{t:g}</text>')
-        out.append(f'<line x1="{left}" y1="{py(t):.1f}" x2="{w-right}" y2="{py(t):.1f}" stroke="#ddd"/>')
-        t += step
-    out.append(f'<line x1="{px(70):.1f}" y1="{top}" x2="{px(70):.1f}" y2="{h-bottom}" stroke="#999" stroke-dasharray="4 3"/>')
-    out.append(f'<text x="{(left+w-right)/2}" y="{h-15}" text-anchor="middle">mean pLDDT</text>')
-    out.append(f'<text x="18" y="{(top+h-bottom)/2}" text-anchor="middle" transform="rotate(-90 18 {(top+h-bottom)/2})">CA RMSD to RCSB (Å)</text>')
-    for r in rows:
-        c = COLORS.get(r["condition"], "black")
-        out.append(f'<circle cx="{px(r["mean_plddt"]):.1f}" cy="{py(r["ca_rmsd"]):.1f}" r="5" fill="{c}"/>')
-        out.append(f'<text x="{px(r["mean_plddt"])+7:.1f}" y="{py(r["ca_rmsd"])-6:.1f}" font-size="10">{r["label"]}</text>')
+           f'<rect width="{w}" height="{h}" fill="white"/>']
+
+    def panel(sub, left, right, x0, x1, y0, y1, xstep, ystep, title, mark70, labels):
+        px = lambda v: left + (v - x0) / (x1 - x0) * (right - left)
+        py = lambda v: h - bottom - (v - y0) / (y1 - y0) * (h - top - bottom)
+        out.append(f'<text x="{(left+right)/2}" y="{top-22}" text-anchor="middle" font-size="14" font-weight="bold">{title}</text>')
+        out.append(f'<line x1="{left}" y1="{h-bottom}" x2="{right}" y2="{h-bottom}" stroke="black"/>')
+        out.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{h-bottom}" stroke="black"/>')
+        t = x0
+        while t <= x1 + 1e-9:
+            out.append(f'<text x="{px(t):.1f}" y="{h-bottom+18}" text-anchor="middle">{t:g}</text>')
+            t += xstep
+        t = y0
+        while t <= y1 + 1e-9:
+            out.append(f'<text x="{left-8}" y="{py(t)+4:.1f}" text-anchor="end">{t:g}</text>')
+            out.append(f'<line x1="{left}" y1="{py(t):.1f}" x2="{right}" y2="{py(t):.1f}" stroke="#ddd"/>')
+            t += ystep
+        if mark70:
+            out.append(f'<line x1="{px(70):.1f}" y1="{top}" x2="{px(70):.1f}" y2="{h-bottom}" stroke="#999" stroke-dasharray="4 3"/>')
+            out.append(f'<text x="{px(70)+4:.1f}" y="{top+12}" font-size="10" fill="#555">pLDDT 70</text>')
+        out.append(f'<text x="{(left+right)/2}" y="{h-15}" text-anchor="middle">mean pLDDT</text>')
+        # one marker per target and condition; labels are only written where they do not collide
+        placed = {}
+        for r in sub:
+            x, y = px(r["mean_plddt"]), py(r["ca_rmsd"])
+            c = COLORS.get(r["condition"], "black")
+            if r["condition"] == "example":
+                out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="9" fill="none" stroke="{c}" stroke-width="2.5"/>')
+            else:
+                out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="5" fill="{c}"/>')
+            if labels and r["condition"] != "example":
+                key = r["target"]
+                placed[key] = placed.get(key, 0) + 1
+                name = r["target"] + (" (example and msa)" if r["target"] == "6KWC_A" and r["condition"] == "msa" else "")
+                out.append(f'<text x="{x+12:.1f}" y="{y+4:.1f}" font-size="11">{name}</text>')
+
+    sub_all = rows
+    sub_msa = [r for r in rows if r["condition"] != "single"]
+    panel(sub_all, 70, 440, 30.0, 100.0, 0.0, max(25.0, max(r["ca_rmsd"] for r in rows) * 1.1 // 5 * 5 + 5),
+          10.0, 5.0, "all predictions", True, False)
+    panel(sub_msa, 590, 840, 92.0, 98.0, 0.0, 2.5, 1.0, 0.5, "predictions with an MSA (zoom)", False, True)
+    out.append(f'<text x="22" y="{(top+h-bottom)/2}" text-anchor="middle" transform="rotate(-90 22 {(top+h-bottom)/2})">CA RMSD to RCSB (Å)</text>')
     for k, (cond, label) in enumerate(CONDITION_LABELS.items()):
-        y = top + 10 + 20 * k
-        out.append(f'<circle cx="{w-right+20}" cy="{y}" r="5" fill="{COLORS[cond]}"/>')
-        out.append(f'<text x="{w-right+30}" y="{y+4}">{label}</text>')
-    out.append(f'<text x="{w-right+12}" y="{top+80}" font-size="10" fill="#555">dashed line: pLDDT 70</text>')
+        y = top + 10 + 22 * k
+        if cond == "example":
+            out.append(f'<circle cx="868" cy="{y}" r="8" fill="none" stroke="{COLORS[cond]}" stroke-width="2.5"/>')
+        else:
+            out.append(f'<circle cx="868" cy="{y}" r="5" fill="{COLORS[cond]}"/>')
+        out.append(f'<text x="882" y="{y+4}" font-size="11">{label}</text>')
     out.append("</svg>")
     path.write_text("\n".join(out) + "\n")
 

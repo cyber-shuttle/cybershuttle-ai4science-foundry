@@ -1,55 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" font-family="sans-serif" font-size="12">
-<rect width="640" height="440" fill="white"/>
-<line x1="70" y1="380" x2="450" y2="380" stroke="black"/>
-<line x1="70" y1="30" x2="70" y2="380" stroke="black"/>
-<text x="70.0" y="398" text-anchor="middle">30</text>
-<text x="124.3" y="398" text-anchor="middle">40</text>
-<text x="178.6" y="398" text-anchor="middle">50</text>
-<text x="232.9" y="398" text-anchor="middle">60</text>
-<text x="287.1" y="398" text-anchor="middle">70</text>
-<text x="341.4" y="398" text-anchor="middle">80</text>
-<text x="395.7" y="398" text-anchor="middle">90</text>
-<text x="450.0" y="398" text-anchor="middle">100</text>
-<text x="62" y="384.0" text-anchor="end">0</text>
-<line x1="70" y1="380.0" x2="450" y2="380.0" stroke="#ddd"/>
-<text x="62" y="310.4" text-anchor="end">5</text>
-<line x1="70" y1="306.4" x2="450" y2="306.4" stroke="#ddd"/>
-<text x="62" y="236.8" text-anchor="end">10</text>
-<line x1="70" y1="232.8" x2="450" y2="232.8" stroke="#ddd"/>
-<text x="62" y="163.2" text-anchor="end">15</text>
-<line x1="70" y1="159.2" x2="450" y2="159.2" stroke="#ddd"/>
-<text x="62" y="89.6" text-anchor="end">20</text>
-<line x1="70" y1="85.6" x2="450" y2="85.6" stroke="#ddd"/>
-<line x1="287.1" y1="30" x2="287.1" y2="380" stroke="#999" stroke-dasharray="4 3"/>
-<text x="260.0" y="425" text-anchor="middle">mean pLDDT</text>
-<text x="18" y="205.0" text-anchor="middle" transform="rotate(-90 18 205.0)">CA RMSD to RCSB (Å)</text>
-<circle cx="431.9" cy="363.0" r="5" fill="#1f77b4"/>
-<text x="438.9" y="357.0" font-size="10">6KWC_A</text>
-<circle cx="409.7" cy="355.2" r="5" fill="#2ca02c"/>
-<text x="416.7" y="349.2" font-size="10">1AKE_A</text>
-<circle cx="429.3" cy="352.0" r="5" fill="#2ca02c"/>
-<text x="436.3" y="346.0" font-size="10">2LZM_A</text>
-<circle cx="416.3" cy="372.3" r="5" fill="#2ca02c"/>
-<text x="423.3" y="366.3" font-size="10">3CHY_A</text>
-<circle cx="432.4" cy="363.0" r="5" fill="#2ca02c"/>
-<text x="439.4" y="357.0" font-size="10">6KWC_A</text>
-<circle cx="430.7" cy="370.7" r="5" fill="#2ca02c"/>
-<text x="437.7" y="364.7" font-size="10">8TIM_A</text>
-<circle cx="162.8" cy="78.9" r="5" fill="#d62728"/>
-<text x="169.8" y="72.9" font-size="10">1AKE_A</text>
-<circle cx="197.6" cy="141.9" r="5" fill="#d62728"/>
-<text x="204.6" y="135.9" font-size="10">2LZM_A</text>
-<circle cx="184.5" cy="209.6" r="5" fill="#d62728"/>
-<text x="191.5" y="203.6" font-size="10">3CHY_A</text>
-<circle cx="166.5" cy="68.6" r="5" fill="#d62728"/>
-<text x="173.5" y="62.6" font-size="10">6KWC_A</text>
-<circle cx="135.1" cy="61.8" r="5" fill="#d62728"/>
-<text x="142.1" y="55.8" font-size="10">8TIM_A</text>
-<circle cx="470" cy="40" r="5" fill="#1f77b4"/>
-<text x="480" y="44">OpenFold example MSA</text>
-<circle cx="470" cy="60" r="5" fill="#2ca02c"/>
-<text x="480" y="64">ColabFold MSA</text>
-<circle cx="470" cy="80" r="5" fill="#d62728"/>
-<text x="480" y="84">single sequence</text>
-<text x="462" y="110" font-size="10" fill="#555">dashed line: pLDDT 70</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="470" font-family="sans-serif" font-size="12">
+<rect width="1120" height="470" fill="white"/>
+<text x="255.0" y="28" text-anchor="middle" font-size="14" font-weight="bold">all predictions</text>
+<line x1="70" y1="410" x2="440" y2="410" stroke="black"/>
+<line x1="70" y1="50" x2="70" y2="410" stroke="black"/>
+<text x="70.0" y="428" text-anchor="middle">30</text>
+<text x="122.9" y="428" text-anchor="middle">40</text>
+<text x="175.7" y="428" text-anchor="middle">50</text>
+<text x="228.6" y="428" text-anchor="middle">60</text>
+<text x="281.4" y="428" text-anchor="middle">70</text>
+<text x="334.3" y="428" text-anchor="middle">80</text>
+<text x="387.1" y="428" text-anchor="middle">90</text>
+<text x="440.0" y="428" text-anchor="middle">100</text>
+<text x="62" y="414.0" text-anchor="end">0</text>
+<line x1="70" y1="410.0" x2="440" y2="410.0" stroke="#ddd"/>
+<text x="62" y="342.0" text-anchor="end">5</text>
+<line x1="70" y1="338.0" x2="440" y2="338.0" stroke="#ddd"/>
+<text x="62" y="270.0" text-anchor="end">10</text>
+<line x1="70" y1="266.0" x2="440" y2="266.0" stroke="#ddd"/>
+<text x="62" y="198.0" text-anchor="end">15</text>
+<line x1="70" y1="194.0" x2="440" y2="194.0" stroke="#ddd"/>
+<text x="62" y="126.0" text-anchor="end">20</text>
+<line x1="70" y1="122.0" x2="440" y2="122.0" stroke="#ddd"/>
+<text x="62" y="54.0" text-anchor="end">25</text>
+<line x1="70" y1="50.0" x2="440" y2="50.0" stroke="#ddd"/>
+<line x1="281.4" y1="50" x2="281.4" y2="410" stroke="#999" stroke-dasharray="4 3"/>
+<text x="285.4" y="62" font-size="10" fill="#555">pLDDT 70</text>
+<text x="255.0" y="455" text-anchor="middle">mean pLDDT</text>
+<circle cx="422.4" cy="393.4" r="9" fill="none" stroke="#1f77b4" stroke-width="2.5"/>
+<circle cx="400.7" cy="385.8" r="5" fill="#2ca02c"/>
+<circle cx="419.8" cy="382.6" r="5" fill="#2ca02c"/>
+<circle cx="407.2" cy="402.5" r="5" fill="#2ca02c"/>
+<circle cx="422.8" cy="393.3" r="5" fill="#2ca02c"/>
+<circle cx="421.2" cy="400.9" r="5" fill="#2ca02c"/>
+<circle cx="160.4" cy="115.4" r="5" fill="#d62728"/>
+<circle cx="194.2" cy="177.1" r="5" fill="#d62728"/>
+<circle cx="181.5" cy="243.3" r="5" fill="#d62728"/>
+<circle cx="163.9" cy="105.3" r="5" fill="#d62728"/>
+<circle cx="133.4" cy="98.7" r="5" fill="#d62728"/>
+<text x="715.0" y="28" text-anchor="middle" font-size="14" font-weight="bold">predictions with an MSA (zoom)</text>
+<line x1="590" y1="410" x2="840" y2="410" stroke="black"/>
+<line x1="590" y1="50" x2="590" y2="410" stroke="black"/>
+<text x="590.0" y="428" text-anchor="middle">92</text>
+<text x="631.7" y="428" text-anchor="middle">93</text>
+<text x="673.3" y="428" text-anchor="middle">94</text>
+<text x="715.0" y="428" text-anchor="middle">95</text>
+<text x="756.7" y="428" text-anchor="middle">96</text>
+<text x="798.3" y="428" text-anchor="middle">97</text>
+<text x="840.0" y="428" text-anchor="middle">98</text>
+<text x="582" y="414.0" text-anchor="end">0</text>
+<line x1="590" y1="410.0" x2="840" y2="410.0" stroke="#ddd"/>
+<text x="582" y="342.0" text-anchor="end">0.5</text>
+<line x1="590" y1="338.0" x2="840" y2="338.0" stroke="#ddd"/>
+<text x="582" y="270.0" text-anchor="end">1</text>
+<line x1="590" y1="266.0" x2="840" y2="266.0" stroke="#ddd"/>
+<text x="582" y="198.0" text-anchor="end">1.5</text>
+<line x1="590" y1="194.0" x2="840" y2="194.0" stroke="#ddd"/>
+<text x="582" y="126.0" text-anchor="end">2</text>
+<line x1="590" y1="122.0" x2="840" y2="122.0" stroke="#ddd"/>
+<text x="582" y="54.0" text-anchor="end">2.5</text>
+<line x1="590" y1="50.0" x2="840" y2="50.0" stroke="#ddd"/>
+<text x="715.0" y="455" text-anchor="middle">mean pLDDT</text>
+<circle cx="784.6" cy="244.1" r="9" fill="none" stroke="#1f77b4" stroke-width="2.5"/>
+<circle cx="613.7" cy="167.5" r="5" fill="#2ca02c"/>
+<text x="625.7" y="171.5" font-size="11">1AKE_A</text>
+<circle cx="764.2" cy="135.7" r="5" fill="#2ca02c"/>
+<text x="776.2" y="139.7" font-size="11">2LZM_A</text>
+<circle cx="665.0" cy="335.1" r="5" fill="#2ca02c"/>
+<text x="677.0" y="339.1" font-size="11">3CHY_A</text>
+<circle cx="787.9" cy="243.2" r="5" fill="#2ca02c"/>
+<text x="799.9" y="247.2" font-size="11">6KWC_A (example and msa)</text>
+<circle cx="775.0" cy="319.4" r="5" fill="#2ca02c"/>
+<text x="787.0" y="323.4" font-size="11">8TIM_A</text>
+<text x="22" y="230.0" text-anchor="middle" transform="rotate(-90 22 230.0)">CA RMSD to RCSB (Å)</text>
+<circle cx="868" cy="60" r="8" fill="none" stroke="#1f77b4" stroke-width="2.5"/>
+<text x="882" y="64" font-size="11">OpenFold example MSA</text>
+<circle cx="868" cy="82" r="5" fill="#2ca02c"/>
+<text x="882" y="86" font-size="11">ColabFold MSA</text>
+<circle cx="868" cy="104" r="5" fill="#d62728"/>
+<text x="882" y="108" font-size="11">single sequence</text>
 </svg>

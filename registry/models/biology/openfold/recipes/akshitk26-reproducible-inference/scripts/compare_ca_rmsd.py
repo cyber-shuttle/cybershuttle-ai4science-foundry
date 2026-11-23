@@ -88,30 +88,35 @@ def rmsd_after_superposition(mobile, target):
     return np.sqrt(np.mean(np.sum((aligned - target) ** 2, axis=1)))
 
 
-if len(sys.argv) != 5:
-    raise SystemExit(
-        "usage: python scripts/compare_ca_rmsd.py PREDICTED_PDB PREDICTED_CHAIN REFERENCE_PDB REFERENCE_CHAIN"
-    )
+def main():
+    if len(sys.argv) != 5:
+        raise SystemExit(
+            "usage: python scripts/compare_ca_rmsd.py PREDICTED_PDB PREDICTED_CHAIN REFERENCE_PDB REFERENCE_CHAIN"
+        )
 
-predicted_path = Path(sys.argv[1])
-predicted_chain = sys.argv[2]
-reference_path = Path(sys.argv[3])
-reference_chain = sys.argv[4]
+    predicted_path = Path(sys.argv[1])
+    predicted_chain = sys.argv[2]
+    reference_path = Path(sys.argv[3])
+    reference_chain = sys.argv[4]
 
-predicted = ca_residues(predicted_path, predicted_chain)
-reference = ca_residues(reference_path, reference_chain)
-pairs = align("".join(r[0] for r in predicted), "".join(r[0] for r in reference))
-matching = [(i, j) for i, j in pairs if predicted[i][0] == reference[j][0]]
-if len(matching) < 3:
-    raise SystemExit("fewer than three matching ca residues")
+    predicted = ca_residues(predicted_path, predicted_chain)
+    reference = ca_residues(reference_path, reference_chain)
+    pairs = align("".join(r[0] for r in predicted), "".join(r[0] for r in reference))
+    matching = [(i, j) for i, j in pairs if predicted[i][0] == reference[j][0]]
+    if len(matching) < 3:
+        raise SystemExit("fewer than three matching ca residues")
 
-predicted_coords = np.array([predicted[i][1] for i, _ in matching])
-reference_coords = np.array([reference[j][1] for _, j in matching])
-identity = len(matching) / len(pairs)
-rmsd = rmsd_after_superposition(predicted_coords, reference_coords)
+    predicted_coords = np.array([predicted[i][1] for i, _ in matching])
+    reference_coords = np.array([reference[j][1] for _, j in matching])
+    identity = len(matching) / len(pairs)
+    rmsd = rmsd_after_superposition(predicted_coords, reference_coords)
 
-print(f"predicted ca residues: {len(predicted)}")
-print(f"reference ca residues: {len(reference)}")
-print(f"aligned matching ca residues: {len(matching)}")
-print(f"sequence identity across alignment: {identity:.2%}")
-print(f"ca rmsd after superposition (angstrom): {rmsd:.3f}")
+    print(f"predicted ca residues: {len(predicted)}")
+    print(f"reference ca residues: {len(reference)}")
+    print(f"aligned matching ca residues: {len(matching)}")
+    print(f"sequence identity across alignment: {identity:.2%}")
+    print(f"ca rmsd after superposition (angstrom): {rmsd:.3f}")
+
+
+if __name__ == "__main__":
+    main()

@@ -52,4 +52,4 @@ notes: >
   partition can also allocate. Confirmed directly with HyenaDNA's documented
   `torch==1.13.0+cu117` pin: it works on the V100/A100 nodes this partition
   allocates but needs `torch>=2.1` with a CUDA 11.8+ build on H100/H200
-  nodes. See `scripts/hyenadna_setup_env.sh` for a GPU-aware installer.
+  nodes. See `registry/models/hyenadna/vishram1123-genomics/scripts/hyenadna_setup_env.sh` for a GPU-aware installer.

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../schemas/model.schema.json
+# yaml-language-server: $schema=../../../schemas/model.schema.json
 
 id: hyenadna
 name: HyenaDNA
@@ -95,7 +95,7 @@ software:
     - flash-attn (hard dependency for the repo's Lightning training path; not required for standalone inference)
   optional:
     - datasets   # GenomicBenchmarks auto-download
-  container: null  # no validated container yet; conda env only, see scripts/hyenadna_setup_env.sh
+  container: null  # no validated container yet; conda env only, see vishram1123-genomics/scripts/hyenadna_setup_env.sh
 
 # resource_profiles values must be lists of profile paths (schema-enforced);
 # numeric GPU-memory minimums live in minimum_requirements below instead —
@@ -128,7 +128,8 @@ readiness:
     From-scratch training (the repo's documented quick-start, on the
     GenomicBenchmarks suite) is packaged as
     recipes/hyenadna-training-quickstart.yaml plus
-    scripts/hyenadna_train.sbatch and scripts/hyenadna_train_validate.py,
+    vishram1123-genomics/scripts/hyenadna_train.sbatch and
+    vishram1123-genomics/scripts/hyenadna_train_validate.py,
     and has been verified end-to-end as committed via a real `sbatch`
     submission on PACE ICE (100 epochs, final train/accuracy 0.992,
     val/accuracy 0.711, validator printed VALIDATION PASSED). Nexus-specific
@@ -150,5 +151,5 @@ notes: >
   large-1m requires an A100-class GPU per HuggingFace's own guidance.
 
   See recipes/hyenadna-inference-embeddings.yaml for the inference recipe
-  and registry/models/genomics/hyenadna/README.md for full setup,
+  and registry/models/hyenadna/vishram1123-genomics/README.md for full setup,
   execution, verification, troubleshooting, and cleanup instructions.

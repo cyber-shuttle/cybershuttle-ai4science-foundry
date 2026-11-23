@@ -1,0 +1,81 @@
+{
+  "script": "scripts/clay_embed.py",
+  "command": [
+    "scripts/clay_embed.py",
+    "--tile",
+    "/home/hice1/sjin308/scratch/clay-final/data/m_3211002_se_12_1_20150530.tif",
+    "--reference",
+    "/home/hice1/sjin308/scratch/clay-final/data/m_3211002_se_12_1_20150530.parquet",
+    "--checkpoint",
+    "/home/hice1/sjin308/scratch/clay-final/weights/clay-v1.5.ckpt",
+    "--metadata",
+    "/home/hice1/sjin308/scratch/clay-final/clay-model/configs/metadata.yaml",
+    "--batch-size",
+    "16",
+    "--out",
+    "/home/hice1/sjin308/scratch/clay-final/results/inference-6194944/embeddings.parquet"
+  ],
+  "host": "atl1-1-03-004-25-0.pace.gatech.edu",
+  "started": "2026-10-11T20:43:18-04:00",
+  "inputs": {
+    "date": "2015-05-30",
+    "iso_week": 22,
+    "hour": 12,
+    "latlon": "[sin lon, cos lon, sin lat, cos lat] of the chip center",
+    "normalized": true,
+    "gsd": 1.0,
+    "waves_um": [
+      0.65,
+      0.56,
+      0.48,
+      0.842
+    ]
+  },
+  "n_chips": 725,
+  "chip_grid_max_error_px": 2.7939677238464355e-09,
+  "geometry_max_gap_deg": 0.0,
+  "tile": {
+    "path": "/storage/ice1/5/6/sjin308/clay-final/data/m_3211002_se_12_1_20150530.tif",
+    "sha256": "4bd22adff7877ef333561620a0b0d8e9c5da25adb9c3e131b865849679ade567",
+    "crs": "EPSG:26912",
+    "width": 6490,
+    "height": 7570
+  },
+  "reference": {
+    "path": "/storage/ice1/5/6/sjin308/clay-final/data/m_3211002_se_12_1_20150530.parquet",
+    "sha256": "a551efc22b3ab2e3f0317f9b97a821550baafcb1e0fa2bd5a36fc0c186bece54",
+    "metadata": {
+      "date": "20150530",
+      "gsd": "1.0",
+      "uri": "s3://naip-analytic/az/2015/100cm/rgbir_cog/32110/m_3211002_se_12_1_20150530.tif"
+    }
+  },
+  "metadata_yaml": "/storage/ice1/5/6/sjin308/clay-final/clay-model/configs/metadata.yaml",
+  "versions": {
+    "python": "3.11.17",
+    "torch": "2.4.0+cu121",
+    "claymodel": "1.5.0",
+    "timm": "1.0.11",
+    "lightning": "2.4.0",
+    "numpy": "2.1.3",
+    "rasterio": "1.4.2",
+    "pyproj": "3.7.0",
+    "shapely": "2.0.6",
+    "pyarrow": "18.0.0"
+  },
+  "platform": "Linux-5.14.0-687.49.1.el9_8.x86_64-x86_64-with-glibc2.34",
+  "model": {
+    "teacher": "vit_large_patch14_reg4_dinov2.lvd142m",
+    "model_size": "large",
+    "mask_ratio": 0.0,
+    "checkpoint_load": "strict (no missing or unexpected keys)",
+    "float32_matmul_precision": "medium",
+    "checkpoint": "/storage/ice1/5/6/sjin308/clay-final/weights/clay-v1.5.ckpt"
+  },
+  "inference_seconds": 12.224,
+  "peak_cuda_memory_gb": 2.01,
+  "gpu": "NVIDIA L40S",
+  "gpu_compute_capability": "8.9",
+  "batch_size": 16,
+  "total_seconds": 24.688
+}

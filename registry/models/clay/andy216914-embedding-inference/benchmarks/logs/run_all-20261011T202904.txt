@@ -1,0 +1,5 @@
+submitted 2026-10-11T20:29:04-04:00 by sjin308 from login-ice-gnr-2.pace.gatech.edu
+foundry commit ddeb3ad  scripts tree 9d02664aa884486779f55a673c435b14e40b8e1b  uncommitted script changes: 0
+CLAY_WORKDIR /home/hice1/sjin308/scratch/clay-final
+slurm account from scripts, qos from scripts, cpu partition coc-cpu, gpu partition coc-gpu, gpu from scripts
+build=6194941 download=6194942 smoke=6194943 inference=6194944

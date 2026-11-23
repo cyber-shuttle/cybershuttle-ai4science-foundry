@@ -1,0 +1,162 @@
+{
+  "type": "Feature",
+  "stac_version": "1.0.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+  ],
+  "id": "az_m_3211002_se_12_1_20150530_20151022",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -110.746661,
+          32.872041
+        ],
+        [
+          -110.746467,
+          32.940326
+        ],
+        [
+          -110.815894,
+          32.940447
+        ],
+        [
+          -110.816035,
+          32.872162
+        ],
+        [
+          -110.746661,
+          32.872041
+        ]
+      ]
+    ]
+  },
+  "bbox": [
+    -110.816035,
+    32.872041,
+    -110.746467,
+    32.940447
+  ],
+  "properties": {
+    "gsd": 1.0,
+    "datetime": "2015-05-30T00:00:00Z",
+    "naip:year": "2015",
+    "proj:bbox": [
+      517210.0,
+      3637130.0,
+      523700.0,
+      3644700.0
+    ],
+    "proj:epsg": 26912,
+    "naip:state": "az",
+    "proj:shape": [
+      7570,
+      6490
+    ],
+    "proj:transform": [
+      1.0,
+      0.0,
+      517210.0,
+      0.0,
+      -1.0,
+      3644700.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "links": [
+    {
+      "rel": "collection",
+      "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip",
+      "type": "application/json"
+    },
+    {
+      "rel": "parent",
+      "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip",
+      "type": "application/json"
+    },
+    {
+      "rel": "root",
+      "href": "https://planetarycomputer.microsoft.com/api/stac/v1",
+      "type": "application/json",
+      "title": "Microsoft Planetary Computer STAC API"
+    },
+    {
+      "rel": "self",
+      "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip/items/az_m_3211002_se_12_1_20150530_20151022",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "preview",
+      "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/map?collection=naip&item=az_m_3211002_se_12_1_20150530_20151022",
+      "type": "text/html",
+      "title": "Map of item"
+    }
+  ],
+  "assets": {
+    "image": {
+      "href": "https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_100cm_2015/32110/m_3211002_se_12_1_20150530.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "title": "RGBIR COG tile",
+      "eo:bands": [
+        {
+          "name": "Red",
+          "common_name": "red"
+        },
+        {
+          "name": "Green",
+          "common_name": "green"
+        },
+        {
+          "name": "Blue",
+          "common_name": "blue"
+        },
+        {
+          "name": "NIR",
+          "common_name": "nir",
+          "description": "near-infrared"
+        }
+      ],
+      "roles": [
+        "data"
+      ]
+    },
+    "metadata": {
+      "href": "https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_fgdc_2015/32110/m_3211002_se_12_1_20150530.txt",
+      "type": "text/plain",
+      "title": "FGDC Metdata",
+      "roles": [
+        "metadata"
+      ]
+    },
+    "thumbnail": {
+      "href": "https://naipeuwest.blob.core.windows.net/naip/v002/az/2015/az_100cm_2015/32110/m_3211002_se_12_1_20150530.200.jpg",
+      "type": "image/jpeg",
+      "title": "Thumbnail",
+      "roles": [
+        "thumbnail"
+      ]
+    },
+    "tilejson": {
+      "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&item=az_m_3211002_se_12_1_20150530_20151022&assets=image&asset_bidx=image%7C1,2,3&format=png",
+      "type": "application/json",
+      "title": "TileJSON with default rendering",
+      "roles": [
+        "tiles"
+      ]
+    },
+    "rendered_preview": {
+      "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&item=az_m_3211002_se_12_1_20150530_20151022&assets=image&asset_bidx=image%7C1,2,3&format=png",
+      "type": "image/png",
+      "title": "Rendered preview",
+      "rel": "preview",
+      "roles": [
+        "overview"
+      ]
+    }
+  },
+  "collection": "naip"
+}

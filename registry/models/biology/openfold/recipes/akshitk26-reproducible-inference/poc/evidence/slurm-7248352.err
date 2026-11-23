@@ -1,0 +1,45 @@
+/usr/local/pace-apps/lmod/lmod/init/bash: line 204: conda: command not found
+/home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:97: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  d = torch.load(ckpt_path)
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:Loaded OpenFold parameters at /home/hice1/akumar3097/openfold-reproducible-inference/artifacts/params/finetuning_no_templ_ptm_1.pt...
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_A at /home/hice1/akumar3097/openfold-reproducible-inference/artifacts/alignments_no_templates...
+Traceback (most recent call last):
+  File "/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py", line 499, in <module>
+    main(args)
+  File "/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py", line 299, in main
+    feature_dict = generate_feature_dict(
+  File "/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py", line 151, in generate_feature_dict
+    feature_dict = data_processor.process_fasta(
+  File "/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/data/data_pipeline.py", line 883, in process_fasta
+    hits = self._parse_template_hit_files(
+  File "/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/data/data_pipeline.py", line 795, in _parse_template_hit_files
+    for f in os.listdir(alignment_dir):
+FileNotFoundError: [Errno 2] No such file or directory: '/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/alignments_no_templates/6KWC_A'
+Command exited with non-zero status 1
+	Command being timed: "bash poc/run_poc.sh"
+	User time (seconds): 35.45
+	System time (seconds): 4.61
+	Percent of CPU this job got: 115%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:34.56
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1567896
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 2146
+	Minor (reclaiming a frame) page faults: 928965
+	Voluntary context switches: 26070
+	Involuntary context switches: 255
+	Swaps: 0
+	File system inputs: 1202600
+	File system outputs: 41584
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

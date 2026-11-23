@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" font-family="sans-serif" font-size="12">
+<rect width="640" height="440" fill="white"/>
+<line x1="70" y1="380" x2="450" y2="380" stroke="black"/>
+<line x1="70" y1="30" x2="70" y2="380" stroke="black"/>
+<text x="70.0" y="398" text-anchor="middle">30</text>
+<text x="124.3" y="398" text-anchor="middle">40</text>
+<text x="178.6" y="398" text-anchor="middle">50</text>
+<text x="232.9" y="398" text-anchor="middle">60</text>
+<text x="287.1" y="398" text-anchor="middle">70</text>
+<text x="341.4" y="398" text-anchor="middle">80</text>
+<text x="395.7" y="398" text-anchor="middle">90</text>
+<text x="450.0" y="398" text-anchor="middle">100</text>
+<text x="62" y="384.0" text-anchor="end">0</text>
+<line x1="70" y1="380.0" x2="450" y2="380.0" stroke="#ddd"/>
+<text x="62" y="310.4" text-anchor="end">5</text>
+<line x1="70" y1="306.4" x2="450" y2="306.4" stroke="#ddd"/>
+<text x="62" y="236.8" text-anchor="end">10</text>
+<line x1="70" y1="232.8" x2="450" y2="232.8" stroke="#ddd"/>
+<text x="62" y="163.2" text-anchor="end">15</text>
+<line x1="70" y1="159.2" x2="450" y2="159.2" stroke="#ddd"/>
+<text x="62" y="89.6" text-anchor="end">20</text>
+<line x1="70" y1="85.6" x2="450" y2="85.6" stroke="#ddd"/>
+<line x1="287.1" y1="30" x2="287.1" y2="380" stroke="#999" stroke-dasharray="4 3"/>
+<text x="260.0" y="425" text-anchor="middle">mean pLDDT</text>
+<text x="18" y="205.0" text-anchor="middle" transform="rotate(-90 18 205.0)">CA RMSD to RCSB (Å)</text>
+<circle cx="431.9" cy="363.0" r="5" fill="#1f77b4"/>
+<text x="438.9" y="357.0" font-size="10">6KWC_A</text>
+<circle cx="409.7" cy="355.2" r="5" fill="#2ca02c"/>
+<text x="416.7" y="349.2" font-size="10">1AKE_A</text>
+<circle cx="429.3" cy="352.0" r="5" fill="#2ca02c"/>
+<text x="436.3" y="346.0" font-size="10">2LZM_A</text>
+<circle cx="416.3" cy="372.3" r="5" fill="#2ca02c"/>
+<text x="423.3" y="366.3" font-size="10">3CHY_A</text>
+<circle cx="432.4" cy="363.0" r="5" fill="#2ca02c"/>
+<text x="439.4" y="357.0" font-size="10">6KWC_A</text>
+<circle cx="430.7" cy="370.7" r="5" fill="#2ca02c"/>
+<text x="437.7" y="364.7" font-size="10">8TIM_A</text>
+<circle cx="162.8" cy="78.9" r="5" fill="#d62728"/>
+<text x="169.8" y="72.9" font-size="10">1AKE_A</text>
+<circle cx="197.6" cy="141.9" r="5" fill="#d62728"/>
+<text x="204.6" y="135.9" font-size="10">2LZM_A</text>
+<circle cx="184.5" cy="209.6" r="5" fill="#d62728"/>
+<text x="191.5" y="203.6" font-size="10">3CHY_A</text>
+<circle cx="166.5" cy="68.6" r="5" fill="#d62728"/>
+<text x="173.5" y="62.6" font-size="10">6KWC_A</text>
+<circle cx="135.1" cy="61.8" r="5" fill="#d62728"/>
+<text x="142.1" y="55.8" font-size="10">8TIM_A</text>
+<circle cx="470" cy="40" r="5" fill="#1f77b4"/>
+<text x="480" y="44">OpenFold example MSA</text>
+<circle cx="470" cy="60" r="5" fill="#2ca02c"/>
+<text x="480" y="64">ColabFold MSA</text>
+<circle cx="470" cy="80" r="5" fill="#d62728"/>
+<text x="480" y="84">single sequence</text>
+<text x="462" y="110" font-size="10" fill="#555">dashed line: pLDDT 70</text>
+</svg>

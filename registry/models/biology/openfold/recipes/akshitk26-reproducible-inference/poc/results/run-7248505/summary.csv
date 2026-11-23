@@ -1,0 +1,14 @@
+target,condition,reference,primary_reference,msa_depth,mean_plddt,frac_ca_plddt_over_70,ca_rmsd,tm_score,identity,matched,pred_residues,ref_residues,inference_s
+6KWC_A,example,6KWC:A,True,5006,96.67,0.995,1.152,0.975,1.0,191,191,191,26.3
+1AKE_A,msa,1AKE:A,True,16866,92.57,1.0,1.684,0.928,1.0,214,214,214,30.2
+1AKE_A,msa,4AKE:A,False,16866,92.57,1.0,5.981,0.719,1.0,214,214,214,30.2
+2LZM_A,msa,2LZM:A,True,4079,96.18,1.0,1.905,0.873,1.0,164,164,164,20.3
+3CHY_A,msa,3CHY:A,True,11989,93.8,1.0,0.52,0.985,1.0,128,128,128,14.4
+6KWC_A,msa,6KWC:A,True,5615,96.75,0.995,1.158,0.975,1.0,191,191,191,25.4
+8TIM_A,msa,8TIM:A,True,16749,96.44,0.996,0.629,0.989,1.0,247,247,247,37.8
+1AKE_A,single,1AKE:A,True,1,47.1,0.033,20.455,0.252,1.0,214,214,214,30.0
+1AKE_A,single,4AKE:A,False,1,47.1,0.033,19.924,0.264,1.0,214,214,214,30.0
+2LZM_A,single,2LZM:A,True,1,53.5,0.213,16.175,0.313,1.0,164,164,164,20.4
+3CHY_A,single,3CHY:A,True,1,51.09,0.055,11.578,0.315,1.0,128,128,128,14.7
+6KWC_A,single,6KWC:A,True,1,47.77,0.079,21.157,0.214,1.0,191,191,191,25.5
+8TIM_A,single,8TIM:A,True,1,41.99,0.008,21.617,0.21,1.0,247,247,247,37.7

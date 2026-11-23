@@ -1,0 +1,33 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-22-2026 23:32:54
+Job ID:    7248352
+User ID:   akumar3097
+Account:   coc
+Job name:  openfold-poc
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+PyTorch: 2.5.1
+CUDA available: True
+GPU: Quadro RTX 6000
+openfold module: /home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/__init__.py
+setup check passed
+== building alignment directories in /home/hice1/akumar3097/scratch/openfold-6kwc/poc/run-7248352
+== example: 6KWC_A 
+output directory: /storage/ice1/2/9/akumar3097/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/akshitk26-reproducible-inference/poc/results/run-7248352/example
+[2026-11-22 23:33:22,865] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/akumar3097/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+---------------------------------------
+Begin Slurm Epilog: Nov-22-2026 23:33:49
+Job ID:        7248352
+User ID:       akumar3097
+Account:       coc
+Job name:      openfold-poc
+Resources:     cpu=4,gres/gpu:rtx_6000=1,mem=32G,node=1
+Rsrc Used:     cput=00:03:44,vmem=0,walltime=00:00:56,mem=2172188K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-5-0
+---------------------------------------

@@ -1,0 +1,28 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-22-2026 20:24:21
+Job ID:    7246226
+User ID:   mli863
+Account:   coc
+Job name:  poc-suite
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+/home/hice1/mli863/scratch/envs/transolver/bin/python
+atl1-1-01-005-17-0.pace.gatech.edu
+/var/lib/slurm/slurmd/job7246226/slurm_script: line 25: nvidia-smi: command not found
+cuda available: False
+Namespace(batch_size=4, cpu_cars=10, cpu_time=True, data_dir='/storage/ice1/2/2/mli863/Transolver/data/mlcfd_data/training_data', distill=False, distill_alpha=0.0, drag=True, embed='slice', enc_epochs=200, epochs=40, fold_id=0, hidden=256, latent=128, lr=0.001, max_train=0, max_val=0, model='deeponet', n_sensors=2048, n_vol_query=8192, out_dir='results_poc', reg=1.0, save_dir='/storage/ice1/2/2/mli863/Transolver/data/preprocessed_data', seed=0, suite=True, val_every=10, weight=0.5)
+device: cpu
+[2026-11-22T20:26:38.873] error: *** JOB 7246226 ON atl1-1-01-005-17-0 CANCELLED AT 2026-11-22T20:26:38 DUE to SIGNAL Terminated ***
+---------------------------------------
+Begin Slurm Epilog: Nov-22-2026 20:26:41
+Job ID:        7246226
+User ID:       mli863
+Account:       coc
+Job name:      poc-suite
+Resources:     cpu=8,gres/gpu:mi210=1,mem=32G,node=1
+Rsrc Used:     cput=00:18:16,vmem=0,walltime=00:02:17,mem=564956K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-17-0
+---------------------------------------

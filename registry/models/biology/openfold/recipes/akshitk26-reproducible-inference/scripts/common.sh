@@ -7,9 +7,19 @@
 
 RECIPE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# Variables exported before the script runs win over .env, so callers such as
+# poc/run_poc.sh can point one run at other inputs.
+_path_vars=(OPENFOLD_WORK OPENFOLD_ENV OPENFOLD_DIR ALIGNMENT_DIR TEMPLATE_MMCIF_DIR \
+  CHECKPOINT_PATH FASTA_DIR OUTPUT_DIR CONFIG_PRESET)
 if [[ -f "$RECIPE_DIR/.env" ]]; then
+  declare -A _preset=()
+  for _v in "${_path_vars[@]}"; do
+    [[ -n "${!_v+x}" ]] && _preset[$_v]="${!_v}"
+  done
   # shellcheck disable=SC1091
   source "$RECIPE_DIR/.env"
+  for _v in "${!_preset[@]}"; do printf -v "$_v" '%s' "${_preset[$_v]}"; done
+  unset _preset _v
 fi
 
 # Large files (OpenFold source, CUDA build, weights, conda env) go in scratch,

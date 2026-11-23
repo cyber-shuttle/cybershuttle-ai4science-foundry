@@ -1,0 +1,71 @@
+sha256:
+  8a86a8c487a42283f97b9f119abcba11bc66b0103fc97854d881a0d6ace52827  backbone.ckpt
+  b30df4709018a0d06580a1990cf7815174c0b96be5a0f907e426903099e621dc  stats_v0/global_means.npy
+  71e3577b32c2fad146b7606691e7e47f8025df22802e3084fa74c69c7a6e29c3  stats_v0/global_stds.npy
+  57127bb7d922636b3fe9e8fb6fcf3d9f3a27ca3d331fcf9ae180393534134938  stats_v0/time_means.npy
+ERA5 source: gs://weatherbench2/datasets/era5/1959-2023_01_10-wb13-6h-1440x721_with_derived_variables.zarr
+init 2018-01-01 00:00:00 -> rows 0..20
+  fetched 10m_u_component_of_wind
+  fetched 10m_v_component_of_wind
+  fetched 2m_temperature
+  fetched surface_pressure
+  fetched mean_sea_level_pressure
+  fetched temperature
+  fetched u_component_of_wind
+  fetched v_component_of_wind
+  fetched geopotential
+  fetched relative_humidity
+  fetched total_column_water_vapour
+  u10    mean         0.07   training mean        -0.01   std       5.61   ok
+  v10    mean        -0.13   training mean         0.29   std       4.78   ok
+  t2m    mean       277.42   training mean       279.02   std      21.42   ok
+  sp     mean     96686.59   training mean     96601.07   std    9669.02   ok
+  msl    mean    100952.45   training mean    100906.42   std    1386.30   ok
+  t850   mean       274.02   training mean       274.95   std      15.74   ok
+  u1000  mean         0.15   training mean         0.01   std       6.20   ok
+  v1000  mean        -0.16   training mean         0.30   std       5.31   ok
+  z1000  mean       745.98   training mean       698.26   std    1129.48   ok
+  u850   mean         1.56   training mean         1.48   std       8.28   ok
+  v850   mean        -0.13   training mean         0.22   std       6.25   ok
+  z850   mean     13698.57   training mean     13735.68   std    1560.23   ok
+  u500   mean         6.93   training mean         6.36   std      11.91   ok
+  v500   mean         0.06   training mean        -0.04   std       9.15   ok
+  z500   mean     53949.15   training mean     54170.41   std    3439.80   ok
+  t500   mean       252.39   training mean       202.87   std      11.55   MISMATCH
+  z50    mean    199429.56   training mean    199242.69   std    6702.69   ok
+  r500   mean        39.89   training mean        49.95   std      33.51   ok
+  r850   mean        61.88   training mean        69.04   std      26.32   ok
+  tcwv   mean        17.26   training mean        18.72   std      16.25   ok
+init 2018-07-01 00:00:00 -> rows 724..744
+  fetched 10m_u_component_of_wind
+  fetched 10m_v_component_of_wind
+  fetched 2m_temperature
+  fetched surface_pressure
+  fetched mean_sea_level_pressure
+  fetched temperature
+  fetched u_component_of_wind
+  fetched v_component_of_wind
+  fetched geopotential
+  fetched relative_humidity
+  fetched total_column_water_vapour
+  u10    mean        -0.06   training mean        -0.01   std       5.61   ok
+  v10    mean         0.59   training mean         0.29   std       4.78   ok
+  t2m    mean       280.84   training mean       279.02   std      21.42   ok
+  sp     mean     96659.91   training mean     96601.07   std    9669.02   ok
+  msl    mean    100963.39   training mean    100906.42   std    1386.30   ok
+  t850   mean       277.11   training mean       274.95   std      15.74   ok
+  u1000  mean        -0.03   training mean         0.01   std       6.20   ok
+  v1000  mean         0.62   training mean         0.30   std       5.31   ok
+  z1000  mean       745.14   training mean       698.26   std    1129.48   ok
+  u850   mean         1.29   training mean         1.48   std       8.28   ok
+  v850   mean         0.39   training mean         0.22   std       6.25   ok
+  z850   mean     13886.79   training mean     13735.68   std    1560.23   ok
+  u500   mean         5.31   training mean         6.36   std      11.91   ok
+  v500   mean        -0.07   training mean        -0.04   std       9.15   ok
+  z500   mean     54615.70   training mean     54170.41   std    3439.80   ok
+  t500   mean       254.93   training mean       202.87   std      11.55   MISMATCH
+  z50    mean    199831.34   training mean    199242.69   std    6702.69   ok
+  r500   mean        41.57   training mean        49.95   std      33.51   ok
+  r850   mean        60.83   training mean        69.04   std      26.32   ok
+  tcwv   mean        20.80   training mean        18.72   std      16.25   ok
+wrote /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5

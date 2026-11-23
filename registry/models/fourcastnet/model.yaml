@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: fourcastnet
+name: FourCastNet
+version: "v0"
+
+description: >
+  Global data-driven weather model (AFNO). Forecasts 20 variables 6 hours ahead
+  on a 0.25° grid and rolls forward for multi-day forecasts. Original NVlabs
+  code and paper weights.
+
+domain:
+  - climate
+  - weather-forecasting
+
+model_family:
+  - neural-operator
+  - vision-transformer
+  - afno
+
+tasks:
+  - inference
+  - evaluation
+  - training
+
+upstream:
+  github: https://github.com/NVlabs/FourCastNet
+  paper: https://arxiv.org/abs/2202.11214
+  paper_title: "FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators"
+  license: BSD-3-Clause
+  other:
+    - https://portal.nersc.gov/project/m4134/FCN_weights_v0/
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+    - training
+
+input:
+  format: HDF5, dataset `fields` (time, 20, 721, 1440), 6-hourly ERA5
+  description: >
+    Channels: u10 v10 t2m sp msl t850 u1000 v1000 z1000 u850 v850 z850 u500
+    v500 z500 t500 z50 r500 r850 tcwv. Latitude 90N to 90S; the model uses
+    the first 720 rows.
+
+output:
+  inference:
+    format: HDF5 with predicted and true fields, plus RMSE and ACC per lead time and channel
+    description: 6-hourly forecast of all 20 channels on a 720 × 1440 grid
+
+architecture:
+  type: AFNO vision transformer
+  patch_size: 8
+  embed_dim: 768
+  num_layers: 12
+  afno_num_blocks: 8
+  checkpoint_size: "896 MB"
+
+datasets:
+  recommended:
+    - era5
+
+software:
+  python: "3.11"
+  frameworks:
+    - torch==2.4.1+cu121
+    - numpy==1.26.4
+    - h5py, timm, einops, ruamel.yaml, wandb
+    - xarray, zarr==2.18.3, numcodecs==0.13.1, gcsfs
+  pinned_requirements: scripts/fourcastnet_requirements.txt
+  upstream_commit: 93360c1720a9f97aabf970689f21c9fad8737788
+  container: null
+
+checkpoint:
+  url: https://portal.nersc.gov/project/m4134/FCN_weights_v0/backbone.ckpt
+  sha256:
+    backbone.ckpt: 8a86a8c487a42283f97b9f119abcba11bc66b0103fc97854d881a0d6ace52827
+    stats_v0/global_means.npy: b30df4709018a0d06580a1990cf7815174c0b96be5a0f907e426903099e621dc
+    stats_v0/global_stds.npy: 71e3577b32c2fad146b7606691e7e47f8025df22802e3084fa74c69c7a6e29c3
+    stats_v0/time_means.npy: 57127bb7d922636b3fe9e8fb6fcf3d9f3a27ca3d331fcf9ae180393534134938
+
+resource_profiles:
+  recommended:
+    - resource-profiles/pace-ice/coc-gpu-a100.yaml
+
+minimum_requirements:
+  gpu_memory_gb: 16
+  ram_gb: 16
+
+cybershuttle:
+  enabled: false
+  workflow_templates: []
+
+readiness:
+  registry_status: containerized
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: validated
+  last_updated: "2026-10-10"
+  notes: >
+    Conda env, no container image. Inference verified on PACE ICE (A100);
+    training and fine-tuning untested.
+
+maintainers:
+  - name: Thomas Yang
+    github: "@thomasy666"
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  NVlabs stats for t500 are 0.8x real values; the model was trained with
+  them, so real t500 is used unchanged. Setup and results:
+  registry/models/climate/fourcastnet/README.md.

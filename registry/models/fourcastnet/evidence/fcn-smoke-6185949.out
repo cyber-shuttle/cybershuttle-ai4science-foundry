@@ -1,0 +1,241 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 15:05:51
+Job ID:    6185949
+User ID:   xyang654
+Account:   coc
+Job name:  fcn-smoke
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+date: 2026-10-11T15:05:58-04:00
+host: atl1-1-03-007-33-0.pace.gatech.edu
+job: 6185949  partition: coc-gpu  nsteps: 2  init times: 2018-01-01T00:00:00 2018-07-01T00:00:00
+repo commit: ed1f016670faa3a3dd51ae0f707d932f02f674cb
+FourCastNet commit: 93360c1720a9f97aabf970689f21c9fad8737788
+
+Currently Loaded Modules:
+  1) gmp/6.2.1   (H)   5) gcc/12.3.0              9) mvapich2/2.3.7-1
+  2) mpfr/4.2.0  (H)   6) libpciaccess/0.17 (H)  10) miniforge/24.3.0-0
+  3) mpc/1.3.1   (H)   7) pmix/4.2.6        (H)
+  4) zlib/1.2.13 (H)   8) slurm/23.11.1     (H)
+
+  Where:
+   H:  Hidden Module
+python 3.11.17 | torch 2.4.1+cu121 | numpy 1.26.4
+name, memory.total [MiB], driver_version
+NVIDIA A100-PCIE-40GB, 40960 MiB, 615.71.09
+2026-10-11 15:07:52,405 - root - INFO - --------------- Versions ---------------
+2026-10-11 15:07:52,465 - root - INFO - git branch: b'* (HEAD detached at 93360c1)\n  master'
+2026-10-11 15:07:52,469 - root - INFO - git hash: b'93360c1720a9f97aabf970689f21c9fad8737788'
+2026-10-11 15:07:52,469 - root - INFO - Torch: 2.4.1+cu121
+2026-10-11 15:07:52,469 - root - INFO - ----------------------------------------
+2026-10-11 15:07:52,469 - root - INFO - ------------------ Configuration ------------------
+2026-10-11 15:07:52,469 - root - INFO - Configuration file: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-01-01T00/config.yaml
+2026-10-11 15:07:52,469 - root - INFO - Configuration name: pace_inference
+2026-10-11 15:07:52,469 - root - INFO - inf_data_path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample
+2026-10-11 15:07:52,469 - root - INFO - global_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_means.npy
+2026-10-11 15:07:52,469 - root - INFO - global_stds_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_stds.npy
+2026-10-11 15:07:52,469 - root - INFO - time_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/time_means.npy
+2026-10-11 15:07:52,470 - root - INFO - prediction_length 3
+2026-10-11 15:07:52,470 - root - INFO - ics_type datetime
+2026-10-11 15:07:52,470 - root - INFO - date_strings ['2018-01-01 00:00:00']
+2026-10-11 15:07:52,470 - root - INFO - log_to_wandb False
+2026-10-11 15:07:52,470 - root - INFO - lr 0.0005
+2026-10-11 15:07:52,470 - root - INFO - batch_size 64
+2026-10-11 15:07:52,470 - root - INFO - max_epochs 150
+2026-10-11 15:07:52,470 - root - INFO - scheduler CosineAnnealingLR
+2026-10-11 15:07:52,470 - root - INFO - in_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:07:52,470 - root - INFO - out_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:07:52,470 - root - INFO - orography False
+2026-10-11 15:07:52,470 - root - INFO - orography_path None
+2026-10-11 15:07:52,470 - root - INFO - exp_dir /pscratch/sd/s/shas1693/results/era5_wind
+2026-10-11 15:07:52,470 - root - INFO - train_data_path /pscratch/sd/s/shas1693/data/era5/train
+2026-10-11 15:07:52,470 - root - INFO - valid_data_path /pscratch/sd/s/shas1693/data/era5/test
+2026-10-11 15:07:52,470 - root - INFO - loss l2
+2026-10-11 15:07:52,470 - root - INFO - num_data_workers 4
+2026-10-11 15:07:52,470 - root - INFO - dt 1
+2026-10-11 15:07:52,470 - root - INFO - n_history 0
+2026-10-11 15:07:52,470 - root - INFO - prediction_type iterative
+2026-10-11 15:07:52,470 - root - INFO - n_initial_conditions 5
+2026-10-11 15:07:52,470 - root - INFO - save_raw_forecasts True
+2026-10-11 15:07:52,470 - root - INFO - save_channel False
+2026-10-11 15:07:52,470 - root - INFO - masked_acc False
+2026-10-11 15:07:52,470 - root - INFO - maskpath None
+2026-10-11 15:07:52,470 - root - INFO - perturb False
+2026-10-11 15:07:52,470 - root - INFO - add_grid False
+2026-10-11 15:07:52,471 - root - INFO - N_grid_channels 0
+2026-10-11 15:07:52,471 - root - INFO - gridtype sinusoidal
+2026-10-11 15:07:52,471 - root - INFO - roll False
+2026-10-11 15:07:52,471 - root - INFO - num_blocks 8
+2026-10-11 15:07:52,471 - root - INFO - nettype afno
+2026-10-11 15:07:52,471 - root - INFO - patch_size 8
+2026-10-11 15:07:52,471 - root - INFO - width 56
+2026-10-11 15:07:52,471 - root - INFO - modes 32
+2026-10-11 15:07:52,471 - root - INFO - target default
+2026-10-11 15:07:52,471 - root - INFO - normalization zscore
+2026-10-11 15:07:52,471 - root - INFO - log_to_screen True
+2026-10-11 15:07:52,471 - root - INFO - save_checkpoint True
+2026-10-11 15:07:52,471 - root - INFO - enable_nhwc False
+2026-10-11 15:07:52,471 - root - INFO - optimizer_type FusedAdam
+2026-10-11 15:07:52,471 - root - INFO - crop_size_x None
+2026-10-11 15:07:52,471 - root - INFO - crop_size_y None
+2026-10-11 15:07:52,471 - root - INFO - two_step_training False
+2026-10-11 15:07:52,471 - root - INFO - plot_animations False
+2026-10-11 15:07:52,471 - root - INFO - add_noise False
+2026-10-11 15:07:52,471 - root - INFO - noise_std 0
+2026-10-11 15:07:52,471 - root - INFO - world_size 1
+2026-10-11 15:07:52,471 - root - INFO - interp 0
+2026-10-11 15:07:52,471 - root - INFO - use_daily_climatology False
+2026-10-11 15:07:52,471 - root - INFO - global_batch_size 64
+2026-10-11 15:07:52,471 - root - INFO - experiment_dir /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-01-01T00
+2026-10-11 15:07:52,471 - root - INFO - best_checkpoint_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+2026-10-11 15:07:52,471 - root - INFO - resuming False
+2026-10-11 15:07:52,471 - root - INFO - local_rank 0
+2026-10-11 15:07:52,472 - root - INFO - ---------------------------------------------------
+2026-10-11 15:07:52,474 - root - INFO - Inference for 1 initial conditions
+2026-10-11 15:07:52,583 - root - INFO - Getting file stats from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:07:52,590 - root - INFO - Number of samples per year: 1460
+2026-10-11 15:07:52,590 - root - INFO - Found data at path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample. Number of examples: 1460. Image Shape: 720 x 1440 x 20
+2026-10-11 15:07:52,590 - root - INFO - Delta t: 6 hours
+2026-10-11 15:07:52,590 - root - INFO - Including 0 hours of past history in training at a frequency of 6 hours
+2026-10-11 15:07:52,591 - root - INFO - Loading trained model checkpoint from /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+/storage/ice1/5/3/xyang654/fourcastnet-work/FourCastNet/inference/inference.py:90: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_fname)
+2026-10-11 15:07:59,231 - root - INFO - Loading inference data
+2026-10-11 15:07:59,231 - root - INFO - Inference data from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:07:59,232 - root - INFO - Initial condition 1 of 1
+2026-10-11 15:08:00,379 - root - INFO - Begin autoregressive inference
+2026-10-11 15:08:19,220 - root - INFO - Predicted timestep 0 of 3. z500 RMS Error: 0.0, ACC: 1.0
+2026-10-11 15:08:32,464 - root - INFO - Predicted timestep 1 of 3. z500 RMS Error: 37.890865325927734, ACC: 0.9995751976966858
+2026-10-11 15:08:32,720 - root - INFO - Predicted timestep 2 of 3. z500 RMS Error: 51.94194793701172, ACC: 0.9992228746414185
+2026-10-11 15:08:32,790 - root - INFO - Saving files at /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-01-01T00/autoregressive_predictions_z500_vis.h5
+2026-10-11 15:08:39,468 - root - INFO - --------------- Versions ---------------
+2026-10-11 15:08:39,479 - root - INFO - git branch: b'* (HEAD detached at 93360c1)\n  master'
+2026-10-11 15:08:39,483 - root - INFO - git hash: b'93360c1720a9f97aabf970689f21c9fad8737788'
+2026-10-11 15:08:39,483 - root - INFO - Torch: 2.4.1+cu121
+2026-10-11 15:08:39,483 - root - INFO - ----------------------------------------
+2026-10-11 15:08:39,484 - root - INFO - ------------------ Configuration ------------------
+2026-10-11 15:08:39,484 - root - INFO - Configuration file: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-07-01T00/config.yaml
+2026-10-11 15:08:39,484 - root - INFO - Configuration name: pace_inference
+2026-10-11 15:08:39,484 - root - INFO - inf_data_path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample
+2026-10-11 15:08:39,484 - root - INFO - global_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_means.npy
+2026-10-11 15:08:39,484 - root - INFO - global_stds_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/global_stds.npy
+2026-10-11 15:08:39,484 - root - INFO - time_means_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/stats_v0/time_means.npy
+2026-10-11 15:08:39,484 - root - INFO - prediction_length 3
+2026-10-11 15:08:39,484 - root - INFO - ics_type datetime
+2026-10-11 15:08:39,484 - root - INFO - date_strings ['2018-07-01 00:00:00']
+2026-10-11 15:08:39,484 - root - INFO - log_to_wandb False
+2026-10-11 15:08:39,484 - root - INFO - lr 0.0005
+2026-10-11 15:08:39,484 - root - INFO - batch_size 64
+2026-10-11 15:08:39,484 - root - INFO - max_epochs 150
+2026-10-11 15:08:39,484 - root - INFO - scheduler CosineAnnealingLR
+2026-10-11 15:08:39,484 - root - INFO - in_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:08:39,484 - root - INFO - out_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-11 15:08:39,484 - root - INFO - orography False
+2026-10-11 15:08:39,484 - root - INFO - orography_path None
+2026-10-11 15:08:39,484 - root - INFO - exp_dir /pscratch/sd/s/shas1693/results/era5_wind
+2026-10-11 15:08:39,484 - root - INFO - train_data_path /pscratch/sd/s/shas1693/data/era5/train
+2026-10-11 15:08:39,484 - root - INFO - valid_data_path /pscratch/sd/s/shas1693/data/era5/test
+2026-10-11 15:08:39,484 - root - INFO - loss l2
+2026-10-11 15:08:39,484 - root - INFO - num_data_workers 4
+2026-10-11 15:08:39,484 - root - INFO - dt 1
+2026-10-11 15:08:39,484 - root - INFO - n_history 0
+2026-10-11 15:08:39,485 - root - INFO - prediction_type iterative
+2026-10-11 15:08:39,485 - root - INFO - n_initial_conditions 5
+2026-10-11 15:08:39,485 - root - INFO - save_raw_forecasts True
+2026-10-11 15:08:39,485 - root - INFO - save_channel False
+2026-10-11 15:08:39,485 - root - INFO - masked_acc False
+2026-10-11 15:08:39,485 - root - INFO - maskpath None
+2026-10-11 15:08:39,485 - root - INFO - perturb False
+2026-10-11 15:08:39,485 - root - INFO - add_grid False
+2026-10-11 15:08:39,485 - root - INFO - N_grid_channels 0
+2026-10-11 15:08:39,485 - root - INFO - gridtype sinusoidal
+2026-10-11 15:08:39,485 - root - INFO - roll False
+2026-10-11 15:08:39,485 - root - INFO - num_blocks 8
+2026-10-11 15:08:39,485 - root - INFO - nettype afno
+2026-10-11 15:08:39,485 - root - INFO - patch_size 8
+2026-10-11 15:08:39,485 - root - INFO - width 56
+2026-10-11 15:08:39,485 - root - INFO - modes 32
+2026-10-11 15:08:39,485 - root - INFO - target default
+2026-10-11 15:08:39,485 - root - INFO - normalization zscore
+2026-10-11 15:08:39,485 - root - INFO - log_to_screen True
+2026-10-11 15:08:39,485 - root - INFO - save_checkpoint True
+2026-10-11 15:08:39,485 - root - INFO - enable_nhwc False
+2026-10-11 15:08:39,485 - root - INFO - optimizer_type FusedAdam
+2026-10-11 15:08:39,485 - root - INFO - crop_size_x None
+2026-10-11 15:08:39,485 - root - INFO - crop_size_y None
+2026-10-11 15:08:39,485 - root - INFO - two_step_training False
+2026-10-11 15:08:39,485 - root - INFO - plot_animations False
+2026-10-11 15:08:39,485 - root - INFO - add_noise False
+2026-10-11 15:08:39,485 - root - INFO - noise_std 0
+2026-10-11 15:08:39,485 - root - INFO - world_size 1
+2026-10-11 15:08:39,486 - root - INFO - interp 0
+2026-10-11 15:08:39,486 - root - INFO - use_daily_climatology False
+2026-10-11 15:08:39,486 - root - INFO - global_batch_size 64
+2026-10-11 15:08:39,486 - root - INFO - experiment_dir /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-07-01T00
+2026-10-11 15:08:39,486 - root - INFO - best_checkpoint_path /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+2026-10-11 15:08:39,486 - root - INFO - resuming False
+2026-10-11 15:08:39,486 - root - INFO - local_rank 0
+2026-10-11 15:08:39,486 - root - INFO - ---------------------------------------------------
+2026-10-11 15:08:39,487 - root - INFO - Inference for 1 initial conditions
+2026-10-11 15:08:39,488 - root - INFO - Getting file stats from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:08:39,489 - root - INFO - Number of samples per year: 1460
+2026-10-11 15:08:39,489 - root - INFO - Found data at path /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample. Number of examples: 1460. Image Shape: 720 x 1440 x 20
+2026-10-11 15:08:39,489 - root - INFO - Delta t: 6 hours
+2026-10-11 15:08:39,489 - root - INFO - Including 0 hours of past history in training at a frequency of 6 hours
+2026-10-11 15:08:39,490 - root - INFO - Loading trained model checkpoint from /home/hice1/xyang654/scratch/fourcastnet-work/weights/backbone.ckpt
+/storage/ice1/5/3/xyang654/fourcastnet-work/FourCastNet/inference/inference.py:90: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_fname)
+2026-10-11 15:08:40,588 - root - INFO - Loading inference data
+2026-10-11 15:08:40,588 - root - INFO - Inference data from /home/hice1/xyang654/scratch/fourcastnet-work/data/out_of_sample/2018.h5
+2026-10-11 15:08:40,589 - root - INFO - Initial condition 1 of 1
+2026-10-11 15:08:41,263 - root - INFO - Begin autoregressive inference
+2026-10-11 15:08:41,673 - root - INFO - Predicted timestep 0 of 3. z500 RMS Error: 0.0, ACC: 1.0
+2026-10-11 15:08:42,509 - root - INFO - Predicted timestep 1 of 3. z500 RMS Error: 42.138885498046875, ACC: 0.9991489052772522
+2026-10-11 15:08:42,665 - root - INFO - Predicted timestep 2 of 3. z500 RMS Error: 58.92353439331055, ACC: 0.9984182715415955
+2026-10-11 15:08:42,734 - root - INFO - Saving files at /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949/2018-07-01T00/autoregressive_predictions_z500_vis.h5
+forecast time: 94s
+Run: /home/hice1/xyang654/scratch/fourcastnet-work/runs/6185949   init times: 2   leads: 0-12 h
+
+PASS  2018-01-01T00: output shape (1, 3, 20, 720, 1440)
+PASS  2018-01-01T00: z500 finite, range 47835.6 to 58520.2 (expected 45000 to 60000)
+PASS  2018-01-01T00: t850 finite, range 240.1 to 305.1 (expected 220 to 320)
+PASS  2018-01-01T00: t2m finite, range 222.4 to 317.5 (expected 180 to 340)
+PASS  2018-01-01T00: u10 finite, range -18.8 to 23.9 (expected -80 to 80)
+PASS  2018-07-01T00: output shape (1, 3, 20, 720, 1440)
+PASS  2018-07-01T00: z500 finite, range 46080.3 to 58612.3 (expected 45000 to 60000)
+PASS  2018-07-01T00: t850 finite, range 222.4 to 310.8 (expected 220 to 320)
+PASS  2018-07-01T00: t2m finite, range 202.9 to 321.3 (expected 180 to 340)
+PASS  2018-07-01T00: u10 finite, range -24.0 to 22.9 (expected -80 to 80)
+PASS  z500: error grows with lead time (40.01 at 6 h -> 55.43 at 12 h)
+PASS  t850: error grows with lead time (0.56 at 6 h -> 0.72 at 12 h)
+PASS  t2m: error grows with lead time (0.77 at 6 h -> 0.87 at 12 h)
+PASS  u10: error grows with lead time (0.57 at 6 h -> 0.78 at 12 h)
+PASS  z500: FourCastNet beats persistence at every lead
+PASS  t850: FourCastNet beats persistence at every lead
+
+RMSE (lat-weighted, averaged over init times) and ACC:
+var     lead  FourCastNet  persistence     ACC
+z500      6h       40.015      216.653  0.9994
+z500     12h       55.433      338.660  0.9988
+t850      6h        0.555        1.474  0.9959
+t850     12h        0.717        2.221  0.9935
+t2m       6h        0.769        2.657  0.9941
+t2m      12h        0.869        3.746  0.9930
+u10       6h        0.575        2.182  0.9903
+u10      12h        0.778        3.127  0.9819
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 15:08:45
+Job ID:        6185949
+User ID:       xyang654
+Account:       coc
+Job name:      fcn-smoke
+Resources:     cpu=4,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=00:11:36,vmem=0,walltime=00:02:54,mem=5322376K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-007-33-0
+---------------------------------------

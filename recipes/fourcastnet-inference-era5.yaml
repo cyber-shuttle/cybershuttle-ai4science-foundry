@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: fourcastnet-inference-era5
+name: FourCastNet — 5-day forecast from ERA5
+model: fourcastnet
+task: inference
+description: >
+  5-day forecasts from ERA5 initial conditions in 2018, scored against ERA5
+  and a persistence baseline.
+
+input:
+  format: ERA5, 20 channels, 0.25° (721 × 1440), 6-hourly
+  source: gs://weatherbench2/datasets/era5/1959-2023_01_10-wb13-6h-1440x721_with_derived_variables.zarr
+  init_times: ["2018-01-01T00:00", "2018-07-01T00:00"]
+
+output:
+  forecasts: HDF5 per init time in $WORK_DIR/runs/<jobid>/ (about 3.5 GB each, not committed)
+  validation: validation.txt, rmse_vs_lead.png, z500_map.png in registry/models/climate/fourcastnet/evidence/<jobid>/
+
+environment:
+  python: "3.11"
+  pytorch: "2.4.1+cu121"
+  config: scripts/fourcastnet_config.env
+  setup_script: scripts/fourcastnet_setup_env.sh
+
+steps:
+  - name: setup_environment
+    description: Create the conda env, install pinned packages, check out NVlabs at commit 93360c1.
+    script: scripts/fourcastnet_setup_env.sh
+
+  - name: prefetch
+    description: Download weights and ERA5 on the login node.
+    script: scripts/fourcastnet_prefetch.py
+
+  - name: inference
+    description: Run NVlabs inference once per init time.
+    script: scripts/fourcastnet_inference.py
+    args:
+      nsteps: 20
+
+  - name: validate
+    description: Smoke checks, then RMSE vs ERA5 and persistence.
+    script: scripts/fourcastnet_validate.py
+
+resource_requirements:
+  gpu_count: 1
+  gpu_memory_gb: 16
+  ram_gb: 16
+  recommended_gpu: A100
+  storage_gb: 25
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/coc-gpu-a100.yaml
+
+compatible_optimization_profiles: []
+
+slurm_example: |
+  source scripts/fourcastnet_config.env
+  sbatch --job-name=fcn-smoke scripts/fourcastnet_forecast.sbatch 2
+  # wait for fcn-smoke to finish with all PASS, then:
+  sbatch --job-name=fcn-full scripts/fourcastnet_forecast.sbatch

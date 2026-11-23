@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schemas/resource_profile.schema.json
+
+id: pace-ice-coc-gpu-a100
+name: Georgia Tech PACE ICE — coc-gpu partition, A100
+system: pace-ice
+partition: coc-gpu
+scheduler: slurm
+max_walltime_hours: 16
+
+gpu:
+  model: NVIDIA A100-PCIE-40GB
+  count: 1
+  vram_gb: 40
+  interconnect: PCIe
+
+cpu:
+  cores: 4
+  ram_gb: 32
+
+storage:
+  scratch_gb: 300
+  parallel_fs: /storage/ice1
+
+notes: >
+  Request with --account=coc --qos=coc-ice --partition=coc-gpu --gres=gpu:a100:1.
+  Home quota is 30 GB; keep envs and data in ~/scratch.

@@ -39,8 +39,7 @@ import torch
 import torch.nn.functional as F
 
 DEFAULT_FASTA = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..",
-    "registry", "models", "genomics", "hyenadna", "data", "example.fasta",
+    os.path.dirname(os.path.abspath(__file__)), "..", "data", "example.fasta",
 )
 
 sys.path.insert(0, os.path.dirname(__file__))

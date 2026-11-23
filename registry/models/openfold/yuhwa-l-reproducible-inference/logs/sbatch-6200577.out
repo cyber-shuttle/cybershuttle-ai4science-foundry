@@ -1,0 +1,60 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 23:35:46
+Job ID:    6200577
+User ID:   ylee3055
+Account:   coc
+Job name:  openfold-6kwc
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+=== SLURM execution metadata ===
+Date: 2026-10-11T23:35:48-04:00
+Job ID: 6200577
+Node: atl1-1-03-007-35-0.pace.gatech.edu
+Conda env: /home/hice1/ylee3055/scratch/.conda/envs/openfold-env
+
+Sun Oct 11 23:35:48 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   35C    P0             43W /  250W |       0MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+=== OpenFold reproducible inference ===
+OpenFold:       /home/hice1/ylee3055/scratch/openfold
+Input:          /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/inputs
+Alignments:     /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments
+Parameters:     /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+Templates:      /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/pdb_mmcif/mmcif_files
+Output:         /storage/ice1/4/4/ylee3055/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run
+
+[2026-10-11 23:38:01,946] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 23:40:04
+Job ID:        6200577
+User ID:       ylee3055
+Account:       coc
+Job name:      openfold-6kwc
+Resources:     cpu=8,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=00:34:24,vmem=0,walltime=00:04:18,mem=2807180K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-007-35-0
+---------------------------------------

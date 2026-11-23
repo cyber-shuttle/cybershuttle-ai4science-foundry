@@ -1,0 +1,44 @@
+=== OpenFold reproducible inference environment ===
+Recorded: 2026-10-11T19:55:42-04:00
+
+=== System ===
+login-ice-gnr-1.pace.gatech.edu
+Linux login-ice-gnr-1.pace.gatech.edu 5.14.0-687.49.1.el9_8.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Sep 16 05:35:20 EDT 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+=== Python ===
+/home/hice1/ylee3055/scratch/.conda/envs/openfold_env/bin/python
+Python 3.10.21
+
+=== Conda ===
+CONDA_DEFAULT_ENV=openfold_env
+CONDA_PREFIX=/home/hice1/ylee3055/scratch/.conda/envs/openfold_env
+
+=== PyTorch / CUDA ===
+PyTorch: 2.5.1
+PyTorch CUDA: 12.4
+CUDA available: False
+
+=== Key Python packages ===
+openfold: 2.2.0
+flash-attn: 2.8.3
+tensorrt-cu12: 11.4.0.106
+polygraphy: 0.53.6
+cuda-python: 12.9.7
+biopython: 1.88
+numpy: 2.2.6
+
+=== OpenFold source ===
+https://github.com/aqlaboratory/openfold.git
+Commit: be2ec1841f16c966c65ae0e7599ebbadc725757d
+Working tree: source code unchanged; local environment.yml changes excluded from this check
+
+=== Model parameters ===
+Path: /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+-rw-rw-r-x. 1 root root 356M Jul 19  2021 /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+5e564f79af5bcd54ccef6e2a6bb0ff01015d01650ebc41d4575e35f0de9ecc84  /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+
+=== Input ===
+b247679c36ec63f89aa5b849caac450e9368cee99e3082951303698a73f33166  registry/models/biology/openfold/recipes/reproducible-inference/inputs/6KWC.fasta
+
+=== Prediction ===
+eca9dedb426047a781658bf8679e5f99d26fcb007e8f4c5a7929bfd15cd48b69  registry/models/biology/openfold/recipes/reproducible-inference/results/6KWC_1_model_1_ptm_unrelaxed.pdb

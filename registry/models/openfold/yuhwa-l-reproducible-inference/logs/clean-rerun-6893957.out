@@ -1,0 +1,1360 @@
+---------------------------------------
+Begin Slurm Prolog: Nov-09-2026 07:08:17
+Job ID:    6893957
+User ID:   ylee3055
+Account:   coc
+Job name:  openfold-repro-check
+Partition: coc-gpu
+QOS:       coc-ice
+---------------------------------------
+
+=== STEP 1.2 create openfold-env-check (07:08:17) ===
+Retrieving notices: ...working... done
+
+
+Looking for: ['cuda', 'gcc=12.4', 'python=3.10', 'setuptools=59.5.0', 'pip', 'openmm', 'pdbfixer', 'pytorch-lightning', 'biopython', 'numpy', 'pandas', 'pyyaml', 'requests', 'scipy', 'tqdm', 'typing-extensions', 'wandb', 'modelcif=0.7', 'awscli', 'ml-collections', 'aria2', 'mkl', 'git', 'bioconda::hmmer', 'conda-forge::libopenblas', 'bioconda::hhsuite', 'bioconda::kalign2', 'pytorch::pytorch=2.5', 'pytorch::pytorch-cuda=12.4']
+
+
+Transaction
+
+  Prefix: /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check
+
+  Updating specs:
+
+   - cuda
+   - gcc=12.4
+   - python=3.10
+   - setuptools=59.5.0
+   - pip
+   - openmm
+   - pdbfixer
+   - pytorch-lightning
+   - biopython
+   - numpy
+   - pandas
+   - pyyaml
+   - requests
+   - scipy
+   - tqdm
+   - typing-extensions
+   - wandb
+   - modelcif=0.7
+   - awscli
+   - ml-collections
+   - aria2
+   - mkl
+   - git
+   - bioconda::hmmer
+   - conda-forge::libopenblas
+   - bioconda::hhsuite
+   - bioconda::kalign2
+   - pytorch::pytorch=2.5
+   - pytorch::pytorch-cuda=12.4
+
+
+  Package                          Version  Build                         Channel           Size
+──────────────────────────────────────────────────────────────────────────────────────────────────
+  Install:
+──────────────────────────────────────────────────────────────────────────────────────────────────
+
+  + pytorch-mutex                      1.0  cuda                          pytorch         Cached
+  + libnvjitlink                  12.4.127  0                             nvidia          Cached
+  + libcublas                     12.4.5.8  0                             nvidia          Cached
+  + libcufft                      11.2.1.3  0                             nvidia          Cached
+  + libcusolver                   11.6.1.9  0                             nvidia          Cached
+  + libcusparse                 12.3.1.170  0                             nvidia          Cached
+  + libnpp                       12.2.5.30  0                             nvidia          Cached
+  + libnvjpeg                   12.3.1.117  0                             nvidia          Cached
+  + cuda-cudart                   12.4.127  0                             nvidia          Cached
+  + cuda-cupti                    12.4.127  0                             nvidia          Cached
+  + cuda-nvrtc                    12.4.127  0                             nvidia          Cached
+  + cuda-opencl                   12.4.127  0                             nvidia          Cached
+  + libcufile                      1.9.1.3  0                             nvidia          Cached
+  + libcurand                   10.3.5.147  0                             nvidia          Cached
+  + libnvfatbin                   12.4.127  0                             nvidia          Cached
+  + cuda-nvtx                     12.4.127  0                             nvidia          Cached
+  + cuda-nvml-dev                 12.4.127  0                             nvidia          Cached
+  + cuda-cccl                     12.4.127  0                             nvidia          Cached
+  + cuda-driver-dev               12.4.127  0                             nvidia          Cached
+  + cuda-profiler-api             12.4.127  0                             nvidia          Cached
+  + cuda-cuobjdump                12.4.127  0                             nvidia          Cached
+  + cuda-cuxxfilt                 12.4.127  0                             nvidia          Cached
+  + cuda-nvcc                     12.4.131  0                             nvidia          Cached
+  + cuda-nvprune                  12.4.127  0                             nvidia          Cached
+  + cuda-gdb                      12.4.127  0                             nvidia          Cached
+  + cuda-sanitizer-api            12.4.127  0                             nvidia          Cached
+  + cuda-nvprof                   12.4.127  0                             nvidia          Cached
+  + cuda-nvdisasm                 12.4.127  0                             nvidia          Cached
+  + cuda-nsight                   12.4.127  0                             nvidia          Cached
+  + nsight-compute              2024.1.1.4  0                             nvidia          Cached
+  + libnvjitlink-dev              12.4.127  0                             nvidia          Cached
+  + libcublas-dev                 12.4.5.8  0                             nvidia          Cached
+  + libcufft-dev                  11.2.1.3  0                             nvidia          Cached
+  + libcusolver-dev               11.6.1.9  0                             nvidia          Cached
+  + libcusparse-dev             12.3.1.170  0                             nvidia          Cached
+  + libnpp-dev                   12.2.5.30  0                             nvidia          Cached
+  + libnvjpeg-dev               12.3.1.117  0                             nvidia          Cached
+  + cuda-nvrtc-dev                12.4.127  0                             nvidia          Cached
+  + cuda-opencl-dev               12.4.127  0                             nvidia          Cached
+  + gds-tools                      1.9.1.3  0                             nvidia          Cached
+  + libcufile-dev                  1.9.1.3  0                             nvidia          Cached
+  + libcurand-dev               10.3.5.147  0                             nvidia          Cached
+  + libnvfatbin-dev               12.4.127  0                             nvidia          Cached
+  + cuda-cudart-dev               12.4.127  0                             nvidia          Cached
+  + cuda-nvvp                     12.4.127  0                             nvidia          Cached
+  + cuda-command-line-tools         12.4.1  0                             nvidia          Cached
+  + libgomp                         16.2.0  he0feb66_7                    conda-forge     Cached
+  + mpi                                1.0  openmpi                       conda-forge     Cached
+  + libzlib                          1.3.2  h25fd6f3_3                    conda-forge     Cached
+  + cuda-libraries                  12.4.1  ha770c72_1                    conda-forge     Cached
+  + cuda-libraries-dev              12.4.1  ha770c72_1                    conda-forge     Cached
+  + zlib                             1.3.2  h25fd6f3_3                    conda-forge     Cached
+  + zstd                             1.5.7  hb78ec9c_7                    conda-forge     Cached
+  + llvm-openmp                     15.0.7  h0cdce71_0                    conda-forge     Cached
+  + cuda-visual-tools               12.4.1  ha770c72_1                    conda-forge     Cached
+  + ld_impl_linux-64                2.46.1  default_hbd61a6d_103          conda-forge     Cached
+  + _openmp_mutex                      4.5  8_kmp_llvm                    conda-forge     Cached
+  + cuda-tools                      12.4.1  ha770c72_1                    conda-forge     Cached
+  + libgcc                          16.2.0  ha9f2e26_7                    conda-forge     Cached
+  + libev                             4.33  h280c20c_3                    conda-forge     Cached
+  + tk                              8.6.13  noxft_h1df4ec4_4              conda-forge     Cached
+  + ncurses                            6.6  hdb14827_1                    conda-forge     Cached
+  + libuuid                         2.42.4  hcfc3c73_1                    conda-forge     Cached
+  + libnsl                           2.0.1  hb9d3cd8_1                    conda-forge     Cached
+  + yaml                             0.2.5  hebe6cf0_3                    conda-forge     Cached
+  + libiconv                          1.18  h0cb94f2_3                    conda-forge     Cached
+  + keyutils                         1.6.3  h7cc23a3_1                    conda-forge     Cached
+  + c-ares                          1.34.9  hebe6cf0_0                    conda-forge     Cached
+  + liblzma                          5.8.3  hb03c661_1                    conda-forge     Cached
+  + libffi                           3.7.0  h81df57d_1                    conda-forge     Cached
+  + bzip2                            1.0.8  hda65f42_10                   conda-forge     Cached
+  + xxhash                           0.8.3  hec8ed23_1                    conda-forge     Cached
+  + libgfortran5                    16.2.0  h6b99dfc_7                    conda-forge     Cached
+  + libstdcxx                       16.2.0  h934c35e_7                    conda-forge     Cached
+  + libgcc-ng                       16.2.0  h69a702a_7                    conda-forge     Cached
+  + libexpat                         2.9.0  hd2095e1_0                    conda-forge     Cached
+  + aws-c-common                    0.14.3  hb03c661_0                    conda-forge     Cached
+  + libxcrypt                       4.4.38  h280c20c_0                    conda-forge     Cached
+  + readline                           8.3  hd6e31c0_1                    conda-forge     Cached
+  + libedit                   3.1.20260512  pl5321h373387f_0              conda-forge     Cached
+  + pcre2                            10.49  h8b3dc9c_0                    conda-forge        1MB
+  + libgfortran                     16.2.0  h69a702a_7                    conda-forge     Cached
+  + icu                               78.3  py310h44b86e0_2               conda-forge     Cached
+  + opencl-headers              2025.06.13  hecca717_0                    conda-forge     Cached
+  + libabseil                   20260526.0  cxx17_hbb87c76_4              conda-forge        1MB
+  + libsanitizer                    12.4.0  ha732cd4_2                    conda-forge     Cached
+  + gmp                              6.3.0  hfd2156b_3                    conda-forge     Cached
+  + libstdcxx-ng                    16.2.0  hdf11a46_7                    conda-forge     Cached
+  + aws-c-compression                0.3.2  h01ee8f8_5                    conda-forge     Cached
+  + aws-c-sdkutils                   0.2.7  h01ee8f8_3                    conda-forge     Cached
+  + aws-checksums                   0.2.10  h01ee8f8_5                    conda-forge     Cached
+  + perl                            5.44.0  1_h7cc23a3_perl5              conda-forge     Cached
+  + libgfortran-ng                  16.2.0  h69a702a_7                    conda-forge     Cached
+  + libopenblas                     0.3.34  pthreads_hf13c14d_2           conda-forge     Cached
+  + libpsl                          0.23.1  hd9e3e90_1                    conda-forge     Cached
+  + libsqlite                       3.54.1  h13e7031_0                    conda-forge     Cached
+  + libxml2-16                      2.15.4  hf3af7cc_1                    conda-forge     Cached
+  + ocl-icd                          2.3.4  hb03c661_1                    conda-forge     Cached
+  + mpfr                             4.2.2  ha2cb11d_1                    conda-forge     Cached
+  + cudatoolkit                     11.8.0  h4ba93d1_13                   conda-forge     Cached
+  + openmpi                          4.1.6  hc5af2df_101                  conda-forge     Cached
+  + libxml2                         2.15.4  h7df9aa5_1                    conda-forge     Cached
+  + ocl-icd-system                   1.0.0  1                             conda-forge     Cached
+  + mpc                              1.4.0  ha2cb11d_1                    conda-forge     Cached
+  + libhwloc                        2.15.0  default_hd7c4d0c_1001         conda-forge     Cached
+  + tbb                          2021.13.0  h7148c6a_9                    conda-forge      172kB
+  + mkl                           2023.2.0  ha770c72_50498                conda-forge     Cached
+  + libblas                          3.9.0  20_linux64_mkl                conda-forge     Cached
+  + blas                               1.0  mkl                           conda-forge     Cached
+  + libcblas                         3.9.0  20_linux64_mkl                conda-forge     Cached
+  + liblapack                        3.9.0  20_linux64_mkl                conda-forge     Cached
+  + gsl                                2.7  he838d99_0                    conda-forge     Cached
+  + ca-certificates             2026.10.23  hbd8a1cb_0                    conda-forge     Cached
+  + python_abi                        3.10  9_cp310                       conda-forge     Cached
+  + libgcc-devel_linux-64           12.4.0  h1762d19_102                  conda-forge     Cached
+  + kernel-headers_linux-64         5.14.0  he073ed8_3                    conda-forge     Cached
+  + tzdata                           2026e  h5d301ff_0                    conda-forge     Cached
+  + libstdcxx-devel_linux-64        12.4.0  h1762d19_102                  conda-forge     Cached
+  + cuda-runtime                    12.4.1  ha804496_0                    conda-forge     Cached
+  + sysroot_linux-64                  2.34  h087de78_3                    conda-forge     Cached
+  + kalign2                           2.04  h7b50bb2_8                    bioconda        Cached
+  + hmmer                              3.4  hb6cb901_4                    bioconda        Cached
+  + openssl                          3.6.5  h781a0a9_0                    conda-forge     Cached
+  + binutils_impl_linux-64          2.46.1  default_hfdba357_103          conda-forge     Cached
+  + libssh2                         1.11.1  h6154650_1                    conda-forge     Cached
+  + libnghttp2                      1.71.0  hc5e5977_0                    conda-forge     Cached
+  + krb5                            1.22.2  hbc21106_2                    conda-forge     Cached
+  + aws-c-cal                       0.9.15  h6bbde05_1                    conda-forge     Cached
+  + s2n                              1.7.6  h7e3ee7f_0                    conda-forge     Cached
+  + python                         3.10.22  h267e890_0_cpython            conda-forge     Cached
+  + binutils                        2.46.1  default_h4852527_103          conda-forge     Cached
+  + binutils_linux-64               2.46.1  default_h4852527_103          conda-forge     Cached
+  + gcc_impl_linux-64               12.4.0  h26ba24d_2                    conda-forge     Cached
+  + aria2                           1.37.0  h4b33fff_4                    conda-forge     Cached
+  + libcurl                         8.23.0  ha042cf0_0                    conda-forge     Cached
+  + aws-c-io                        0.27.5  h4f381ba_1                    conda-forge     Cached
+  + setuptools                      59.5.0  py310hff52083_0               conda-forge     Cached
+  + gcc_linux-64                    12.4.0  h6b7512a_10                   conda-forge     Cached
+  + gxx_impl_linux-64               12.4.0  h3ff227c_2                    conda-forge     Cached
+  + gcc                             12.4.0  h236703b_2                    conda-forge     Cached
+  + git                             2.56.0  pl5440hd619e0c_1              conda-forge       13MB
+  + aws-c-event-stream               0.7.1  h1d67b22_5                    conda-forge     Cached
+  + aws-c-http                      0.11.0  hbe094ff_5                    conda-forge     Cached
+  + gxx_linux-64                    12.4.0  h8489865_10                   conda-forge     Cached
+  + gxx                             12.4.0  h236703b_2                    conda-forge     Cached
+  + c-compiler                       1.7.0  hd590300_1                    conda-forge     Cached
+  + aws-c-mqtt                      0.16.0  h94f2f89_3                    conda-forge     Cached
+  + aws-c-auth                      0.10.4  h4610da3_2                    conda-forge     Cached
+  + cxx-compiler                     1.7.0  h00ab1b0_1                    conda-forge     Cached
+  + aws-c-s3                        0.13.1  h7508075_1                    conda-forge     Cached
+  + pytorch-cuda                      12.4  hc786d27_7                    pytorch         Cached
+  + packaging                         26.3  pyhc364b38_0                  conda-forge     Cached
+  + cuda-compiler                   12.4.1  hbad6d8a_0                    conda-forge     Cached
+  + wheel                           0.48.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + pip                             26.2.1  pyh8b19718_0                  conda-forge     Cached
+  + cuda-toolkit                    12.4.1  ha804496_0                    conda-forge     Cached
+  + python-tzdata                   2026.3  pyhd8ed1ab_0                  conda-forge     Cached
+  + pytz                      2026.3.post1  pyhcf101f3_0                  conda-forge     Cached
+  + zipp                             4.1.0  pyhcf101f3_0                  conda-forge     Cached
+  + pysocks                          1.7.1  pyha55dd90_7                  conda-forge     Cached
+  + hyperframe                       6.1.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + hpack                            4.2.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + distro                           1.8.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + wcwidth                         0.2.14  pyhd8ed1ab_0                  conda-forge     Cached
+  + jmespath                         1.0.1  pyhd8ed1ab_1                  conda-forge     Cached
+  + colorama                         0.4.6  pyhd8ed1ab_1                  conda-forge     Cached
+  + click                            8.4.2  pyhc90fa1f_0                  conda-forge     Cached
+  + platformdirs                    4.11.5  pyhcf101f3_0                  conda-forge     Cached
+  + six                             1.17.0  pyhe01879c_1                  conda-forge     Cached
+  + absl-py                          2.5.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + legacy-cgi                       2.6.4  pyhcf101f3_0                  conda-forge     Cached
+  + fsspec                        2026.7.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + certifi                     2026.10.23  pyhd8ed1ab_3                  conda-forge       14kB
+  + idna                              3.19  pyhcf101f3_0                  conda-forge     Cached
+  + cpython                        3.10.22  py310hd8ed1ab_0               conda-forge     Cached
+  + mpmath                           1.4.1  pyhd8ed1ab_0                  conda-forge     Cached
+  + networkx                         3.4.2  pyh267e887_2                  conda-forge     Cached
+  + filelock                        3.32.5  pyhd8ed1ab_0                  conda-forge     Cached
+  + typing_extensions               4.16.0  pyhcf101f3_0                  conda-forge     Cached
+  + tqdm                            4.70.0  pyh8f84b5b_0                  conda-forge     Cached
+  + cuda                            12.4.1  ha804496_0                    conda-forge     Cached
+  + importlib-metadata               8.7.1  pyhcf101f3_0                  conda-forge     Cached
+  + h2                               4.4.1  pyhcf101f3_0                  conda-forge     Cached
+  + prompt-toolkit                  3.0.51  pyha770c72_0                  conda-forge     Cached
+  + python-dateutil                  2.9.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + python-gil                     3.10.22  hd8ed1ab_0                    conda-forge     Cached
+  + typing-inspection                0.4.4  pyhcf101f3_0                  conda-forge     Cached
+  + lightning-utilities             0.15.3  pyhd8ed1ab_0                  conda-forge     Cached
+  + typing-extensions               4.16.0  h69aa097_0                    conda-forge     Cached
+  + _python_abi3_support               1.0  hd8ed1ab_3                    conda-forge     Cached
+  + annotated-types                  0.8.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + opentelemetry-api               1.44.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + brotli-python                    1.2.0  py310h25d4438_3               conda-forge     Cached
+  + backports.zstd                   1.7.0  py310hff74037_0               conda-forge     Cached
+  + ruamel.yaml.clib                0.2.15  py310h83e8816_3               conda-forge     Cached
+  + docutils                          0.19  py310hff52083_1               conda-forge     Cached
+  + msgpack-python                   1.2.2  py310he417ec5_1               conda-forge     Cached
+  + protobuf                        7.35.1  py310hffa8988_1               conda-forge     Cached
+  + python-xxhash                    3.7.0  py310hf3bd8b6_0               conda-forge     Cached
+  + markupsafe                       3.0.3  py310h3406613_1               conda-forge     Cached
+  + gmpy2                            2.3.1  py310haf1ad51_0               conda-forge     Cached
+  + awscrt                          0.36.2  py310h01eb2e4_0               conda-forge     Cached
+  + pyyaml                           6.0.3  py310h3406613_1               conda-forge     Cached
+  + numpy                            2.2.6  py310hefbff90_0               conda-forge     Cached
+  + pydantic-core                   2.46.5  py310hbfe5df0_1               conda-forge     Cached
+  + charset-normalizer               3.5.2  h1114479_0                    conda-forge     Cached
+  + ihm                               2.11  py310h7c4b9e2_0               conda-forge     Cached
+  + scipy                           1.15.2  py310h1d65ade_0               conda-forge     Cached
+  + pandas                           2.3.3  py310h0158d43_2               conda-forge     Cached
+  + biopython                         1.88  py310h7c4b9e2_0               conda-forge     Cached
+  + openmm                           8.2.0  py310h2b8030a_3               conda-forge     Cached
+  + hhsuite                          3.3.0  h503566f_15                   bioconda        Cached
+  + urllib3                          2.6.3  pyhd8ed1ab_0                  conda-forge     Cached
+  + ruamel.yaml                     0.19.1  pyhcf101f3_0                  conda-forge     Cached
+  + jinja2                           3.1.6  pyhcf101f3_1                  conda-forge     Cached
+  + sympy                           1.14.0  pyh2585a3b_106                conda-forge     Cached
+  + ml-collections                   1.0.0  pyh29332c3_0                  conda-forge     Cached
+  + pydantic                        2.13.5  pyhcf101f3_0                  conda-forge     Cached
+  + modelcif                           0.7  pyhd8ed1ab_0                  conda-forge     Cached
+  + pdbfixer                          1.12  pyhd8ed1ab_1                  conda-forge     Cached
+  + sentry-sdk                      2.68.1  pyhd8ed1ab_0                  conda-forge     Cached
+  + requests                        2.34.2  pyhcf101f3_0                  conda-forge     Cached
+  + awscli                         2.36.35  py310hd3bfc61_0               conda-forge     Cached
+  + wandb                           0.29.0  py310hbfe5df0_0               conda-forge     Cached
+  + pytorch                          2.5.1  py3.10_cuda12.4_cudnn9.1.0_0  pytorch         Cached
+  + torchtriton                      3.1.0  py310                         pytorch         Cached
+  + torchmetrics                     1.9.0  pyhd8ed1ab_0                  conda-forge     Cached
+  + pytorch-lightning                2.6.5  pyhcf101f3_0                  conda-forge     Cached
+
+  Summary:
+
+  Install: 228 packages
+
+  Total download: 16MB
+
+──────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+Downloading and Extracting Packages
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... By downloading and using the CUDA Toolkit conda packages, you accept the terms and conditions of the CUDA End User License Agreement (EULA): https://docs.nvidia.com/cuda/eula/index.html
+
+ 
+For Linux 64, Open MPI is built with CUDA awareness but this support is disabled by default.
+To enable it, please set the environment variable OMPI_MCA_opal_cuda_support=true before
+launching your MPI processes. Equivalently, you can set the MCA parameter in the command line:
+mpiexec --mca opal_cuda_support 1 ...
+ 
+In addition, the UCX support is also built but disabled by default.
+To enable it, first install UCX (conda install -c conda-forge ucx). Then, set the environment
+variables OMPI_MCA_pml="ucx" OMPI_MCA_osc="ucx" before launching your MPI processes.
+Equivalently, you can set the MCA parameters in the command line:
+mpiexec --mca pml ucx --mca osc ucx ...
+Note that you might also need to set UCX_MEMTYPE_CACHE=n for CUDA awareness via UCX.
+Please consult UCX's documentation for detail.
+ 
+
+done
+Installing pip dependencies: ...working... Ran pip subprocess with arguments:
+['/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/python', '-m', 'pip', 'install', '-U', '-r', '/home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt', '--exists-action=b']
+Pip subprocess output:
+Collecting git+https://github.com/NVIDIA/dllogger.git (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 3))
+  Cloning https://github.com/NVIDIA/dllogger.git to /storage/ice1/4/4/ylee3055/tmp/pip-req-build-z2m33aaa
+  Resolved https://github.com/NVIDIA/dllogger.git to commit 0478734ff7be75adde8d160e04872664d1c62e5f
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting deepspeed==0.14.5 (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading deepspeed-0.14.5.tar.gz (1.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 25.5 MB/s  0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting dm-tree==0.1.6 (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 2))
+  Downloading dm_tree-0.1.6-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl.metadata (1.9 kB)
+Collecting tensorrt-cu12 (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 4))
+  Downloading tensorrt_cu12-11.4.0.106.tar.gz (17 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting polygraphy (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 5))
+  Downloading polygraphy-0.53.6-py3-none-any.whl.metadata (5.8 kB)
+Collecting cuda-python<13 (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 6))
+  Downloading cuda_python-12.9.10-py3-none-any.whl.metadata (4.6 kB)
+Collecting nvidia-ml-py (from -r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 7))
+  Downloading nvidia_ml_py-13.615.71-py3-none-any.whl.metadata (9.7 kB)
+Collecting hjson (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading hjson-3.1.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting ninja (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading ninja-1.13.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.4 kB)
+Requirement already satisfied: numpy in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (2.2.6)
+Requirement already satisfied: packaging>=20.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (26.3)
+Collecting psutil (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting py-cpuinfo (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading py_cpuinfo-9.0.0-py3-none-any.whl.metadata (794 bytes)
+Requirement already satisfied: pydantic in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (2.13.5)
+Requirement already satisfied: torch in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (2.5.1)
+Requirement already satisfied: tqdm in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (4.70.0)
+Collecting cuda-bindings~=12.9.10 (from cuda-python<13->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 6))
+  Downloading cuda_bindings-12.9.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.6 kB)
+Collecting cuda-pathfinder~=1.1 (from cuda-bindings~=12.9.10->cuda-python<13->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 6))
+  Downloading cuda_pathfinder-1.8.3-py3-none-any.whl.metadata (1.9 kB)
+Collecting tensorrt_cu12_libs==11.4.0.106 (from tensorrt-cu12->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 4))
+  Downloading tensorrt_cu12_libs-11.4.0.106.tar.gz (15 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting tensorrt_cu12_bindings==11.4.0.106 (from tensorrt-cu12->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 4))
+  Downloading tensorrt_cu12_bindings-11.4.0.106-cp310-none-manylinux_2_28_x86_64.whl.metadata (686 bytes)
+Requirement already satisfied: annotated-types>=0.6.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from pydantic->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (0.8.0)
+Requirement already satisfied: pydantic-core==2.46.5 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from pydantic->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (2.46.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from pydantic->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (4.16.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from pydantic->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (0.4.4)
+Requirement already satisfied: filelock in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (3.32.5)
+Requirement already satisfied: networkx in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (3.4.2)
+Requirement already satisfied: jinja2 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (2026.7.0)
+Collecting sympy==1.13.1 (from torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading sympy-1.13.1-py3-none-any.whl.metadata (12 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy==1.13.1->torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from jinja2->torch->deepspeed==0.14.5->-r /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/condaenv.hz6jeauw.requirements.txt (line 1)) (3.0.3)
+Downloading dm_tree-0.1.6-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (142 kB)
+Downloading cuda_python-12.9.10-py3-none-any.whl (6.6 kB)
+Downloading cuda_bindings-12.9.10-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (7.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.6/7.6 MB 126.0 MB/s  0:00:00
+Downloading cuda_pathfinder-1.8.3-py3-none-any.whl (62 kB)
+Downloading tensorrt_cu12_bindings-11.4.0.106-cp310-none-manylinux_2_28_x86_64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 65.8 MB/s  0:00:00
+Downloading polygraphy-0.53.6-py3-none-any.whl (485 kB)
+Downloading nvidia_ml_py-13.615.71-py3-none-any.whl (58 kB)
+Downloading hjson-3.1.0-py3-none-any.whl (54 kB)
+Downloading ninja-1.13.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (183 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading py_cpuinfo-9.0.0-py3-none-any.whl (22 kB)
+Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 125.1 MB/s  0:00:00
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 26.1 MB/s  0:00:00
+Building wheels for collected packages: DLLogger, deepspeed, tensorrt-cu12, tensorrt_cu12_libs
+  Building wheel for DLLogger (pyproject.toml): started
+  Building wheel for DLLogger (pyproject.toml): finished with status 'done'
+  Created wheel for DLLogger: filename=dllogger-1.1.0-py3-none-any.whl size=5730 sha256=876b4e45b448a5ddc068beb26785a20bbe30b2d8818be033a24aa468ece97137
+  Stored in directory: /storage/ice1/4/4/ylee3055/tmp/pip-ephem-wheel-cache-yrgu7zvp/wheels/c0/c2/32/8b6147f8429ee9f640decf2f46837eda7d4344a01f755002a3
+  Building wheel for deepspeed (pyproject.toml): started
+  Building wheel for deepspeed (pyproject.toml): finished with status 'done'
+  Created wheel for deepspeed: filename=deepspeed-0.14.5-py3-none-any.whl size=1468826 sha256=a88553f5d68f2286e797b49c8dc4c4c33d75956f60cedaaa9476ba7491183a40
+  Stored in directory: /storage/ice1/4/4/ylee3055/repro-check/pip-cache/wheels/40/4f/43/e69eacbe24afb789cb4a7691938cb375cea39a042a9a28955e
+  Building wheel for tensorrt-cu12 (pyproject.toml): started
+  Building wheel for tensorrt-cu12 (pyproject.toml): finished with status 'done'
+  Created wheel for tensorrt-cu12: filename=tensorrt_cu12-11.4.0.106-py3-none-any.whl size=23074 sha256=3d933f02ad63f968f0790404ca67bd1b9a00d256012ee49d79d30de2a3651346
+  Stored in directory: /storage/ice1/4/4/ylee3055/repro-check/pip-cache/wheels/2e/91/98/28a732523919019e127f79688543cd17c03c781f03e4e7731c
+  Building wheel for tensorrt_cu12_libs (pyproject.toml): started
+  Building wheel for tensorrt_cu12_libs (pyproject.toml): finished with status 'done'
+  Created wheel for tensorrt_cu12_libs: filename=tensorrt_cu12_libs-11.4.0.106-py3-none-manylinux_2_28_x86_64.whl size=4387870117 sha256=e191c190d628c4f2ab6fc65cd4c315de58b422989bdc415d34a8e7a5ea0ca584
+  Stored in directory: /storage/ice1/4/4/ylee3055/repro-check/pip-cache/wheels/83/74/5c/5c269b0406e312d1fe10cabe2276ec636aadd5755e804dcb9a
+Successfully built DLLogger deepspeed tensorrt-cu12 tensorrt_cu12_libs
+Installing collected packages: tensorrt_cu12_libs, tensorrt_cu12_bindings, py-cpuinfo, nvidia-ml-py, mpmath, hjson, dm-tree, tensorrt-cu12, sympy, psutil, polygraphy, ninja, DLLogger, cuda-pathfinder, cuda-bindings, deepspeed, cuda-python
+  Attempting uninstall: mpmath
+    Found existing installation: mpmath 1.4.1
+    Uninstalling mpmath-1.4.1:
+      Successfully uninstalled mpmath-1.4.1
+  Attempting uninstall: sympy
+    Found existing installation: sympy 1.14.0
+    Uninstalling sympy-1.14.0:
+      Successfully uninstalled sympy-1.14.0
+
+Successfully installed DLLogger-1.1.0 cuda-bindings-12.9.10 cuda-pathfinder-1.8.3 cuda-python-12.9.10 deepspeed-0.14.5 dm-tree-0.1.6 hjson-3.1.0 mpmath-1.3.0 ninja-1.13.2 nvidia-ml-py-13.615.71 polygraphy-0.53.6 psutil-7.2.2 py-cpuinfo-9.0.0 sympy-1.13.1 tensorrt-cu12-11.4.0.106 tensorrt_cu12_bindings-11.4.0.106 tensorrt_cu12_libs-11.4.0.106
+
+done
+#
+# To activate this environment, use
+#
+#     $ conda activate openfold-env-check
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+
+=== STEP 1.3 install OpenFold (07:18:04) ===
+Collecting flash-attn==2.8.3
+  Downloading flash_attn-2.8.3.tar.gz (8.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.4/8.4 MB 69.1 MB/s  0:00:00
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): still running...
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: torch in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from flash-attn==2.8.3) (2.5.1)
+Collecting einops (from flash-attn==2.8.3)
+  Downloading einops-0.8.2-py3-none-any.whl.metadata (13 kB)
+Requirement already satisfied: filelock in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (3.32.5)
+Requirement already satisfied: typing-extensions>=4.8.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (4.16.0)
+Requirement already satisfied: networkx in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (3.4.2)
+Requirement already satisfied: jinja2 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (3.1.6)
+Requirement already satisfied: fsspec in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (2026.7.0)
+Requirement already satisfied: sympy==1.13.1 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from torch->flash-attn==2.8.3) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from sympy==1.13.1->torch->flash-attn==2.8.3) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages (from jinja2->torch->flash-attn==2.8.3) (3.0.3)
+Downloading einops-0.8.2-py3-none-any.whl (65 kB)
+Building wheels for collected packages: flash-attn
+  Building wheel for flash-attn (pyproject.toml): started
+  Building wheel for flash-attn (pyproject.toml): finished with status 'done'
+  Created wheel for flash-attn: filename=flash_attn-2.8.3-cp310-cp310-linux_x86_64.whl size=255955166 sha256=c59be18fa934e132e5a405bcca6673af1d9d09a0036a9e081133bc7b7fc2992e
+  Stored in directory: /storage/ice1/4/4/ylee3055/repro-check/pip-cache/wheels/f5/05/1e/a6726e9eee2e7ee6151dbfed113e89d220dd3964ba617ab32d
+Successfully built flash-attn
+Installing collected packages: einops, flash-attn
+
+Successfully installed einops-0.8.2 flash-attn-2.8.3
+--2026-11-09 07:19:58--  https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+Resolving git.scicore.unibas.ch (git.scicore.unibas.ch)... 131.152.229.50
+Connecting to git.scicore.unibas.ch (git.scicore.unibas.ch)|131.152.229.50|:443... connected.
+HTTP request sent, awaiting response... 403 Forbidden
+2026-11-09 07:19:59 ERROR 403: Forbidden.
+
+running install
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/setuptools/command/easy_install.py:156: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running bdist_egg
+running egg_info
+creating openfold.egg-info
+writing openfold.egg-info/PKG-INFO
+writing dependency_links to openfold.egg-info/dependency_links.txt
+writing requirements to openfold.egg-info/requires.txt
+writing top-level names to openfold.egg-info/top_level.txt
+writing manifest file 'openfold.egg-info/SOURCES.txt'
+reading manifest file 'openfold.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'openfold.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build
+creating build/lib.linux-x86_64-3.10
+creating build/lib.linux-x86_64-3.10/openfold
+copying openfold/config.py -> build/lib.linux-x86_64-3.10/openfold
+copying openfold/__init__.py -> build/lib.linux-x86_64-3.10/openfold
+creating build/lib.linux-x86_64-3.10/openfold/resources
+copying openfold/resources/__init__.py -> build/lib.linux-x86_64-3.10/openfold/resources
+creating build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/mmcif_parsing.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/msa_identifiers.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/input_pipeline_multimer.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/feature_pipeline.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/input_pipeline.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/feature_processing_multimer.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/data_transforms.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/__init__.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/templates.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/data_transforms_multimer.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/data_pipeline.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/data_modules.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/msa_pairing.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/parsers.py -> build/lib.linux-x86_64-3.10/openfold/data
+copying openfold/data/errors.py -> build/lib.linux-x86_64-3.10/openfold/data
+creating build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/triangular_multiplicative_update.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/torchscript.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/outer_product_mean.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/pair_transition.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/evoformer.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/triangular_attention.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/primitives.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/heads.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/template.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/embedders.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/structure_module.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/msa.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/model.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/dropout.py -> build/lib.linux-x86_64-3.10/openfold/model
+copying openfold/model/__init__.py -> build/lib.linux-x86_64-3.10/openfold/model
+creating build/lib.linux-x86_64-3.10/openfold/np
+copying openfold/np/residue_constants.py -> build/lib.linux-x86_64-3.10/openfold/np
+copying openfold/np/protein.py -> build/lib.linux-x86_64-3.10/openfold/np
+copying openfold/np/__init__.py -> build/lib.linux-x86_64-3.10/openfold/np
+creating build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/rigid_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/precision_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/trace_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/logger.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/script_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/all_atom_multimer.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/superimposition.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/callbacks.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/feats.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/multi_chain_permutation.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/tensor_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/tensorrt_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/exponential_moving_average.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/argparse_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/import_weights.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/lr_schedulers.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/tensorrt_lazy_compiler.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/checkpointing.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/chunk_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/__init__.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/validation_metrics.py -> build/lib.linux-x86_64-3.10/openfold/utils
+copying openfold/utils/loss.py -> build/lib.linux-x86_64-3.10/openfold/utils
+creating build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/hmmsearch.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/kalign.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/utils.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/jackhmmer.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/hhblits.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/parse_msa_files.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/hmmbuild.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/__init__.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+copying openfold/data/tools/hhsearch.py -> build/lib.linux-x86_64-3.10/openfold/data/tools
+creating build/lib.linux-x86_64-3.10/openfold/np/relax
+copying openfold/np/relax/utils.py -> build/lib.linux-x86_64-3.10/openfold/np/relax
+copying openfold/np/relax/amber_minimize.py -> build/lib.linux-x86_64-3.10/openfold/np/relax
+copying openfold/np/relax/relax.py -> build/lib.linux-x86_64-3.10/openfold/np/relax
+copying openfold/np/relax/__init__.py -> build/lib.linux-x86_64-3.10/openfold/np/relax
+copying openfold/np/relax/cleanup.py -> build/lib.linux-x86_64-3.10/openfold/np/relax
+creating build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/quat_rigid.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/vector.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/rotation_matrix.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/utils.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/rigid_matrix_vector.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/test_utils.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+copying openfold/utils/geometry/__init__.py -> build/lib.linux-x86_64-3.10/openfold/utils/geometry
+creating build/lib.linux-x86_64-3.10/openfold/utils/kernel
+copying openfold/utils/kernel/attention_core.py -> build/lib.linux-x86_64-3.10/openfold/utils/kernel
+copying openfold/utils/kernel/__init__.py -> build/lib.linux-x86_64-3.10/openfold/utils/kernel
+creating build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc
+copying openfold/utils/kernel/csrc/softmax_cuda.cpp -> build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc
+copying openfold/utils/kernel/csrc/softmax_cuda_kernel.cu -> build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc
+copying openfold/utils/kernel/csrc/compat.h -> build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc
+copying openfold/utils/kernel/csrc/softmax_cuda_stub.cpp -> build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc
+warning: build_py: byte-compiling is disabled, skipping.
+
+running build_ext
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/utils/cpp_extension.py:426: UserWarning: There are no /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/x86_64-conda-linux-gnu-c++ version bounds defined for CUDA version 12.4
+  warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+building 'attn_core_inplace_cuda' extension
+creating /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10
+creating /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold
+creating /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils
+creating /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel
+creating /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc
+Emitting ninja build file /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/build.ninja...
+Compiling objects...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/2] /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/x86_64-conda-linux-gnu-c++ -MMD -MF /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -fno-merge-constants -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -fPIC -O2 -fno-merge-constants -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -fPIC -I/storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include/python3.10 -c -c /storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/kernel/csrc/softmax_cuda.cpp -o /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o -O3 -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
+[2/2] /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/nvcc --generate-dependencies-with-compile --dependency-output /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o.d -I/storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/kernel/csrc/ -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/TH -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/include/THC -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -I/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include/python3.10 -c -c /storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/kernel/csrc/softmax_cuda_kernel.cu -o /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 --use_fast_math -DVERSION_GE_1_1 -DVERSION_GE_1_3 -DVERSION_GE_1_5 -std=c++17 -maxrregcount=50 -U__CUDA_NO_HALF_OPERATORS__ -U__CUDA_NO_HALF_CONVERSIONS__ --expt-relaxed-constexpr --expt-extended-lambda -gencode arch=compute_80,code=sm_80 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=attn_core_inplace_cuda -D_GLIBCXX_USE_CXX11_ABI=0 -ccbin /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/x86_64-conda-linux-gnu-cc
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/bin/x86_64-conda-linux-gnu-c++ -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -Wl,-rpath-link,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -L/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -Wl,-rpath-link,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -L/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -Wl,-rpath-link,/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -L/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/include /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.o /storage/ice1/4/4/ylee3055/repro-check/openfold/build/temp.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.o -L/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/torch/lib -L/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib -lc10 -ltorch -ltorch_cpu -ltorch_python -lcudart -lc10_cuda -ltorch_cuda -o build/lib.linux-x86_64-3.10/attn_core_inplace_cuda.cpython-310-x86_64-linux-gnu.so
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/openfold
+creating build/bdist.linux-x86_64/egg/openfold/resources
+copying build/lib.linux-x86_64-3.10/openfold/resources/__init__.py -> build/bdist.linux-x86_64/egg/openfold/resources
+creating build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/mmcif_parsing.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/msa_identifiers.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/input_pipeline_multimer.py -> build/bdist.linux-x86_64/egg/openfold/data
+creating build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/hmmsearch.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/kalign.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/utils.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/jackhmmer.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/hhblits.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/parse_msa_files.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/hmmbuild.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/__init__.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/tools/hhsearch.py -> build/bdist.linux-x86_64/egg/openfold/data/tools
+copying build/lib.linux-x86_64-3.10/openfold/data/feature_pipeline.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/input_pipeline.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/feature_processing_multimer.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/data_transforms.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/__init__.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/templates.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/data_transforms_multimer.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/data_pipeline.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/data_modules.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/msa_pairing.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/parsers.py -> build/bdist.linux-x86_64/egg/openfold/data
+copying build/lib.linux-x86_64-3.10/openfold/data/errors.py -> build/bdist.linux-x86_64/egg/openfold/data
+creating build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/triangular_multiplicative_update.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/torchscript.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/outer_product_mean.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/pair_transition.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/evoformer.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/triangular_attention.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/primitives.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/heads.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/template.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/embedders.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/structure_module.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/msa.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/model.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/dropout.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/model/__init__.py -> build/bdist.linux-x86_64/egg/openfold/model
+copying build/lib.linux-x86_64-3.10/openfold/config.py -> build/bdist.linux-x86_64/egg/openfold
+creating build/bdist.linux-x86_64/egg/openfold/np
+copying build/lib.linux-x86_64-3.10/openfold/np/residue_constants.py -> build/bdist.linux-x86_64/egg/openfold/np
+copying build/lib.linux-x86_64-3.10/openfold/np/protein.py -> build/bdist.linux-x86_64/egg/openfold/np
+creating build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/relax/utils.py -> build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/relax/amber_minimize.py -> build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/relax/relax.py -> build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/relax/__init__.py -> build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/relax/cleanup.py -> build/bdist.linux-x86_64/egg/openfold/np/relax
+copying build/lib.linux-x86_64-3.10/openfold/np/__init__.py -> build/bdist.linux-x86_64/egg/openfold/np
+copying build/lib.linux-x86_64-3.10/openfold/__init__.py -> build/bdist.linux-x86_64/egg/openfold
+creating build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/rigid_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/precision_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+creating build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/quat_rigid.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/vector.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/rotation_matrix.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/utils.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/rigid_matrix_vector.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/test_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/geometry/__init__.py -> build/bdist.linux-x86_64/egg/openfold/utils/geometry
+copying build/lib.linux-x86_64-3.10/openfold/utils/trace_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/logger.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/script_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+creating build/bdist.linux-x86_64/egg/openfold/utils/kernel
+creating build/bdist.linux-x86_64/egg/openfold/utils/kernel/csrc
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda.cpp -> build/bdist.linux-x86_64/egg/openfold/utils/kernel/csrc
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_kernel.cu -> build/bdist.linux-x86_64/egg/openfold/utils/kernel/csrc
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc/compat.h -> build/bdist.linux-x86_64/egg/openfold/utils/kernel/csrc
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/csrc/softmax_cuda_stub.cpp -> build/bdist.linux-x86_64/egg/openfold/utils/kernel/csrc
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/attention_core.py -> build/bdist.linux-x86_64/egg/openfold/utils/kernel
+copying build/lib.linux-x86_64-3.10/openfold/utils/kernel/__init__.py -> build/bdist.linux-x86_64/egg/openfold/utils/kernel
+copying build/lib.linux-x86_64-3.10/openfold/utils/all_atom_multimer.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/superimposition.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/callbacks.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/feats.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/multi_chain_permutation.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/tensor_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/tensorrt_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/exponential_moving_average.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/argparse_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/import_weights.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/lr_schedulers.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/tensorrt_lazy_compiler.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/checkpointing.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/chunk_utils.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/__init__.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/validation_metrics.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/openfold/utils/loss.py -> build/bdist.linux-x86_64/egg/openfold/utils
+copying build/lib.linux-x86_64-3.10/attn_core_inplace_cuda.cpython-310-x86_64-linux-gnu.so -> build/bdist.linux-x86_64/egg
+warning: install_lib: byte-compiling is disabled, skipping.
+
+creating stub loader for attn_core_inplace_cuda.cpython-310-x86_64-linux-gnu.so
+warning: install_lib: byte-compiling is disabled, skipping.
+
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying openfold.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying openfold.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying openfold.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying openfold.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying openfold.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+writing build/bdist.linux-x86_64/egg/EGG-INFO/native_libs.txt
+zip_safe flag not set; analyzing archive contents...
+creating dist
+creating 'dist/openfold-2.2.0-py3.10-linux-x86_64.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing openfold-2.2.0-py3.10-linux-x86_64.egg
+Copying openfold-2.2.0-py3.10-linux-x86_64.egg to /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages
+Adding openfold 2.2.0 to easy-install.pth file
+
+Installed /storage/ice1/4/4/ylee3055/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg
+Processing dependencies for openfold==2.2.0
+Finished processing dependencies for openfold==2.2.0
+Download CUTLASS, required for Deepspeed Evoformer attention kernel
+Cloning into 'cutlass'...
+Note: switching to 'bf9da7b76c766d7ee7d536afc77880a4ef1f1156'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Updating files:   9% (568/5888)Updating files:  10% (589/5888)Updating files:  11% (648/5888)Updating files:  12% (707/5888)Updating files:  13% (766/5888)Updating files:  14% (825/5888)Updating files:  15% (884/5888)Updating files:  16% (943/5888)Updating files:  17% (1001/5888)Updating files:  18% (1060/5888)Updating files:  19% (1119/5888)Updating files:  19% (1128/5888)Updating files:  20% (1178/5888)Updating files:  21% (1237/5888)Updating files:  22% (1296/5888)Updating files:  23% (1355/5888)Updating files:  24% (1414/5888)Updating files:  25% (1472/5888)Updating files:  26% (1531/5888)Updating files:  27% (1590/5888)Updating files:  28% (1649/5888)Updating files:  29% (1708/5888)Updating files:  30% (1767/5888)Updating files:  30% (1805/5888)Updating files:  31% (1826/5888)Updating files:  32% (1885/5888)Updating files:  33% (1944/5888)Updating files:  34% (2002/5888)Updating files:  35% (2061/5888)Updating files:  36% (2120/5888)Updating files:  37% (2179/5888)Updating files:  38% (2238/5888)Updating files:  39% (2297/5888)Updating files:  39% (2316/5888)Updating files:  40% (2356/5888)Updating files:  41% (2415/5888)Updating files:  42% (2473/5888)Updating files:  43% (2532/5888)Updating files:  44% (2591/5888)Updating files:  45% (2650/5888)Updating files:  46% (2709/5888)Updating files:  47% (2768/5888)Updating files:  48% (2827/5888)Updating files:  49% (2886/5888)Updating files:  49% (2928/5888)Updating files:  50% (2944/5888)Updating files:  51% (3003/5888)Updating files:  52% (3062/5888)Updating files:  53% (3121/5888)Updating files:  54% (3180/5888)Updating files:  55% (3239/5888)Updating files:  56% (3298/5888)Updating files:  57% (3357/5888)Updating files:  58% (3416/5888)Updating files:  59% (3474/5888)Updating files:  60% (3533/5888)Updating files:  60% (3554/5888)Updating files:  61% (3592/5888)Updating files:  62% (3651/5888)Updating files:  63% (3710/5888)Updating files:  64% (3769/5888)Updating files:  65% (3828/5888)Updating files:  66% (3887/5888)Updating files:  67% (3945/5888)Updating files:  68% (4004/5888)Updating files:  69% (4063/5888)Updating files:  70% (4122/5888)Updating files:  70% (4176/5888)Updating files:  71% (4181/5888)Updating files:  72% (4240/5888)Updating files:  73% (4299/5888)Updating files:  74% (4358/5888)Updating files:  75% (4416/5888)Updating files:  76% (4475/5888)Updating files:  77% (4534/5888)Updating files:  78% (4593/5888)Updating files:  79% (4652/5888)Updating files:  80% (4711/5888)Updating files:  80% (4712/5888)Updating files:  81% (4770/5888)Updating files:  82% (4829/5888)Updating files:  83% (4888/5888)Updating files:  84% (4946/5888)Updating files:  85% (5005/5888)Updating files:  86% (5064/5888)Updating files:  87% (5123/5888)Updating files:  88% (5182/5888)Updating files:  89% (5241/5888)Updating files:  89% (5284/5888)Updating files:  90% (5300/5888)Updating files:  91% (5359/5888)Updating files:  92% (5417/5888)Updating files:  93% (5476/5888)Updating files:  94% (5535/5888)Updating files:  95% (5594/5888)Updating files:  96% (5653/5888)Updating files:  97% (5712/5888)Updating files:  98% (5771/5888)Updating files:  99% (5830/5888)Updating files:  99% (5886/5888)Updating files: 100% (5888/5888)Updating files: 100% (5888/5888), done.
+To make your changes take effect please reactivate your environment
+To make your changes take effect please reactivate your environment
+2.5.1 12.4
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+run_pretrained_openfold --help OK
+
+=== STEP 3 Option A: 6KWC inference (slurm/openfold_inference.slurm) (07:23:24) ===
+=== SLURM execution metadata ===
+Date: 2026-11-09T07:23:27-05:00
+Job ID: 6893957
+Node: atl1-1-01-005-15-0.pace.gatech.edu
+Conda env: /home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check
+
+Mon Nov  9 07:23:27 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:C1:00.0 Off |                    0 |
+| N/A   34C    P0             45W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+=== OpenFold reproducible inference ===
+OpenFold:       /home/hice1/ylee3055/scratch/repro-check/openfold
+Input:          /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/inputs
+Alignments:     /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments
+Parameters:     /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+Templates:      /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/pdb_mmcif/mmcif_files
+Output:         /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run
+
+[2026-11-09 07:23:34,813] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/openfold/utils/script_utils.py:Inference time: 19.071236875955947
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /home/hice1/ylee3055/scratch/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== STEP 4 validate (07:24:16) ===
+=== OpenFold prediction validation ===
+FASTA length: 191
+Prediction residues: 191
+Prediction sequence exact match: True
+
+Mean pLDDT: 97.72
+Median pLDDT: 98.57
+Min pLDDT: 58.91
+Max pLDDT: 98.92
+
+Confidence bins:
+Very high (>=90): 188
+Confident (70-90): 2
+Low (50-70): 1
+Very low (<50): 0
+
+=== Experimental structure comparison ===
+Experimental residues: 191
+Experimental sequence exact match: True
+Aligned C-alpha residues: 191
+C-alpha RMSD after optimal superposition: 0.961 Angstrom
+Aligned prediction written to: /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run/predictions/6KWC_1_model_1_ptm_aligned_to_6KWC.pdb
+eca9dedb426047a781658bf8679e5f99d26fcb007e8f4c5a7929bfd15cd48b69  results/run/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb
+eca9dedb426047a781658bf8679e5f99d26fcb007e8f4c5a7929bfd15cd48b69  results/6KWC_1_model_1_ptm_unrelaxed.pdb
+
+=== STEP 7.1 measurements (slurm/measure_inference.slurm) (07:24:21) ===
+Date: 2026-11-09T07:24:23-05:00  Job: 6893957  Node: atl1-1-01-005-15-0.pace.gatech.edu
+name, memory.total [MiB], driver_version
+NVIDIA A100 80GB PCIe, 81920 MiB, 615.71.09
+
+=== 6KWC_1 (191 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/6KWC_1 ===
+[2026-11-09 07:24:26,782] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 7.712250135955401
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 7.182747357990593
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 7.195366510073654
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 7.213376741041429
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/6KWC_1/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 6KWC_1: ok ===
+     time_s_median: 7.2
+      time_s_first: 7.72
+    peak_alloc_gib: 4.37
+ peak_gpu_used_gib: 7.77
+ gpu_util_mean_pct: 93.3
+        mean_plddt: 97.72
+               ptm: 0.934
+          tm_score: 0.987
+           lddt_ca: 0.983
+           rmsd_ca: 0.96
+=== 9OUF_A (159 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9OUF_A ===
+[2026-11-09 07:25:14,587] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 9OUF_A at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/length-series/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9OUF_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 6.505257104057819
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9OUF_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 5.666460098000243
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9OUF_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 5.67630063300021
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9OUF_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 5.683758429018781
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9OUF_A/predictions/9OUF_A_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 9OUF_A: ok ===
+     time_s_median: 5.68
+      time_s_first: 6.51
+    peak_alloc_gib: 3.69
+ peak_gpu_used_gib: 6.22
+ gpu_util_mean_pct: 91.3
+        mean_plddt: 87.47
+               ptm: 0.77
+          tm_score: 0.946
+           lddt_ca: 0.924
+           rmsd_ca: 2.98
+=== 9Q5U_A (325 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9Q5U_A ===
+[2026-11-09 07:25:54,495] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 9Q5U_A at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/length-series/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9Q5U_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 17.47866250097286
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9Q5U_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 17.00429700606037
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9Q5U_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 17.100654860958457
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9Q5U_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 17.18762668198906
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9Q5U_A/predictions/9Q5U_A_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 9Q5U_A: ok ===
+     time_s_median: 17.1
+      time_s_first: 17.5
+    peak_alloc_gib: 7.23
+ peak_gpu_used_gib: 17.69
+ gpu_util_mean_pct: 96.2
+        mean_plddt: 91.71
+               ptm: 0.877
+          tm_score: 0.877
+           lddt_ca: 0.868
+           rmsd_ca: 2.67
+=== 9NXH_A (500 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9NXH_A ===
+[2026-11-09 07:27:21,632] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 9NXH_A at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/length-series/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9NXH_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 37.03163279395085
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9NXH_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 36.098017676966265
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9NXH_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 35.96849515102804
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9NXH_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 35.899939902010374
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9NXH_A/predictions/9NXH_A_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 9NXH_A: ok ===
+     time_s_median: 35.97
+      time_s_first: 37.03
+    peak_alloc_gib: 11.02
+ peak_gpu_used_gib: 37.57
+ gpu_util_mean_pct: 96.3
+        mean_plddt: 91.48
+               ptm: 0.693
+          tm_score: 0.72
+           lddt_ca: 0.94
+           rmsd_ca: 12.85
+=== 9LB7_A (777 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9LB7_A ===
+[2026-11-09 07:30:13,760] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 9LB7_A at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/length-series/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9LB7_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 103.40430886903778
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9LB7_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 100.19784471800085
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9LB7_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 100.36548693897203
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 9LB7_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 100.44981827202719
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/9LB7_A/predictions/9LB7_A_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 9LB7_A: ok ===
+     time_s_median: 100.37
+      time_s_first: 103.41
+    peak_alloc_gib: 23.26
+ peak_gpu_used_gib: 55.92
+ gpu_util_mean_pct: 96.7
+        mean_plddt: 95.73
+               ptm: 0.941
+          tm_score: 0.99
+           lddt_ca: 0.967
+           rmsd_ca: 1.12
+=== 8P5S_A (1125 residues) -> /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/8P5S_A ===
+[2026-11-09 07:37:34,734] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Using precomputed alignments for 8P5S_A at /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/length-series/alignments...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 8P5S_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 343.13501130905934
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 8P5S_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 317.62994427094236
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 8P5S_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 316.4028740640497
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Running inference for 8P5S_A...
+INFO:/home/hice1/ylee3055/scratch/.conda/envs/openfold-env-check/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/utils/script_utils.py:Inference time: 315.6007888360182
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/repro-check/openfold/run_pretrained_openfold.py:Output written to /storage/ice1/4/4/ylee3055/repro-check/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/measurements-6893957/8P5S_A/predictions/8P5S_A_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+
+=== 8P5S_A: ok ===
+     time_s_median: 316.4
+      time_s_first: 343.14
+    peak_alloc_gib: 23.85
+ peak_gpu_used_gib: 65.93
+ gpu_util_mean_pct: 97.5
+        mean_plddt: 92.25
+               ptm: 0.886
+          tm_score: 0.977
+           lddt_ca: 0.954
+           rmsd_ca: 1.82
+
+target  length  status  gpu                    max_template_date  warmup  repeats  time_s_median  time_s_min  time_s_max  time_s_first  peak_alloc_gib  peak_reserved_gib  peak_gpu_used_gib  gpu_util_mean_pct  mean_plddt  ptm    mean_pae  tm_score  lddt_ca  rmsd_ca  n_matched  job_id   error
+6KWC_1  191     ok      NVIDIA A100 80GB PCIe  2021-01-26         1       3        7.2            7.19        7.22        7.72          4.37            6.55               7.77               93.3               97.72       0.934  2.34      0.987     0.983    0.96     191        6893957  
+9OUF_A  159     ok      NVIDIA A100 80GB PCIe  2025-07-29         1       3        5.68           5.67        5.69        6.51          3.69            5.0                6.22               91.3               87.47       0.77   7.45      0.946     0.924    2.98     148        6893957  
+9Q5U_A  325     ok      NVIDIA A100 80GB PCIe  2025-09-23         1       3        17.1           17.01       17.19       17.5          7.23            16.47              17.69              96.2               91.71       0.877  6.1       0.877     0.868    2.67     311        6893957  
+9NXH_A  500     ok      NVIDIA A100 80GB PCIe  2025-08-19         1       3        35.97          35.9        36.1        37.03         11.02           36.35              37.57              96.3               91.48       0.693  13.92     0.72      0.94     12.85    468        6893957  
+9LB7_A  777     ok      NVIDIA A100 80GB PCIe  2025-07-29         1       3        100.37         100.2       100.45      103.41        23.26           54.7               55.92              96.7               95.73       0.941  4.38      0.99      0.967    1.12     775        6893957  
+8P5S_A  1125    ok      NVIDIA A100 80GB PCIe  2023-08-15         1       3        316.4          315.61      317.71      343.14        23.85           64.71              65.93              97.5               92.25       0.886  9.3       0.977     0.954    1.82     1087       6893957  
+
+=== STEP 7.2 create pymol-env-check and render (08:00:33) ===
+Transaction
+
+  Prefix: /home/hice1/ylee3055/scratch/.conda/envs/pymol-env-check
+
+  Updating specs:
+
+   - pymol-open-source=3.1.0
+   - python=3.11
+
+
+  Package                           Version  Build                 Channel           Size
+───────────────────────────────────────────────────────────────────────────────────────────
+  Install:
+───────────────────────────────────────────────────────────────────────────────────────────
+
+  + libzlib                           1.3.2  h25fd6f3_3            conda-forge     Cached
+  + libglvnd                          1.7.0  ha4b6fd6_5            conda-forge     Cached
+  + libgomp                          16.2.0  he0feb66_7            conda-forge     Cached
+  + zstd                              1.5.7  hb78ec9c_7            conda-forge     Cached
+  + libopengl                         1.7.0  ha4b6fd6_5            conda-forge     Cached
+  + libegl                            1.7.0  ha4b6fd6_5            conda-forge     Cached
+  + _openmp_mutex                       4.5  20_gnu                conda-forge     Cached
+  + ld_impl_linux-64                 2.46.1  default_hbd61a6d_103  conda-forge     Cached
+  + libgcc                           16.2.0  ha9f2e26_7            conda-forge     Cached
+  + libev                              4.33  h280c20c_3            conda-forge     Cached
+  + fribidi                          1.0.18  h7cc23a3_0            conda-forge     Cached
+  + xorg-libxshmfence                 1.3.3  h7cc23a3_0            conda-forge     Cached
+  + aws-c-common                      1.0.5  hebe6cf0_0            conda-forge     Cached
+  + libgfortran5                     16.2.0  h6b99dfc_7            conda-forge     Cached
+  + keyutils                          1.6.3  h7cc23a3_1            conda-forge     Cached
+  + c-ares                           1.34.9  hebe6cf0_0            conda-forge     Cached
+  + libpciaccess                       0.19  hb03c661_1            conda-forge     Cached
+  + libopus                           1.6.1  hebe6cf0_1            conda-forge     Cached
+  + libogg                            1.3.5  hd0c01bc_1            conda-forge     Cached
+  + libcap                             2.78  h084b8d7_1            conda-forge     Cached
+  + xorg-libxdmcp                     1.1.5  h7cc23a3_2            conda-forge     Cached
+  + pthread-stubs                       0.4  h7cc23a3_1004         conda-forge     Cached
+  + xorg-libxau                      1.0.12  h7cc23a3_2            conda-forge     Cached
+  + libnsl                            2.0.1  hb9d3cd8_1            conda-forge     Cached
+  + libffi                            3.7.0  h81df57d_1            conda-forge     Cached
+  + bzip2                             1.0.8  hda65f42_10           conda-forge     Cached
+  + libntlm                             1.8  hb9d3cd8_0            conda-forge     Cached
+  + libjpeg-turbo                     3.2.1  h7cc23a3_0            conda-forge     Cached
+  + libexpat                          2.9.0  hd2095e1_0            conda-forge     Cached
+  + alsa-lib                       1.2.16.1  h7cc23a3_1            conda-forge     Cached
+  + libpng                           1.6.59  h922cc85_0            conda-forge     Cached
+  + liblzma                           5.8.3  hb03c661_1            conda-forge     Cached
+  + libiconv                           1.18  h0cb94f2_3            conda-forge     Cached
+  + xorg-libice                       1.1.2  h280c20c_0            conda-forge     Cached
+  + libstdcxx                        16.2.0  h934c35e_7            conda-forge     Cached
+  + libgcc-ng                        16.2.0  h69a702a_7            conda-forge     Cached
+  + tk                               8.6.13  noxft_h1df4ec4_4      conda-forge     Cached
+  + ncurses                             6.6  hdb14827_1            conda-forge     Cached
+  + libuuid                          2.42.4  hcfc3c73_1            conda-forge     Cached
+  + libxcrypt                        4.4.38  h280c20c_0            conda-forge     Cached
+  + libpython                       3.11.18  ha57cdbe_0_cpython    conda-forge     Cached
+  + aws-c-sdkutils                    1.0.1  ha404f16_0            conda-forge     Cached
+  + aws-c-compression                 1.0.0  ha404f16_1            conda-forge     Cached
+  + aws-checksums                     1.0.1  ha404f16_0            conda-forge     Cached
+  + libgfortran                      16.2.0  h69a702a_7            conda-forge     Cached
+  + libdrm                          2.4.129  h7cc23a3_0            conda-forge     Cached
+  + libsystemd0                       262.2  h26e0ef7_0            conda-forge     Cached
+  + libxcb                           1.17.0  hb83e432_2            conda-forge     Cached
+  + pcre2                             10.47  h8b3dc9c_1            conda-forge     Cached
+  + libfreetype6                     2.14.3  h5e6c136_2            conda-forge     Cached
+  + lz4-c                            1.10.0  hee9eb32_2            conda-forge     Cached
+  + pixman                           0.46.4  h54a6638_3            conda-forge     Cached
+  + graphite2                        1.3.15  h54a6638_1            conda-forge     Cached
+  + libaec                            1.1.7  h659bb9a_0            conda-forge     Cached
+  + snappy                            1.3.1  h34e00bb_0            conda-forge     Cached
+  + mpg123                           1.33.7  h877a99e_1            conda-forge     Cached
+  + libflac                           1.5.0  he200343_1            conda-forge     Cached
+  + libvorbis                         1.3.7  h54a6638_2            conda-forge     Cached
+  + libstdcxx-ng                     16.2.0  hdf11a46_7            conda-forge     Cached
+  + nspr                               4.40  h76ac25a_0            conda-forge     Cached
+  + libglu                            9.0.3  h5888daf_1            conda-forge     Cached
+  + icu                                78.3  py310h44b86e0_2       conda-forge     Cached
+  + glm                               1.0.3  hee9eb32_1            conda-forge     Cached
+  + libedit                    3.1.20260512  pl5321h373387f_0      conda-forge     Cached
+  + readline                            8.3  hd6e31c0_1            conda-forge     Cached
+  + xorg-libsm                        1.2.6  h0d788c3_1            conda-forge     Cached
+  + libopenblas                      0.3.34  pthreads_hf13c14d_2   conda-forge     Cached
+  + xorg-libx11                      1.8.14  hb83e432_0            conda-forge     Cached
+  + xcb-util                          0.4.1  h4f16b4b_2            conda-forge     Cached
+  + xcb-util-wm                       0.4.2  hb711507_0            conda-forge     Cached
+  + xcb-util-renderutil              0.3.10  hb711507_0            conda-forge     Cached
+  + xcb-util-keysyms                  0.4.1  hb711507_0            conda-forge     Cached
+  + libglib                          2.90.0  h569388d_0            conda-forge     Cached
+  + libfreetype                      2.14.3  ha770c72_2            conda-forge     Cached
+  + blosc                            1.21.7  hb29c23e_1            conda-forge     Cached
+  + lame                                4.0  h770b6ad_1            conda-forge     Cached
+  + hdf4                             4.2.15  h2a13503_7            conda-forge     Cached
+  + libpsl                           0.23.1  hd9e3e90_1            conda-forge     Cached
+  + libsqlite                        3.54.1  h13e7031_0            conda-forge     Cached
+  + libxml2-16                       2.15.4  hf3af7cc_1            conda-forge     Cached
+  + libblas                          3.11.0  12_h4a7cf45_openblas  conda-forge     Cached
+  + xorg-libxrender                  0.9.13  h7cc23a3_0            conda-forge     Cached
+  + xkeyboard-config                   2.48  hebe6cf0_1            conda-forge     Cached
+  + xorg-libxfixes                    6.0.2  h7cc23a3_1            conda-forge     Cached
+  + xorg-libxext                      1.3.7  h7cc23a3_1            conda-forge     Cached
+  + libglx                            1.7.0  ha4b6fd6_5            conda-forge     Cached
+  + xcb-util-image                    0.4.0  hb711507_2            conda-forge     Cached
+  + glib-tools                       2.90.0  h3d503d9_0            conda-forge     Cached
+  + dbus                             1.16.2  he8c428d_2            conda-forge     Cached
+  + fontconfig                       2.18.3  h4db4eae_1            conda-forge     Cached
+  + freetype                         2.14.3  ha770c72_2            conda-forge     Cached
+  + libsndfile                        1.2.2  hbc6d301_3            conda-forge     Cached
+  + nss                               3.118  h445c969_0            conda-forge     Cached
+  + libxml2                          2.15.4  h7df9aa5_1            conda-forge     Cached
+  + libcblas                         3.11.0  12_h0358290_openblas  conda-forge     Cached
+  + liblapack                        3.11.0  12_h47877c9_openblas  conda-forge     Cached
+  + xorg-libxcomposite                0.4.7  hb03c661_0            conda-forge     Cached
+  + xorg-libxxf86vm                   1.1.7  h7cc23a3_1            conda-forge       20kB
+  + xorg-libxdamage                   1.1.6  hb9d3cd8_0            conda-forge     Cached
+  + libgl                             1.7.0  ha4b6fd6_5            conda-forge     Cached
+  + pulseaudio-client                  17.0  hb10c1b2_4            conda-forge     Cached
+  + libllvm23                        23.1.5  h474f4eb_0            conda-forge     Cached
+  + libxkbcommon                     1.13.2  h59c2f34_2            conda-forge     Cached
+  + libllvm22                        22.1.8  h474f4eb_3            conda-forge     Cached
+  + glew                              2.3.0  h71661d4_0            conda-forge     Cached
+  + libclang-cpp23.1                 23.1.4  default_h0acdd01_1    conda-forge     Cached
+  + libclang-cpp22.1                 22.1.8  default_h0acdd01_11   conda-forge     Cached
+  + libclang13                       23.1.4  default_h6e6c352_1    conda-forge     Cached
+  + tzdata                            2026e  h5d301ff_0            conda-forge     Cached
+  + python_abi                         3.11  9_cp311               conda-forge     Cached
+  + font-ttf-dejavu-sans-mono          2.37  hab24e00_0            conda-forge     Cached
+  + ca-certificates              2026.10.23  hbd8a1cb_0            conda-forge     Cached
+  + font-ttf-inconsolata              3.000  h77eed37_0            conda-forge     Cached
+  + font-ttf-source-code-pro          2.038  h77eed37_0            conda-forge     Cached
+  + font-ttf-ubuntu                    0.83  h77eed37_3            conda-forge     Cached
+  + fonts-conda-forge                     1  hc364b38_1            conda-forge     Cached
+  + fonts-conda-ecosystem                 1  0                     conda-forge     Cached
+  + openssl                           3.6.5  h781a0a9_0            conda-forge     Cached
+  + cairo                            1.18.6  h3c89d7e_0            conda-forge     Cached
+  + aws-c-cal                         1.0.0  hcf7459e_1            conda-forge     Cached
+  + libssh2                          1.11.1  h6154650_1            conda-forge     Cached
+  + libnghttp2                       1.71.0  hc5e5977_0            conda-forge     Cached
+  + libzip                           1.12.1  h6008cf6_0            conda-forge     Cached
+  + s2n                               1.7.7  ha5dc4ae_0            conda-forge     Cached
+  + libevent                         2.1.12  h5348a74_2            conda-forge     Cached
+  + krb5                             1.22.2  hbc21106_2            conda-forge     Cached
+  + python                          3.11.18  h5f976f7_0_cpython    conda-forge     Cached
+  + libharfbuzz                      15.0.0  h23af247_0            conda-forge     Cached
+  + aws-c-io                          1.0.0  h07ba609_0            conda-forge     Cached
+  + libcurl                          8.23.0  ha042cf0_0            conda-forge     Cached
+  + cyrus-sasl                       2.1.28  hac629b4_1            conda-forge     Cached
+  + libcups                           2.3.3  h7a8fb5f_6            conda-forge     Cached
+  + libpango                         1.58.2  hce4e988_3            conda-forge     Cached
+  + libharfbuzz-devel                15.0.0  h23af247_0            conda-forge     Cached
+  + aws-c-http                        1.0.0  h392d1a3_1            conda-forge     Cached
+  + openldap                         2.6.13  hbde042b_0            conda-forge     Cached
+  + libpango-devel                   1.58.2  h317d9d0_3            conda-forge     Cached
+  + harfbuzz                         15.0.0  ha770c72_0            conda-forge     Cached
+  + aws-c-auth                        1.0.0  h7648d90_2            conda-forge     Cached
+  + libpq                              18.6  h3883810_3            conda-forge     Cached
+  + pango                            1.58.2  h2f58602_3            conda-forge     Cached
+  + aws-c-s3                          1.0.0  hfe03eda_1            conda-forge     Cached
+  + hdf5                              2.2.0  nompi_hdbb200c_101    conda-forge     Cached
+  + libnetcdf                        4.10.0  nompi_he3e3c8e_205    conda-forge     Cached
+  + setuptools                       84.2.1  pyhe730653_0          conda-forge     Cached
+  + packaging                          26.3  pyhc364b38_0          conda-forge     Cached
+  + wheel                            0.48.0  pyhd8ed1ab_0          conda-forge     Cached
+  + pip                              26.2.2  pyh8b19718_2          conda-forge     Cached
+  + tomli                             2.5.0  pyh5ded981_0          conda-forge     Cached
+  + ply                                3.11  pyhd8ed1ab_3          conda-forge     Cached
+  + toml                             0.10.2  pyhcf101f3_3          conda-forge     Cached
+  + glib                             2.90.0  h5e3c387_0            conda-forge     Cached
+  + pmw                               2.1.1  py311h38be061_1       conda-forge     Cached
+  + numpy                             2.4.6  py311h2e04523_0       conda-forge     Cached
+  + sip                              6.10.0  py311h1ddb823_1       conda-forge     Cached
+  + gstreamer                       1.26.11  h29cf534_0            conda-forge     Cached
+  + pyqt5-sip                       12.17.0  py311h1ddb823_2       conda-forge     Cached
+  + gst-plugins-base                1.26.11  h6d08254_0            conda-forge     Cached
+  + qt-main                         5.15.15  h0c412b5_8            conda-forge     Cached
+  + pyqt                            5.15.11  py311h0580839_2       conda-forge     Cached
+  + pymol-open-source                 3.1.0  py311h410d754_8       conda-forge     Cached
+
+  Summary:
+
+  Install: 161 packages
+
+  Total download: 20kB
+
+───────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+Looking for: ['pymol-open-source=3.1.0', 'python=3.11']
+
+
+Downloading and Extracting Packages
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+To activate this environment, use
+
+     $ mamba activate pymol-env-check
+
+To deactivate an active environment, use
+
+     $ mamba deactivate
+
+6KWC_1: images written to visualizations/measurements-6893957
+9OUF_A: images written to visualizations/measurements-6893957
+9Q5U_A: images written to visualizations/measurements-6893957
+9NXH_A: images written to visualizations/measurements-6893957
+9LB7_A: images written to visualizations/measurements-6893957
+8P5S_A: images written to visualizations/measurements-6893957
+ CmdLoad: "" loaded as "openfold".
+ Spectrum: range (50.00000 to 100.00000).
+ Setting: ray_opaque_background set to 0.
+ Ray: render time: 0.53 sec. = 6840.9 frames/hour (0.53 sec. accum.).
+ ScenePNG: wrote 1600x1200 pixel image to file "visualizations/6KWC_1_openfold_plddt.png".
+ CmdLoad: "" loaded as "openfold".
+HEADER    HYDROLASE                               06-SEP-19   6KWC
+TITLE     CRYSTAL STRUCTURE ANALYSIS OF ENDO-BETA-1,4-XYLANASE II
+COMPND    MOL_ID: 1;
+COMPND   2 MOLECULE: ENDO-1,4-BETA-XYLANASE 2;
+COMPND   3 CHAIN: A;
+COMPND   4 SYNONYM: XYLANASE 2,1,4-BETA-D-XYLAN XYLANOHYDROLASE 2,ALKALINE ENDO-
+COMPND   5 BETA-1,4-XYLANASE;
+COMPND   6 EC: 3.2.1.8;
+COMPND   7 ENGINEERED: YES;
+COMPND   8 MUTATION: YES
+ ObjectMolecule: Read secondary structure assignments.
+ ObjectMolecule: Read crystal symmetry information.
+ CmdLoad: "" loaded as "experimental".
+ Executive: Colored 1482 atoms and 1 object.
+ Executive: Colored 3201 atoms.
+ Setting: ray_opaque_background set to 0.
+ Ray: render time: 0.88 sec. = 4102.7 frames/hour (1.40 sec. accum.).
+ ScenePNG: wrote 1600x1200 pixel image to file "visualizations/6KWC_1_openfold_vs_experimental.png".
+visualizations:
+6KWC_1_openfold_plddt.png
+6KWC_1_openfold_vs_experimental.png
+measurements
+measurements-6893957
+
+visualizations/measurements-6893957:
+6KWC_1_openfold_vs_experimental.png
+6KWC_1_plddt.png
+8P5S_A_openfold_vs_experimental.png
+8P5S_A_plddt.png
+9LB7_A_openfold_vs_experimental.png
+9LB7_A_plddt.png
+9NXH_A_openfold_vs_experimental.png
+9NXH_A_plddt.png
+9OUF_A_openfold_vs_experimental.png
+9OUF_A_plddt.png
+9Q5U_A_openfold_vs_experimental.png
+9Q5U_A_plddt.png
+
+=== STEP done (08:04:14) ===
+---------------------------------------
+Begin Slurm Epilog: Nov-09-2026 08:04:14
+Job ID:        6893957
+User ID:       ylee3055
+Account:       coc
+Job name:      openfold-repro-check
+Resources:     cpu=8,gres/gpu:a100=1,mem=64G,node=1
+Rsrc Used:     cput=07:27:44,vmem=0,walltime=00:55:58,mem=18399748K,energy_used=0
+Partition:     coc-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-15-0
+---------------------------------------

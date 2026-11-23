@@ -1,0 +1,11 @@
+# Unpacked from the committed .tar.gz files (README step 6.1).
+length-series/alignments/*/
+# Slurm job logs written to the submit directory.
+/openfold-msa-*.out
+# Slurm logs of the measurement job (README section 7).
+/openfold-measure-*.out
+# Your own runs (README sections 3, 7.1, 7.2); the committed baselines are
+# results/*.pdb and results/measurements/.
+/results/run/
+/results/measurements-*/
+/visualizations/measurements-*/

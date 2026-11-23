@@ -1,0 +1,27 @@
+=== OpenFold reproducible inference ===
+OpenFold:       /home/hice1/ylee3055/scratch/openfold
+Input:          /home/hice1/ylee3055/scratch/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/inputs
+Alignments:     /home/hice1/ylee3055/scratch/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments
+Parameters:     /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz
+Templates:      /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/pdb_mmcif/mmcif_files
+Output:         /home/hice1/ylee3055/scratch/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run
+
+[2026-10-11 23:06:53,549] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold-env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /home/hice1/ylee3055/scratch/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/alignments...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Inference time: 8.198648680001497
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Output written to /home/hice1/ylee3055/scratch/fall-2026-vip/cybershuttle-ai4science-foundry/registry/models/biology/openfold/recipes/reproducible-inference/results/run/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+OpenFold exit status (PIPESTATUS[0]): 0

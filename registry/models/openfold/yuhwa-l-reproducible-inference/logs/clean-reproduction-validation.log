@@ -1,0 +1,22 @@
+=== OpenFold prediction validation ===
+FASTA length: 191
+Prediction residues: 191
+Prediction sequence exact match: True
+
+Mean pLDDT: 97.72
+Median pLDDT: 98.57
+Min pLDDT: 58.91
+Max pLDDT: 98.92
+
+Confidence bins:
+Very high (>=90): 188
+Confident (70-90): 2
+Low (50-70): 1
+Very low (<50): 0
+
+=== Experimental structure comparison ===
+Experimental residues: 191
+Experimental sequence exact match: True
+Aligned C-alpha residues: 191
+C-alpha RMSD after optimal superposition: 0.961 Angstrom
+Aligned prediction written to: results/clean-reproduction/predictions/6KWC_1_model_1_ptm_aligned_to_6KWC.pdb

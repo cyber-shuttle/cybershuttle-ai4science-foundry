@@ -1,0 +1,41 @@
+[2026-10-11 16:45:18,862] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/ylee3055/scratch/.conda/envs/openfold_env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/ylee3055/scratch/.conda/envs/openfold_env/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+<frozen importlib._bootstrap_external>:1184: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Successfully loaded JAX parameters at /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz...
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /home/hice1/ylee3055/scratch/fall-2026-vip/assignment-2/alignments...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/storage/ice1/4/4/ylee3055/openfold/openfold/utils/script_utils.py:Inference time: 16.78449880197877
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:351: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:354: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/storage/ice1/4/4/ylee3055/openfold/run_pretrained_openfold.py:Output written to /home/hice1/ylee3055/scratch/fall-2026-vip/assignment-2/outputs/predictions/6KWC_1_model_1_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/ylee3055/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+	Command being timed: "python run_pretrained_openfold.py /home/hice1/ylee3055/scratch/fall-2026-vip/assignment-2/inputs /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/pdb_mmcif/mmcif_files --use_precomputed_alignments /home/hice1/ylee3055/scratch/fall-2026-vip/assignment-2/alignments --output_dir /home/hice1/ylee3055/scratch/fall-2026-vip/assignment-2/outputs --config_preset model_1_ptm --jax_param_path /storage/ice1/shared/d-pace_community/alphafold/alphafold_2.3.2_data/params/params_model_1_ptm.npz --model_device cuda:0 --data_random_seed 42 --skip_relaxation"
+	User time (seconds): 74.98
+	System time (seconds): 10.07
+	Percent of CPU this job got: 84%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:40.59
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2120908
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 19179
+	Minor (reclaiming a frame) page faults: 975373
+	Voluntary context switches: 61544
+	Involuntary context switches: 34200
+	Swaps: 0
+	File system inputs: 1877344
+	File system outputs: 320
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

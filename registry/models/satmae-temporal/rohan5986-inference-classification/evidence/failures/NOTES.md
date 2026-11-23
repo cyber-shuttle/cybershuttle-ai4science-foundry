@@ -2,7 +2,7 @@
 
 These are the assignment-required failure notes. Each one blocked a job,
 was fixed in-tree, and has a matching Troubleshooting entry in
-`registry/models/earth-science/satmae-temporal/README.md`.
+[`../../README.md`](../../README.md).
 
 ## Job 6190908 — env build (`import timm`)
 

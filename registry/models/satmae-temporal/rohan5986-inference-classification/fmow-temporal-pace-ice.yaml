@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../schemas/benchmark.schema.json
+# yaml-language-server: $schema=../../../../schemas/benchmark.schema.json
 
 id: satmae-temporal-fmow-temporal-pace-ice
 name: SatMAE Temporal ViT-Large — fMoW-Temporal validation on PACE ICE
@@ -15,7 +15,7 @@ description: >
   ablation without TTA is 79.69%.
 
 environment:
-  resource_profile: resource-profiles/pace-ice/coc-gpu.yaml
+  resource_profile: coc-gpu.yaml
   container: null
   software:
     python: "3.9.18"
@@ -56,4 +56,4 @@ cost_and_energy:
   inference_energy_kwh: null
 
 notes: >
-  metrics.json copies: evidence/satmae-temporal/. Related to Foundry issue #22.
+  metrics.json copies: evidence/. Related to Foundry issue #22.

@@ -9,4 +9,4 @@
 | Failures encountered and fixed | [failures/NOTES.md](failures/NOTES.md) |
 
 Weights and fMoW imagery are not in git. Sources and SHA-256 are in
-`registry/models/earth-science/satmae-temporal/README.md`.
+[`../README.md`](../README.md).

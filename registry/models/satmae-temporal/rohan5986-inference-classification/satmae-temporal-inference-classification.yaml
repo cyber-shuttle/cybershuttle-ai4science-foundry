@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+# yaml-language-server: $schema=../../../../schemas/execution_recipe.schema.json
 
 id: satmae-temporal-inference-classification
 name: SatMAE Temporal — fMoW-Temporal land-use classification inference
@@ -133,7 +133,7 @@ resource_requirements:
     notes: ICE user GPU-hour cap is 32 running GPU-hours.
 
 compatible_resource_profiles:
-  - resource-profiles/pace-ice/coc-gpu.yaml
+  - coc-gpu.yaml
 
 compatible_optimization_profiles: []
 
@@ -161,7 +161,7 @@ slurm_example: |
     --batch-size 8 --num-workers 8 --seed 0
 
   # Full version (nvidia-smi, versions, wall time, sacct) is
-  # scripts/satmae_temporal_eval_full.sbatch. Submit from the repo root:
+  # scripts/satmae_temporal_eval_full.sbatch. Submit from this directory:
   # mkdir -p logs && sbatch scripts/satmae_temporal_eval_full.sbatch
 
 verification:

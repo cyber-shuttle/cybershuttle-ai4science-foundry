@@ -13,16 +13,19 @@ This is **not** multi-spectral SatMAE (ViT-Base / fMoW-Sentinel / 62.65%).
 The temporal recipe uses a different checkpoint, dataset, and model class.
 
 `metrics.json` for smoke / subset / full, `pip freeze`, and failure notes
-are in [`../../../../evidence/satmae-temporal/`](../../../../evidence/satmae-temporal/).
-Weights and imagery stay on scratch and are not committed.
+are in [`evidence/`](evidence/). Weights and imagery stay on scratch and
+are not committed.
 
-Cross-links:
+This directory is the whole recipe
+(`registry/models/satmae-temporal/rohan5986-inference-classification/`).
+Cross-links (all local):
 
 - Model metadata: [`model.yaml`](model.yaml)
-- Execution recipe: [`../../../../recipes/satmae-temporal-inference-classification.yaml`](../../../../recipes/satmae-temporal-inference-classification.yaml)
-- Resource profile: [`../../../../resource-profiles/pace-ice/coc-gpu.yaml`](../../../../resource-profiles/pace-ice/coc-gpu.yaml)
-- Environment file: [`../../../../scripts/satmae_temporal_environment.yml`](../../../../scripts/satmae_temporal_environment.yml)
-- Benchmark record: [`../../../../benchmarks/results/satmae-temporal/fmow-temporal-pace-ice.yaml`](../../../../benchmarks/results/satmae-temporal/fmow-temporal-pace-ice.yaml)
+- Execution recipe: [`satmae-temporal-inference-classification.yaml`](satmae-temporal-inference-classification.yaml)
+- Resource profile: [`coc-gpu.yaml`](coc-gpu.yaml)
+- Environment file: [`scripts/satmae_temporal_environment.yml`](scripts/satmae_temporal_environment.yml)
+- Benchmark record: [`fmow-temporal-pace-ice.yaml`](fmow-temporal-pace-ice.yaml)
+- Clone / wait ladder: [`REPRODUCTION.md`](REPRODUCTION.md)
 
 ## Setup
 
@@ -34,10 +37,10 @@ ssh login-ice.pace.gatech.edu
 git clone -b satmae-temporal-inference \
   https://github.com/rohan5986/cybershuttle-ai4science-foundry.git \
   ~/scratch/cybershuttle-ai4science-foundry
-cd ~/scratch/cybershuttle-ai4science-foundry
+cd ~/scratch/cybershuttle-ai4science-foundry/registry/models/satmae-temporal/rohan5986-inference-classification
 ```
 
-All jobs are submitted **from that repo root**. The sbatch scripts resolve
+All jobs are submitted **from this directory**. The sbatch scripts resolve
 paths from `$SLURM_SUBMIT_DIR`. Slurm also needs `logs/` to exist before it
 can write `#SBATCH --output` files. Do not build or evaluate on the login
 node (about 1 CPU / 4 GB).
@@ -318,7 +321,7 @@ preprocessed dump.
 
 **`mkdir: Permission denied` in a Slurm job.** Resolving the repo path from
 `${BASH_SOURCE[0]}` can point at Slurm's spooled copy of the script. These
-scripts use `$SLURM_SUBMIT_DIR`, so submit from the repo root.
+scripts use `$SLURM_SUBMIT_DIR`, so submit from this recipe directory.
 
 **`MKL_INTERFACE_LAYER: unbound variable`.** Conda's MKL activate hook trips
 `set -u`. Activation in the GPU preamble is wrapped in

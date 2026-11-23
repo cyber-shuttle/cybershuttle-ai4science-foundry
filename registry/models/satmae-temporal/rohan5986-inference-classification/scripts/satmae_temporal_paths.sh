@@ -1,5 +1,5 @@
 # Shared path defaults for SatMAE Temporal jobs.
-# Source from the Foundry repo root after Slurm has set SLURM_SUBMIT_DIR.
+# Source from this recipe directory after Slurm has set SLURM_SUBMIT_DIR.
 #
 # Home on ICE is 30 GB. This user was already at 96.9% of home, so every
 # bulky artifact is forced onto scratch.

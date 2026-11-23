@@ -106,7 +106,7 @@ software:
 
 resource_profiles:
   recommended:
-    - resource-profiles/pace-ice/coc-gpu.yaml
+    - coc-gpu.yaml
 
 minimum_requirements:
   gpu_memory_gb_estimate: 12
@@ -141,4 +141,4 @@ notes: >
   is the temporal RGB ViT-Large checkpoint and the 79.99% repository target.
   Paper Table 2 ablation without TTA reports 79.69% for a closely related
   configuration; do not treat those two numbers as the same result. See
-  recipes/satmae-temporal-inference-classification.yaml and the model README.
+  satmae-temporal-inference-classification.yaml and README.md in this directory.

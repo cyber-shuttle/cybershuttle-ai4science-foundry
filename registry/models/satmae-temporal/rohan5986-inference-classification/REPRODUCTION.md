@@ -1,21 +1,24 @@
 # Assignment 2 — Reproducible inference (SatMAE Temporal)
 
-This Foundry fork adds a **SatMAE Temporal ViT-Large** inference recipe for
-fMoW-Temporal, verified on **PACE ICE**. The Foundry root `README.md` is
-upstream project docs and is not replaced; **this file** is the assignment
-entry point.
+This directory is a self-contained **SatMAE Temporal ViT-Large** inference
+recipe for fMoW-Temporal, verified on **PACE ICE**. Path:
+
+`registry/models/satmae-temporal/rohan5986-inference-classification/`
+
+The Foundry root `README.md` is upstream project docs and is not replaced;
+**this directory** is the assignment entry point.
 
 Primary runbook (setup, execution, verification, troubleshooting, cleanup):
 
-- [registry/models/earth-science/satmae-temporal/README.md](registry/models/earth-science/satmae-temporal/README.md)
-- [evidence/satmae-temporal/](evidence/satmae-temporal/) — `metrics.json`, `pip freeze`, failure notes
+- [README.md](README.md)
+- [evidence/](evidence/) — `metrics.json`, `pip freeze`, failure notes
 
-Related metadata:
+Related metadata (all in this directory):
 
-- [registry/models/earth-science/satmae-temporal/model.yaml](registry/models/earth-science/satmae-temporal/model.yaml)
-- [recipes/satmae-temporal-inference-classification.yaml](recipes/satmae-temporal-inference-classification.yaml)
-- [resource-profiles/pace-ice/coc-gpu.yaml](resource-profiles/pace-ice/coc-gpu.yaml)
-- [benchmarks/results/satmae-temporal/fmow-temporal-pace-ice.yaml](benchmarks/results/satmae-temporal/fmow-temporal-pace-ice.yaml)
+- [model.yaml](model.yaml)
+- [satmae-temporal-inference-classification.yaml](satmae-temporal-inference-classification.yaml)
+- [coc-gpu.yaml](coc-gpu.yaml)
+- [fmow-temporal-pace-ice.yaml](fmow-temporal-pace-ice.yaml)
 
 Upstream target: **79.99% Top-1** (SatMAE README, no TTA) using
 `finetune_fmow_temporal.pth`. Observed full-val Top-1 on reconstructed AOI
@@ -38,19 +41,19 @@ Code: sustainlab-group/SatMAE @ `0b210aceb37a14bbbd897110db5b104b3271d818`.
 The 17-point miss vs 79.99% is a data-preprocess gap: SatMAE never published
 the `*_rgb_crop_0.jpg` dump. This recipe reconstructs tight JSON bbox crops;
 the official fMoW baseline pads context around the box. Full write-up:
-[Verification](registry/models/earth-science/satmae-temporal/README.md#verification).
+[Verification](README.md#verification).
 
 ## Clone this fork (not `main`)
 
 The recipe lives on **`satmae-temporal-inference`**. `main` does not have these
-scripts. Clone that branch of this fork:
+scripts. Clone that branch of this fork, then `cd` into this directory:
 
 ```bash
 ssh login-ice.pace.gatech.edu
 git clone -b satmae-temporal-inference \
   https://github.com/rohan5986/cybershuttle-ai4science-foundry.git \
   ~/scratch/cybershuttle-ai4science-foundry
-cd ~/scratch/cybershuttle-ai4science-foundry
+cd ~/scratch/cybershuttle-ai4science-foundry/registry/models/satmae-temporal/rohan5986-inference-classification
 ```
 
 If you already have a clone, switch to the branch instead of cloning again:
@@ -58,9 +61,10 @@ If you already have a clone, switch to the branch instead of cloning again:
 ```bash
 git fetch origin
 git checkout satmae-temporal-inference
+cd registry/models/satmae-temporal/rohan5986-inference-classification
 ```
 
-## Submit jobs from the repo root on ICE
+## Submit jobs from this directory on ICE
 
 Each stage depends on the previous one. **Submit one `sbatch`, wait until
 `sacct` shows `COMPLETED` with exit `0:0`, then submit the next.** Do not
@@ -68,7 +72,7 @@ queue the whole ladder at once: later jobs need the conda prefix, weights,
 and cropped chips from earlier jobs.
 
 ```bash
-cd ~/scratch/cybershuttle-ai4science-foundry
+cd ~/scratch/cybershuttle-ai4science-foundry/registry/models/satmae-temporal/rohan5986-inference-classification
 export SATMAE_TEMPORAL_WORKDIR="$HOME/scratch/satmae-temporal"
 mkdir -p logs "$SATMAE_TEMPORAL_WORKDIR"
 
@@ -99,20 +103,22 @@ sorts those globs. Neither number is the 79.99% upstream claim.
 
 ## Suggested PR title and body
 
-**Title:** Add SatMAE Temporal (earth science) with a verified inference recipe for PACE ICE
+**Title:** Add SatMAE Temporal with a verified inference recipe for PACE ICE
 
 ```markdown
 Adds a registry entry and PACE ICE inference recipe for SatMAE Temporal
 ViT-Large on fMoW-Temporal. Related to #22.
 
+Layout (Foundry registry reorganization):
+`registry/models/satmae-temporal/rohan5986-inference-classification/`
+
 ## What's added
-- `registry/models/earth-science/satmae-temporal/model.yaml`
-- `registry/models/earth-science/satmae-temporal/README.md`
-- `recipes/satmae-temporal-inference-classification.yaml`
-- `resource-profiles/pace-ice/coc-gpu.yaml`
+- `model.yaml`, `README.md`, `REPRODUCTION.md`
+- `satmae-temporal-inference-classification.yaml`
+- `coc-gpu.yaml`
 - `scripts/satmae_temporal_*`
-- `benchmarks/results/satmae-temporal/fmow-temporal-pace-ice.yaml`
-- `REPRODUCTION.md`
+- `fmow-temporal-pace-ice.yaml`
+- `evidence/` (metrics.json, pip freeze, failure notes)
 
 ## Verification
 Checkpoint: Zenodo 10.5281/zenodo.7369796 `finetune_fmow_temporal.pth`
@@ -128,5 +134,6 @@ Data: fMoW-RGB val from public S3 + SatMAE `val_62classes.csv` + reconstructed A
 
 ## Notes for reviewers
 This is the temporal RGB ViT-Large variant, not multi-spectral SatMAE (#28).
-`cybershuttle.enabled` is false. Nexus is untested.
+`cybershuttle.enabled` is false. Nexus is untested. Submit all sbatch jobs
+from this recipe directory.
 ```

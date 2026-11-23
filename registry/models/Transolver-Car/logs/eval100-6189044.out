@@ -1,0 +1,65 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 16:54:49
+Job ID:    6189044
+User ID:   mli863
+Account:   coc
+Job name:  eval100
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+/home/hice1/mli863/.conda/envs/transolver/bin/python
+atl1-1-01-005-13-0.pace.gatech.edu
+Sun Oct 11 16:54:53 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          On  |   00000000:25:00.0 Off |                    0 |
+| N/A   53C    P0             49W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+cuda available: True
+Namespace(cfd_mesh=False, cfd_model='Transolver', data_dir='/home/hice1/mli863/scratch/Transolver/data/mlcfd_data/training_data', fold_id=0, gpu=0, nb_epochs=100, r=0.2, save_dir='/home/hice1/mli863/scratch/Transolver/data/preprocessed_data', weight=0.5)
+use preprocessed data
+loading data
+load data finish
+main_evaluation.py:36: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model = torch.load(os.path.join(path, f'model_{args.nb_epochs}.pth')).to(device)
+/home/hice1/mli863/.conda/envs/transolver/lib/python3.8/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+param0/18a9275b78be4b9ec6d3267fc5334296
+[0m[31m2026-10-11 16:58:29.697 ( 198.863s) [    15555540F740]      vtkDataReader.cxx:511    ERR| vtkUnstructuredGridReader (0xab537280): Unable to open file: /data/PDE_data/mlcfd_data/training_data/param0/18a9275b78be4b9ec6d3267fc5334296/quadpress_smpl.vtk[0m
+[0m[31m2026-10-11 16:58:29.697 ( 198.864s) [    15555540F740]      vtkDataReader.cxx:511    ERR| vtkUnstructuredGridReader (0xab537280): Unable to open file: /data/PDE_data/mlcfd_data/training_data/param0/18a9275b78be4b9ec6d3267fc5334296/hexvelo_smpl.vtk[0m
+Traceback (most recent call last):
+  File "main_evaluation.py", line 79, in <module>
+    pred_coef = cal_coefficient(vallst[index].split('/')[1], pred_press[:, None].detach().cpu().numpy(),
+  File "/storage/ice1/2/2/mli863/Transolver/Car-Design-ShapeNetCar/utils/drag_coefficient.py", line 159, in cal_coefficient
+    normal_surf = get_normal(unstructured_grid_data_press)
+  File "/storage/ice1/2/2/mli863/Transolver/Car-Design-ShapeNetCar/utils/drag_coefficient.py", line 144, in get_normal
+    return vtk_to_numpy(normal_filter.GetOutput().GetCellData().GetNormals())
+  File "/home/hice1/mli863/.conda/envs/transolver/lib/python3.8/site-packages/vtkmodules/util/numpy_support.py", line 217, in vtk_to_numpy
+    typ = vtk_array.GetDataType()
+AttributeError: 'NoneType' object has no attribute 'GetDataType'
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 16:58:30
+Job ID:        6189044
+User ID:       mli863
+Account:       coc
+Job name:      eval100
+Resources:     cpu=8,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=00:29:28,vmem=0,walltime=00:03:41,mem=29327148K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-13-0
+---------------------------------------

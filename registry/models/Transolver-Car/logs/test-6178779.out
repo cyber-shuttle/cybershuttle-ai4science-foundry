@@ -1,0 +1,51 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 07:06:50
+Job ID:    6178779
+User ID:   mli863
+Account:   coc
+Job name:  transolver-test
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+atl1-1-03-007-33-0.pace.gatech.edu
+Sun Oct 11 07:06:53 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  |   00000000:25:00.0 Off |                    0 |
+| N/A   55C    P0             53W /  250W |       0MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'torch'
+Traceback (most recent call last):
+  File "/storage/ice1/2/2/mli863/Transolver/Car-Design-ShapeNetCar/main.py", line 1, in <module>
+    import train
+  File "/storage/ice1/2/2/mli863/Transolver/Car-Design-ShapeNetCar/train.py", line 3, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 07:06:55
+Job ID:        6178779
+User ID:       mli863
+Account:       coc
+Job name:      transolver-test
+Resources:     cpu=8,gres/gpu:a100=1,mem=32G,node=1
+Rsrc Used:     cput=00:00:48,vmem=0,walltime=00:00:06,mem=73556K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-03-007-33-0
+---------------------------------------

@@ -1,0 +1,45 @@
+affine @ file:///home/conda/feedstock_root/build_artifacts/affine_1733762038348/work
+attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1741918516150/work
+awscli==1.44.87
+beautifulsoup4==4.15.0
+botocore==1.42.97
+Brotli @ file:///home/conda/feedstock_root/build_artifacts/brotli-split_1749229842835/work
+certifi @ file:///home/conda/feedstock_root/build_artifacts/certifi_1754231422783/work/certifi
+cffi @ file:///home/conda/feedstock_root/build_artifacts/cffi_1725571112467/work
+charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_charset-normalizer_1790766086/work
+click @ file:///home/conda/feedstock_root/build_artifacts/click_1734858813237/work
+click-plugins @ file:///home/conda/feedstock_root/build_artifacts/click-plugins_1750848229740/work
+cligj @ file:///home/conda/feedstock_root/build_artifacts/cligj_1733749956636/work
+colorama==0.4.6
+docutils==0.19
+filelock==3.19.1
+gdown==5.2.2
+h2 @ file:///home/conda/feedstock_root/build_artifacts/h2_1738578511449/work
+hpack @ file:///home/conda/feedstock_root/build_artifacts/hpack_1737618293087/work
+hyperframe @ file:///home/conda/feedstock_root/build_artifacts/hyperframe_1737618333194/work
+idna @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_idna_1776928534/work
+jmespath==1.1.0
+numpy @ file:///home/conda/feedstock_root/build_artifacts/numpy_1668919081525/work
+pandas==1.5.3
+Pillow @ file:///home/conda/feedstock_root/build_artifacts/pillow_1675487166627/work
+pyasn1==0.6.4
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pycparser_1733195786/work
+pyparsing @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pyparsing_1753873557/work
+PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1733217236728/work
+python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-dateutil_1751104122/work
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1742920838005/work
+PyYAML==6.0.3
+rasterio @ file:///home/conda/feedstock_root/build_artifacts/rasterio_1677453131386/work
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1755614211359/work
+rsa==4.7.2
+s3transfer==0.16.1
+six @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_six_1753199211/work
+snuggs @ file:///home/conda/feedstock_root/build_artifacts/snuggs_1733818638588/work
+soupsieve==2.8.4
+timm==0.3.2
+torch==1.12.1
+torchvision==0.13.1
+tqdm==4.70.1
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_typing_extensions_1751643513/work
+urllib3==1.26.20
+zstandard==0.23.0

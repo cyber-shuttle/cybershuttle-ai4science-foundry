@@ -1,0 +1,17 @@
+# Slurm streams (keep excerpts in README.md)
+logs/*.out
+logs/*.err
+logs/*_nvidia-smi.txt
+logs/*_versions.txt
+logs/*_sacct.txt
+logs/*_walltime.txt
+
+# Weights, imagery, and local conda prefixes stay on scratch
+*.pth
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+.DS_Store
+__pycache__/
+*.pyc

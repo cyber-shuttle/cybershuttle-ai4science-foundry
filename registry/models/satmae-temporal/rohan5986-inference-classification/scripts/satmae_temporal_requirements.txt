@@ -1,0 +1,11 @@
+# Pip packages for the SatMAE Temporal env. Installed *after* conda creates
+# the prefix (python 3.9 + rasterio). Torch comes from the cu113 wheel index
+# so we do not pick up a conda-forge MKL build that fails with
+# iJIT_NotifyEvent (peer reproduction, PR #38).
+--extra-index-url https://download.pytorch.org/whl/cu113
+torch==1.12.1+cu113
+torchvision==0.13.1+cu113
+timm==0.3.2
+gdown
+awscli
+tqdm==4.70.1

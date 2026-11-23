@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: hyenadna-dnabert2-bridge
+name: HyenaDNA consuming DNABERT-2 embeddings (cross-model representation hand-off)
+model: hyenadna
+task: research-proof-of-concept
+description: >
+  Assignment 5 research proof of concept. Feeds a pretrained DNABERT-2
+  (117M params, BPE tokenization, PR #43 of this Foundry) per-token hidden
+  states into HyenaDNA's own Hyena-operator stack through a small trainable
+  linear projection, bypassing HyenaDNA's native per-nucleotide embedding
+  lookup entirely. This is the representation hand-off pattern described in
+  the assignment (one time-series/sequence model trained or run on another
+  model's output representations, e.g. BENDR on CEBRA's latents), applied
+  to two DNA foundation models already in this Foundry instead of the
+  originally planned HyenaDNA + Evo 2 pairing (Evo 2's smallest checkpoint
+  needs transformer-engine and newer-GPU kernel support that could not be
+  reliably stood up in the time this assignment allows -- see notes).
+
+depends_on_recipes:
+  - hyenadna-inference-embeddings   # HyenaDNA checkpoint loading, same env
+  # DNABERT-2's own recipe lives in PR #43 (athellis/add-dnabert2-inference),
+  # not yet merged to main as of this recipe; this script re-implements the
+  # minimal loading call directly against transformers.AutoModel rather than
+  # depending on an unmerged PR's files.
+
+input:
+  format: raw DNA sequence / FASTA, same input used by hyenadna-inference-embeddings
+  notes: >
+    Both models tokenize the same raw sequence independently: HyenaDNA at
+    single-nucleotide resolution (vocab size 12), DNABERT-2 with BPE (vocab
+    size ~4096, variable span per token). Script: dnabert2_hyenadna_bridge.py.
+
+output:
+  bridged_embedding:
+    format: PyTorch tensor (.pt), shape "[1, hyenadna_token_count, 128]"
+    description: >
+      HyenaDNA-backbone output when its input is DNABERT-2's (resampled,
+      projected) hidden states instead of HyenaDNA's own embedding lookup.
+  native_embedding:
+    format: PyTorch tensor (.pt), same shape
+    description: Baseline -- HyenaDNA's own native embedding of the same sequence, for comparison.
+
+environment:
+  conda_env: dna-bridge (Python 3.10) -- a new env, not hyena-dna's, because
+    DNABERT-2's trust_remote_code model class and HyenaDNA's standalone
+    code both only need torch + transformers + einops; combining them in
+    one env avoided running two separate jobs with an intermediate file.
+  pytorch: "1.13.1+cu117 -- constrained to Ampere-or-older GPUs (same GPU-architecture limitation already flagged on the Future Direction slide; see resource_requirements)"
+  packages: transformers==4.29.2, einops==0.6.1, numpy==1.24.4
+
+steps:
+  - name: bridge_forward_pass
+    description: >
+      Load both pretrained models, run DNABERT-2 on the input sequence,
+      resample+project its hidden states to HyenaDNA's embedding space,
+      run them through HyenaDNA's layers, and validate: shape/NaN check,
+      determinism across repeated runs, sensitivity to a shuffled sequence,
+      and an L2-distance comparison against HyenaDNA's own native embedding
+      of the same input.
+    script: dnabert2_hyenadna_bridge.py
+    args:
+      fasta: data/example.fasta
+      output: results/bridge-embedding.pt
+
+resource_requirements:
+  gpu_memory_gb: 8   # two models loaded at once, still small (117M + ~1M params)
+  gpu_count: 1
+  recommended_gpu: V100/A100/L40S/A40 (nvidia-gpu constraint; torch==1.13.1+cu117 has no kernels on Hopper H100/H200)
+  storage_gb: 2
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/ice-gpu.yaml
+
+compatible_optimization_profiles: []
+
+notes: >
+  See registry/models/hyenadna/vishram1123-genomics/README.md, "Research
+  proof of concept" section, for the full writeup: motivation, the
+  BPE-to-nucleotide alignment gap (DNABERT-2's tokens don't map 1:1 to
+  nucleotides, so this resamples the token sequence by linear
+  interpolation rather than using exact character offsets), execution
+  evidence, and observations/next steps.

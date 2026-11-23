@@ -1,0 +1,7 @@
+# fetched 2026-11-23 04:30 UTC from files.rcsb.org and https://api.colabfold.com (mode env)
+id	pdb	chain	length	sequence_sha256	references	msa (file:raw->kept)
+6KWC_A	6KWC	A	191	9242e2f04bf7c45b181cc1331d7abde24995aa6b4a53ede967ccc732799a6352	6KWC:A	bfd.mgnify30.metaeuk30.smag30.a3m:2412->2412;uniref.a3m:3203->3203
+3CHY_A	3CHY	A	128	53b53a21d59a664ef0ecbca8087ae0a9a722f3f6321ca600153a2e850a256a97	3CHY:A	bfd.mgnify30.metaeuk30.smag30.a3m:4836->4836;uniref.a3m:7153->7153
+2LZM_A	2LZM	A	164	0619a8bdf08b15085930db9c8a635510324e67bfd558bb2f8d1654b896355133	2LZM:A	bfd.mgnify30.metaeuk30.smag30.a3m:2899->2899;uniref.a3m:1180->1180
+1AKE_A	1AKE	A	214	c7fb9fc96e9e0aabc1a454ba36086dc00a2fc71387e8d5fb44a50d830b27d697	1AKE:A,4AKE:A	bfd.mgnify30.metaeuk30.smag30.a3m:9239->9239;uniref.a3m:7627->7627
+8TIM_A	8TIM	A	247	259edea5763503150915f15e69b05738cac79f7c223dca4d34c54168d19eabed	8TIM:A	bfd.mgnify30.metaeuk30.smag30.a3m:9026->9026;uniref.a3m:7723->7723

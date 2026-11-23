@@ -1,0 +1,152 @@
+# yaml-language-server: $schema=../../../../../schemas/execution_recipe.schema.json
+
+id: astropt-095m-reproducible-inference
+name: AstroPT 95M reproducible embedding inference and mag_g validation
+model: astropt
+task: inference
+
+description: >
+  Load the released AstroPT v2.0 95M checkpoint, run an eight-example embedding
+  smoke test, then perform a separate substantive validation on 1,000 galaxies
+  by fitting a linear probe for g-band magnitude and comparing it with a
+  training-mean baseline. The complete reviewed package, including SLURM logs
+  and machine-readable results, is stored in reproducible-inference/.
+
+tracking_issue: https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/2
+
+artifact_root: registry/models/astronomy/astropt/recipes/reproducible-inference
+documentation: registry/models/astronomy/astropt/recipes/reproducible-inference/README.md
+
+parameters:
+  model_repository: Smith42/astroPT_v2.0
+  checkpoint_path: astropt/095M
+  weights_filename: ckpt.pt
+  parameter_count: 95177472
+  dataset: Smith42/galaxies
+  dataset_revision: v2.0
+  dataset_split: test
+  smoke_examples: 8
+  smoke_batch_size: 8
+  validation_examples: 1000
+  validation_batch_size: 32
+  embedding_dimension: 768
+  validation_target: mag_g
+  probe_train_examples: 500
+  probe_test_examples: 500
+
+input:
+  source: https://huggingface.co/datasets/Smith42/galaxies/tree/v2.0
+  access: streaming
+  split: test
+  fields:
+    - image
+    - mag_g
+  selection: first examples with non-null mag_g
+
+output:
+  smoke_metadata: registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/inference_results.json
+  validation_metadata: registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/validation_mag_g.json
+  validation_plot: registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/mag_g_probe.png
+  generated_arrays:
+    - registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/embeddings_small.npy
+    - registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/mag_g_small.npy
+    - registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/validation_embeddings.npy
+    - registry/models/astronomy/astropt/recipes/reproducible-inference/outputs/validation_mag_g.npy
+  notes: Large regeneratable arrays are intentionally excluded from Git.
+
+environment:
+  python: "3.10.22"
+  dependencies:
+    primary: registry/models/astronomy/astropt/recipes/reproducible-inference/environment.yml
+    pip_lock: registry/models/astronomy/astropt/recipes/reproducible-inference/requirements-lock.txt
+  core_versions:
+    astropt: "2.0.5"
+    pytorch: "2.14.1+cu130"
+  cache: registry/models/astronomy/astropt/recipes/reproducible-inference/hf_cache
+
+steps:
+  - name: setup
+    description: Create and activate the locked Conda environment.
+    commands:
+      - cd registry/models/astronomy/astropt/recipes/reproducible-inference
+      - module load miniforge/24.3.0-0
+      - conda env create --prefix "$PWD/env" --file environment.yml
+
+  - name: submit
+    description: Submit the complete smoke and validation workflow to SLURM.
+    commands:
+      - cd registry/models/astronomy/astropt/recipes/reproducible-inference
+      - sbatch slurm/astropt_inference.slurm
+
+  - name: smoke_test
+    description: Load the checkpoint and run eight-example embedding inference.
+    scripts:
+      - registry/models/astronomy/astropt/recipes/reproducible-inference/scripts/smoke_load.py
+      - registry/models/astronomy/astropt/recipes/reproducible-inference/scripts/inference_small.py
+    acceptance:
+      parameter_count: 95177472
+      embedding_shape: [8, 768]
+      all_embeddings_finite: true
+
+  - name: substantive_validation
+    description: Fit on 500 embeddings and evaluate on a held-out set of 500.
+    script: registry/models/astronomy/astropt/recipes/reproducible-inference/scripts/validate_mag_g.py
+    acceptance:
+      embedding_shape: [1000, 768]
+      probe_mse_below_mean_baseline: true
+      probe_mae_below_mean_baseline: true
+
+resource_requirements:
+  resource_profile: resource-profiles/georgia-tech-ice/ice-h100.yaml
+  scheduler: slurm
+  gpu:
+    model: NVIDIA H100 80GB HBM3
+    count: 1
+  cpu_cores: 4
+  ram_gb: 32
+  walltime: "00:30:00"
+
+compatible_resource_profiles:
+  - resource-profiles/georgia-tech-ice/ice-h100.yaml
+
+validation:
+  smoke_test:
+    examples: 8
+    embedding_shape: [8, 768]
+    all_embeddings_finite: true
+    runtime_seconds: 0.5925802129786462
+    peak_cuda_memory_gb: 0.5342669486999512
+  substantive_mag_g_probe:
+    examples: 1000
+    train_examples: 500
+    test_examples: 500
+    embedding_shape: [1000, 768]
+    embedding_runtime_seconds: 46.49877521299641
+    peak_cuda_memory_gb: 0.9777636528015137
+    linear_probe:
+      mse: 0.9652325510978699
+      mae: 0.7315179109573364
+      r2: 0.16768014430999756
+    mean_baseline:
+      mse: 1.1604853868484497
+      mae: 0.7727935910224915
+      r2: -0.0006862878799438477
+
+execution_evidence:
+  successful_job:
+    slurm_job_id: 6133484
+    stdout: registry/models/astronomy/astropt/recipes/reproducible-inference/logs/astropt_a2_6133484.out
+    stderr: registry/models/astronomy/astropt/recipes/reproducible-inference/logs/astropt_a2_6133484.err
+    walltime: "00:01:30"
+    max_rss_kib: 3392784
+  failed_compatibility_job:
+    slurm_job_id: 6133445
+    stdout: registry/models/astronomy/astropt/recipes/reproducible-inference/logs/astropt_a2_6133445.out
+    stderr: registry/models/astronomy/astropt/recipes/reproducible-inference/logs/astropt_a2_6133445.err
+    gpu: Tesla V100-PCIE-16GB
+    failure: PyTorch 2.14.1+cu130 does not support compute capability 7.0
+
+notes: >
+  The scientific scripts and verified results are copied unchanged from the
+  reviewed Assignment 2 package. See the tracking issue and the included README
+  for independent setup, verification, troubleshooting, and cleanup instructions.

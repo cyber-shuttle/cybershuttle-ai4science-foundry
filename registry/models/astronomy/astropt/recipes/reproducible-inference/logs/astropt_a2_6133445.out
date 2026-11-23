@@ -1,0 +1,61 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-09-2026 19:03:06
+Job ID:    6133445
+User ID:   bak8
+Account:   ece
+Job name:  astropt-a2
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+========================================
+AstroPT Assignment 2 Reproducible Run
+========================================
+Date: Fri Oct  9 07:03:12 PM EDT 2026
+Hostname: atl1-1-02-011-31-0.pace.gatech.edu
+SLURM Job ID: 6133445
+
+=== GPU ===
+Tesla V100-PCIE-16GB, 16384 MiB, 580.178.04
+
+=== Software ===
+Python 3.10.22
+AstroPT: 2.0.5
+PyTorch: 2.14.1+cu130
+CUDA available: True
+
+=== AstroPT Source Commit ===
+fa361ae5b6631c89525429755ed3fc2b2d304eca
+
+=== Smoke Test ===
+=== AstroPT Assignment 2 Smoke Test ===
+AstroPT version: 2.0.5
+PyTorch version: 2.14.1+cu130
+CUDA available: True
+GPU: Tesla V100-PCIE-16GB
+number of parameters: 95.18M
+model loaded successfully from smith42/astropt_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+Model loaded successfully.
+Parameter count: 95,177,472
+Load time: 4.71 seconds
+CUDA memory allocated: 0.35 GB
+CUDA peak memory: 0.35 GB
+
+=== Small Inference ===
+=== AstroPT Reproducible Inference ===
+Device: Tesla V100-PCIE-16GB
+number of parameters: 95.18M
+model loaded successfully from Smith42/astroPT_v2.0/astropt/095M
+args: {'n_layer': 12, 'n_head': 12, 'n_embd': 768, 'n_chan': 3, 'block_size': 1024, 'dropout': 0.0, 'modalities': [ModalityConfig(name='images', input_size=768, pos_input_size=1, patch_size=16, embed_pos=True, loss_weight=1.0)], 'attn_type': 'causal'}
+---------------------------------------
+Begin Slurm Epilog: Oct-09-2026 19:03:43
+Job ID:        6133445
+User ID:       bak8
+Account:       ece
+Job name:      astropt-a2
+Resources:     cpu=4,gres/gpu:v100=1,mem=32G,node=1
+Rsrc Used:     cput=00:02:32,vmem=0,walltime=00:00:38,mem=3105428K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-011-31-0
+---------------------------------------

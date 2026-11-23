@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../../../schemas/model.schema.json
+
+id: astropt
+name: AstroPT v2.0
+version: "2.0"
+
+description: >
+  AstroPT is an autoregressive transformer foundation model for astronomical
+  observations. This entry records reproducible embedding inference with the
+  released 95M-parameter checkpoint and a held-out linear-probe validation on
+  galaxy g-band magnitude.
+
+domain:
+  - astronomy
+  - astrophysics
+
+model_family:
+  - transformer
+  - foundation-model
+  - autoregressive-model
+  - vision-model
+
+tasks:
+  - inference
+  - evaluation
+
+upstream:
+  huggingface: Smith42/astroPT_v2.0
+  github: https://github.com/Smith42/astroPT
+  paper: https://arxiv.org/abs/2405.14930
+  other:
+    - https://huggingface.co/datasets/Smith42/galaxies/tree/v2.0
+    - https://github.com/Smith42/astroPT/commit/fa361ae5b6631c89525429755ed3fc2b2d304eca
+
+lifecycle:
+  supported_stages:
+    - inference
+    - evaluation
+
+checkpoint:
+  repository: Smith42/astroPT_v2.0
+  path: astropt/095M
+  weights_filename: ckpt.pt
+  parameters: 95177472
+
+input:
+  dataset: Smith42/galaxies
+  revision: v2.0
+  split: test
+  fields:
+    - image
+    - mag_g
+
+output:
+  embeddings:
+    dtype: float32
+    dimension: 768
+  validation_target: mag_g
+
+software:
+  python: "3.10.22"
+  astropt: "2.0.5"
+  pytorch: "2.14.1+cu130"
+
+datasets:
+  recommended:
+    - Smith42/galaxies@v2.0
+  supported:
+    - Smith42/galaxies@v2.0
+
+resource_profiles:
+  recommended:
+    - resource-profiles/georgia-tech-ice/ice-h100.yaml
+
+cybershuttle:
+  enabled: false
+
+readiness:
+  registry_status: candidate
+  nexus_validation: untested
+  benchmark_status: not-started
+  optimization_status: not-started
+  workflow_status: validated
+
+maintainers:
+  - name: Bora Ak
+    github: Bora-ak
+    affiliation: Georgia Institute of Technology
+
+notes: >
+  Related to cybershuttle-ai4science-foundry issue #2:
+  https://github.com/cyber-shuttle/cybershuttle-ai4science-foundry/issues/2.
+  The included recipe was validated on Georgia Tech ICE job 6133484 using one
+  NVIDIA H100 80GB HBM3 GPU. Failed job 6133445 is retained as evidence that
+  the locked PyTorch CUDA 13.0 build does not support a V100 (compute
+  capability 7.0). Nexus validation has not been performed.

@@ -1,0 +1,75 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-11-2026 18:03:49
+Job ID:    6190401
+User ID:   akumar3097
+Account:   coc
+Job name:  openfold-6KWC1
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+PyTorch: 2.5.1
+CUDA available: True
+GPU: Quadro RTX 6000
+openfold module: /home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/openfold-2.2.0-py3.10-linux-x86_64.egg/openfold/__init__.py
+setup check passed
+[2026-10-11 18:04:14,910] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:49: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  def forward(ctx, input, weight, bias=None):
+/home/hice1/akumar3097/.conda/envs/openfold-repro/lib/python3.10/site-packages/deepspeed/runtime/zero/linear.py:67: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  def backward(ctx, grad_output):
+/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:97: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  d = torch.load(ckpt_path)
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:Loaded OpenFold parameters at /home/hice1/akumar3097/openfold-reproducible-inference/artifacts/params/finetuning_no_templ_ptm_1.pt...
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py:Using precomputed alignments for 6KWC_1 at /home/hice1/akumar3097/openfold-reproducible-inference/artifacts/alignments_no_templates...
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:Running inference for 6KWC_1...
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/openfold/utils/script_utils.py:Inference time: 26.207721921033226
+/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py:341: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  lambda x: np.array(x[..., -1].cpu()),
+/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py:344: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  out = tensor_tree_map(lambda x: np.array(x.cpu()), out)
+INFO:/home/hice1/akumar3097/openfold-reproducible-inference/artifacts/openfold/run_pretrained_openfold.py:Output written to /home/hice1/akumar3097/openfold-reproducible-inference/results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb...
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/hice1/akumar3097/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+	Command being timed: "bash scripts/run_inference.sh"
+	User time (seconds): 51.34
+	System time (seconds): 15.86
+	Percent of CPU this job got: 113%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2123904
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 3027
+	Minor (reclaiming a frame) page faults: 932448
+	Voluntary context switches: 26392
+	Involuntary context switches: 224
+	Swaps: 0
+	File system inputs: 1328976
+	File system outputs: 320
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+pdb: results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb
+size (bytes): 120528
+atom records: 1482
+unique residues: 191
+mean pdb b-factor / predicted confidence: 96.66
+pass: structure file with atom coordinates
+Sun Oct 11 06:05:06 PM EDT 2026
+---------------------------------------
+Begin Slurm Epilog: Oct-11-2026 18:05:07
+Job ID:        6190401
+User ID:       akumar3097
+Account:       coc
+Job name:      openfold-6KWC1
+Resources:     cpu=4,gres/gpu:rtx_6000=1,mem=32G,node=1
+Rsrc Used:     cput=00:05:12,vmem=0,walltime=00:01:18,mem=2740460K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-01-005-7-0
+---------------------------------------

@@ -1,0 +1,2 @@
+/usr/local/pace-apps/lmod/lmod/init/bash: line 206: conda: command not found
+mkdir: cannot create directory ‘evidence’: Permission denied

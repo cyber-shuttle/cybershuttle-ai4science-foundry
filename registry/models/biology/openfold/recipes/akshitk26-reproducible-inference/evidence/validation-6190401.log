@@ -1,0 +1,6 @@
+pdb: results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb
+size (bytes): 120528
+atom records: 1482
+unique residues: 191
+mean pdb b-factor / predicted confidence: 96.66
+pass: structure file with atom coordinates

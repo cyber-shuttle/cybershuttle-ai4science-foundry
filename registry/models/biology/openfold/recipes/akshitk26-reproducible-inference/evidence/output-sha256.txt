@@ -1,0 +1,1 @@
+c28158c297e082922861b692b71e8e43b1c1bf74f88ef43de586371fc92f900e  results/run-001/predictions/6KWC_1_model_3_ptm_unrelaxed.pdb

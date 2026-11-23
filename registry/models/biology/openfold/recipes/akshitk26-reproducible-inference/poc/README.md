@@ -54,7 +54,7 @@ If the ColabFold server cannot be reached, run `python poc/fetch_inputs.py --no-
 | `results/run-<job id>/plddt_vs_rmsd.svg` | mean pLDDT against CA RMSD |
 | `evidence/slurm-<job id>.out` | job log; also platform and GPU memory records |
 
-Check: the `6KWC_A` example row must show 191/191 matched residues, pLDDT 96.66 and CA RMSD 1.154 Å. If it does not, the setup differs from the validated run and the other rows should not be trusted.
+Check: the `6KWC_A` example row must show 191/191 matched residues, pLDDT within 0.2 of 96.66 and CA RMSD within 0.05 Å of 1.154. GPU and driver change the last digits (job 7248505 gave 96.67 and 1.152). If it is further off, the setup differs from the validated run and the other rows should not be trusted.
 
 ## limits
 

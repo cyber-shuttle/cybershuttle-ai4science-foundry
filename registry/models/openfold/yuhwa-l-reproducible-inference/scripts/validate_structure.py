@@ -1,144 +1,104 @@
 #!/usr/bin/env python3
+"""Validate OpenFold predictions for the proteins in proteins.tsv.
+
+For each protein it checks that the predicted sequence matches the input
+FASTA, reports pLDDT (stored in the B-factor column), compares the prediction
+with the experimental chain A (TM-score, C-alpha lDDT, C-alpha RMSD; see
+structure_metrics.py), writes the prediction superposed on the experimental
+structure, and compares the numbers with the committed baseline in
+results/measurements/measurements.csv.
+
+Usage:
+  python scripts/validate_structure.py                      # results/run/
+  python scripts/validate_structure.py --results results/measurements
+  python scripts/validate_structure.py 6KWC_1               # one protein
+"""
 
 import argparse
+import csv
+import sys
 from pathlib import Path
-import urllib.request
 
 import numpy as np
-from Bio import PDB, SeqIO
-from Bio.PDB.Polypeptide import protein_letters_3to1
+from Bio import PDB
+
+from structure_metrics import compare, write_superposed
+
+RECIPE_DIR = Path(__file__).resolve().parent.parent
+BASELINE = RECIPE_DIR / "results/measurements/measurements.csv"
+# A reproduction passes when it is within these limits of the baseline.
+TOLERANCE = {"mean_plddt": 0.5, "tm_score": 0.01, "lddt_ca": 0.01, "rmsd_ca": 0.1}
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-FASTA_PATH = BASE_DIR / "inputs" / "6KWC.fasta"
-PREDICTION_PATH = BASE_DIR / "results" / "6KWC_1_model_1_ptm_unrelaxed.pdb"
-REFERENCE_DIR = BASE_DIR / "reference"
-REFERENCE_PATH = REFERENCE_DIR / "6KWC.pdb"
-
-REFERENCE_URL = "https://files.rcsb.org/download/6KWC.pdb"
+def read_fasta(path):
+    return "".join(l.strip() for l in path.read_text().splitlines() if not l.startswith(">"))
 
 
-def chain_sequence(chain):
-    sequence = []
-    residues = []
-
-    for residue in chain:
-        if residue.id[0] != " ":
-            continue
-
-        name = residue.resname.upper()
-        if name in protein_letters_3to1:
-            sequence.append(protein_letters_3to1[name])
-            residues.append(residue)
-
-    return "".join(sequence), residues
+def plddt_and_sequence(path):
+    chain = next(PDB.PDBParser(QUIET=True).get_structure("p", path)[0].get_chains())
+    residues = [r for r in chain if r.id[0] == " "]
+    seq = "".join(PDB.Polypeptide.protein_letters_3to1.get(r.resname, "X") for r in residues)
+    return np.array([r["CA"].get_bfactor() for r in residues]), seq
 
 
 def main():
-    arg_parser = argparse.ArgumentParser(
-        description="Validate an OpenFold 6KWC prediction."
-    )
-    arg_parser.add_argument(
-        "--prediction",
-        type=Path,
-        default=PREDICTION_PATH,
-        help="Predicted PDB to validate (default: included reference prediction).",
-    )
-    arg_parser.add_argument(
-        "--aligned-output",
-        type=Path,
-        default=None,
-        help="Where to write the superimposed prediction "
-        "(default: next to the prediction).",
-    )
-    args = arg_parser.parse_args()
-    prediction_path = args.prediction.resolve()
-    aligned_path = args.aligned_output or (
-        prediction_path.parent / "6KWC_1_model_1_ptm_aligned_to_6KWC.pdb"
-    )
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("targets", nargs="*", help="Proteins to check (default: all in proteins.tsv).")
+    parser.add_argument("--results", type=Path, default=RECIPE_DIR / "results/run",
+                        help="Folder with one subfolder per protein (default: results/run).")
+    args = parser.parse_args()
 
-    parser = PDB.PDBParser(QUIET=True)
+    with open(RECIPE_DIR / "proteins.tsv") as f:
+        proteins = list(csv.DictReader(f, delimiter="\t"))
+    if args.targets:
+        proteins = [p for p in proteins if p["target"] in args.targets]
+    with open(BASELINE) as f:
+        baseline = {r["target"]: r for r in csv.DictReader(f)}
 
-    # Read expected sequence.
-    fasta_record = SeqIO.read(FASTA_PATH, "fasta")
-    fasta_sequence = str(fasta_record.seq)
+    rows, all_ok = [], True
+    for p in proteins:
+        target = p["target"]
+        run_dir = args.results / target
+        prediction = run_dir / "predictions" / f"{target}_model_1_ptm_unrelaxed.pdb"
+        if not prediction.exists():
+            print(f"{target}: MISSING {prediction}")
+            all_ok = False
+            continue
+        reference = RECIPE_DIR / p["reference"]
+        plddt, seq = plddt_and_sequence(prediction)
+        seq_ok = seq == read_fasta(RECIPE_DIR / p["fasta"])
+        m = compare(prediction, reference, ref_chain="A")
+        write_superposed(prediction, reference, run_dir / f"{target}_superposed_on_reference.pdb",
+                         ref_chain="A")
+        values = {"mean_plddt": plddt.mean(), **m}
+        base = baseline[target]
+        diffs_ok = all(abs(values[k] - float(base[k])) <= tol for k, tol in TOLERANCE.items())
+        ok = seq_ok and diffs_ok
+        all_ok &= ok
+        rows.append({"target": target, "status": "ok" if ok else "FAIL",
+                     "residues": len(seq), "sequence_match": seq_ok,
+                     "mean_plddt": f"{values['mean_plddt']:.2f}",
+                     "tm_score": f"{m['tm_score']:.3f}", "lddt_ca": f"{m['lddt_ca']:.3f}",
+                     "rmsd_ca": f"{m['rmsd_ca']:.2f}", "n_matched": m["n_matched"],
+                     "reference": p["reference"]})
 
-    # Read OpenFold prediction.
-    predicted_structure = parser.get_structure("openfold", prediction_path)
-    predicted_chain = predicted_structure[0]["A"]
-    predicted_sequence, predicted_residues = chain_sequence(predicted_chain)
-
-    # pLDDT is stored in the PDB B-factor field.
-    plddt = np.array(
-        [residue["CA"].get_bfactor() for residue in predicted_residues]
-    )
-
-    print("=== OpenFold prediction validation ===")
-    print(f"FASTA length: {len(fasta_sequence)}")
-    print(f"Prediction residues: {len(predicted_residues)}")
-    print(f"Prediction sequence exact match: {predicted_sequence == fasta_sequence}")
-    print()
-    print(f"Mean pLDDT: {plddt.mean():.2f}")
-    print(f"Median pLDDT: {np.median(plddt):.2f}")
-    print(f"Min pLDDT: {plddt.min():.2f}")
-    print(f"Max pLDDT: {plddt.max():.2f}")
-    print()
-    print("Confidence bins:")
-    print(f"Very high (>=90): {(plddt >= 90).sum()}")
-    print(f"Confident (70-90): {((plddt >= 70) & (plddt < 90)).sum()}")
-    print(f"Low (50-70): {((plddt >= 50) & (plddt < 70)).sum()}")
-    print(f"Very low (<50): {(plddt < 50).sum()}")
-
-    # Obtain experimental structure from RCSB PDB if needed.
-    REFERENCE_DIR.mkdir(exist_ok=True)
-
-    if not REFERENCE_PATH.exists():
-        print()
-        print(f"Downloading experimental 6KWC structure from {REFERENCE_URL}")
-        urllib.request.urlretrieve(REFERENCE_URL, REFERENCE_PATH)
-
-    experimental_structure = parser.get_structure("experimental", REFERENCE_PATH)
-    experimental_chain = experimental_structure[0]["A"]
-    experimental_sequence, experimental_residues = chain_sequence(
-        experimental_chain
-    )
-
-    print()
-    print("=== Experimental structure comparison ===")
-    print(f"Experimental residues: {len(experimental_residues)}")
-    print(
-        "Experimental sequence exact match: "
-        f"{experimental_sequence == fasta_sequence}"
-    )
-
-    if not (
-        predicted_sequence == fasta_sequence
-        and experimental_sequence == fasta_sequence
-    ):
-        raise ValueError(
-            "Sequence mismatch detected; refusing position-by-position structural alignment."
-        )
-
-    predicted_ca = [residue["CA"] for residue in predicted_residues]
-    experimental_ca = [residue["CA"] for residue in experimental_residues]
-
-    superimposer = PDB.Superimposer()
-    superimposer.set_atoms(experimental_ca, predicted_ca)
-
-    print(f"Aligned C-alpha residues: {len(predicted_ca)}")
-    print(
-        f"C-alpha RMSD after optimal superposition: "
-        f"{superimposer.rms:.3f} Angstrom"
-    )
-
-    # Apply the optimal transformation and save the aligned prediction.
-    superimposer.apply(predicted_structure.get_atoms())
-
-    io = PDB.PDBIO()
-    io.set_structure(predicted_structure)
-    io.save(str(aligned_path))
-
-    print(f"Aligned prediction written to: {aligned_path}")
+    columns = ["target", "status", "residues", "sequence_match", "mean_plddt", "tm_score",
+               "lddt_ca", "rmsd_ca", "n_matched", "reference"]
+    if rows:
+        args.results.mkdir(parents=True, exist_ok=True)
+        with open(args.results / "validation.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, columns)
+            w.writeheader()
+            w.writerows(rows)
+    print(f"{'Protein':8} {'Residues':>8} {'Seq':>5} {'pLDDT':>6} {'TM':>6} {'lDDT':>6} {'RMSD':>6}  Result")
+    for r in rows:
+        b = baseline[r["target"]]
+        print(f"{r['target']:8} {r['residues']:>8} {str(r['sequence_match']):>5} {r['mean_plddt']:>6} "
+              f"{r['tm_score']:>6} {r['lddt_ca']:>6} {r['rmsd_ca']:>6}  {r['status']}"
+              f"  (baseline {float(b['mean_plddt']):.2f} / {float(b['tm_score']):.3f} / "
+              f"{float(b['lddt_ca']):.3f} / {float(b['rmsd_ca']):.2f})")
+    print("ALL PASS" if all_ok else "SOME CHECKS FAILED")
+    sys.exit(0 if all_ok else 1)
 
 
 if __name__ == "__main__":

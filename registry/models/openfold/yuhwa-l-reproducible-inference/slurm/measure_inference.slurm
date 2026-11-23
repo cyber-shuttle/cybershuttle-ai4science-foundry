@@ -11,9 +11,9 @@
 #SBATCH --time=03:00:00
 #SBATCH --output=openfold-measure-%j.out
 
-# Measures inference time, GPU memory and use, and accuracy for 6KWC and the
-# five length-series proteins, one after another on one A100 (baseline
-# settings). Submit from the recipe directory after README step 6.1:
+# Measures inference time, GPU memory and use, and accuracy for the six
+# proteins in proteins.tsv, one after another on one A100 (baseline
+# settings). Submit from the recipe directory after README step 2.1:
 #   sbatch slurm/measure_inference.slurm
 # Results: results/measurements-<job ID>/ (set OUTPUT_DIR to write somewhere else).
 
@@ -56,12 +56,10 @@ measure() {  # FASTA ALIGNMENT_DIR REFERENCE RELEASE_DATE
     --output-dir "$OUTPUT_DIR" || status=1
 }
 
-# 6KWC (released 2021-01-27), then the length series from short to long.
-measure inputs/6KWC.fasta alignments reference/6KWC.pdb 2021-01-27
-while IFS=$'\t' read -r id chain length released _; do
-  measure "length-series/inputs/${id}_${chain}.fasta" length-series/alignments \
-    "length-series/reference/${id}.cif" "$released"
-done < <(tail -n +2 length-series/targets.tsv | sort -t$'\t' -k3,3n)
+# All six proteins in proteins.tsv, shortest first.
+while IFS=$'\t' read -r target _ released fasta alignments reference; do
+  measure "$fasta" "$alignments" "$reference" "$released"
+done < <(tail -n +2 proteins.tsv)
 
 echo
 column -s, -t "$OUTPUT_DIR/measurements.csv"

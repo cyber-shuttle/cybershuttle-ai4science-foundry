@@ -1,17 +1,18 @@
 #!/bin/bash
-#SBATCH --job-name=openfold-6kwc
+#SBATCH --job-name=openfold-inference
 #SBATCH --account=coc
 #SBATCH --partition=coc-gpu
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 #SBATCH --time=02:00:00
-#SBATCH --output=openfold-6kwc-%j.out
-#SBATCH --error=openfold-6kwc-%j.err
+#SBATCH --output=openfold-inference-%j.out
+#SBATCH --error=openfold-inference-%j.err
 
 # Submit from the recipe directory:
 #   cd registry/models/openfold/yuhwa-l-reproducible-inference
 #   sbatch slurm/openfold_inference.slurm
+# Predicts all six proteins in proteins.tsv (about 20 minutes on one A100).
 
 set -eo pipefail
 

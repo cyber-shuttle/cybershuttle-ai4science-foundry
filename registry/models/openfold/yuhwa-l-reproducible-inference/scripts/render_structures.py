@@ -1,4 +1,4 @@
-# Render the predicted structures from scripts/measure_inference.py with PyMOL.
+# Render the predicted structures of an inference or measurement run with PyMOL.
 # Run from the recipe directory:
 #   pymol -cq scripts/render_structures.py -- RESULTS_DIR IMAGE_DIR
 #
@@ -17,15 +17,22 @@ results = Path(sys.argv[1])
 out_dir = Path(sys.argv[2])
 out_dir.mkdir(parents=True, exist_ok=True)
 
-with open(results / "measurements.csv", newline="") as f:
+# A measurement run (section 6) has measurements.csv; a plain inference run
+# has validation.csv, written by scripts/validate_structure.py (section 4).
+table = results / "measurements.csv"
+if not table.exists():
+    table = results / "validation.csv"
+with open(table, newline="") as f:
     rows = [row for row in csv.DictReader(f) if row["status"] == "ok"]
 
 for row in rows:
     target = row["target"]
     run_dir = results / target
-    result = json.loads((run_dir / "result.json").read_text())
-    chain = result["reference_chain"]
-    reference = Path(result["reference"])
+    if (run_dir / "result.json").exists():
+        result = json.loads((run_dir / "result.json").read_text())
+        chain, reference = result["reference_chain"], Path(result["reference"])
+    else:
+        chain, reference = "A", Path(row["reference"])
     if not reference.exists():  # results made in another user's checkout
         reference = next(p for d in ("reference", "length-series/reference")
                          if (p := Path(d) / reference.name).exists())

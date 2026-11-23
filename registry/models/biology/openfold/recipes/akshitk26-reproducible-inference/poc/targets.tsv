@@ -1,0 +1,7 @@
+# id	pdb	chain	extra_refs	note
+# extra_refs: more pdb:chain references to score the same prediction against, or "-"
+6KWC_A	6KWC	A	-	anchor: the assignment 2 target, 191 residues, beta-sandwich
+3CHY_A	3CHY	A	-	CheY, about 128 residues, single alpha/beta domain
+2LZM_A	2LZM	A	-	T4 lysozyme, about 164 residues, two lobes
+1AKE_A	1AKE	A	4AKE:A	adenylate kinase, about 214 residues, three domains with a hinge; 1AKE is closed, 4AKE is open
+8TIM_A	8TIM	A	-	triosephosphate isomerase, about 247 residues, TIM barrel

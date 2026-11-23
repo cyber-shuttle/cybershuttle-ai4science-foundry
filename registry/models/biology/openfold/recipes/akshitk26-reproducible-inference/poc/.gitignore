@@ -1,0 +1,3 @@
+# OpenFold writes a temporary copy of the input FASTA next to its outputs.
+results/**/tmp_*.fasta
+__pycache__/

@@ -1,0 +1,10 @@
+OK: 10 modules import.
+numpy 1.26.4, torch 2.2.2+cu121
+OK: numpy<2 and torch<2.6.
+INFO: no CUDA device here (expected on a login node). Confirm with srun before sbatch.
+OK: all artifact files present, checkpoint size matches.
+OK: evaluation file fields shape = (40, 21, 721, 1440)
+OK: config/AFNO.yaml has afno_backbone.
+OK: inference.py references vis option.
+
+SMOKE TEST PASSED. Safe to submit slurm/run_inference.sbatch.

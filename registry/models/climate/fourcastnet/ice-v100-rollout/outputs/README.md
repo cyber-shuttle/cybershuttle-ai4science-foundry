@@ -1,0 +1,1 @@
+This folder holds the small result files from my runs: the Z500 skill plot (`skill_vs_leadtime.png`) and one CSV of Z500 ACC and RMSE per job. The 6.6 GB prediction file stays on scratch, and `docs/PROVENANCE.md` explains how to rebuild everything else.

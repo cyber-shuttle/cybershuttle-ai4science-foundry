@@ -1,0 +1,108 @@
+
+# yaml-language-server: $schema=../schemas/execution_recipe.schema.json
+
+id: fourcastnet-inference-ice-rollout
+name: FourCastNet 234-hour Z500 rollout on PACE-ICE (V100)
+model: fourcastnet
+task: inference
+description: >
+  Single-GPU autoregressive rollout of the pretrained FourCastNet AFNO
+  backbone on PACE-ICE. Starts from the first state of the released 2018
+  out-of-sample ERA5 file and runs 39 six-hour steps, which gives 40 saved
+  states from lead 0 h to lead 234 h, then scores the output against ERA5
+  with RMSE and ACC. Z500 is the headline variable.
+  Two runs on the same GPU gave identical numbers.
+
+reference_implementation: https://github.com/srir1607/fourcastnet-reproducible-inference
+
+input:
+  format: HDF5 (NVIDIA demo bundle, 2018 out-of-sample ERA5 file)
+  shape: "(40, 21, 721, 1440) float32"
+  download_size_gb: 4
+  notes: >
+    The bundle is fetched over plain HTTPS with checksum verification, so no
+    Globus account is needed. The file holds 40 time steps, so the default
+    41-step rollout would run off the end. The workflow patches
+    prediction_length from the file.
+
+output:
+  format: HDF5 plus CSV and PNG
+  description: >
+    A prediction file of about 6.6 GB stays on scratch. The repo keeps the
+    Z500 skill CSV, a skill-versus-lead-time plot, Slurm logs and GPU usage
+    samples.
+
+steps:
+  - name: environment
+    description: Build the conda environment on scratch (torch 2.2.2+cu121, numpy<2)
+    commands:
+      - git clone https://github.com/NVlabs/FourCastNet.git ~/FourCastNet
+      - git -C ~/FourCastNet checkout 93360c1720a9f97aabf970689f21c9fad8737788
+      - git clone -b recipe-fourcastnet-ice-rollout https://github.com/srir1607/cybershuttle-ai4science-foundry.git ~/scratch/foundry
+      - cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout
+      - mamba env create -f environment/environment.yml -p ~/scratch/.conda/envs/fourcastnet-inference
+
+  - name: download
+    description: Download and checksum the demo bundle (resumable)
+    script: scripts/download_artifacts.sh
+    args:
+      artifact_root: ~/scratch/fcn-artifacts
+
+  - name: smoke_test
+    description: Check files, imports and CUDA visibility before submitting
+    script: scripts/smoke_test.py
+
+  - name: inference
+    description: Submit the Slurm job from the repo root
+    commands:
+      - cd ~/scratch/foundry/registry/models/climate/fourcastnet/ice-v100-rollout
+      - sbatch slurm/run_inference.sbatch
+
+  - name: validate
+    description: Check output shapes, finiteness, ACC at lead 0 and 24 h, and trend with lead time
+    script: scripts/validate.py
+    args:
+      run_dir: ~/scratch/fcn-run-<jobid>
+
+resource_requirements:
+  gpu_memory_gb: 16
+  gpu_count: 1
+  recommended_gpu: Tesla V100-PCIE-16GB or newer (sm_70 and up)
+  measured_peak_gpu_memory_gib: 11.3
+  measured_host_ram_gb: 22.0
+  measured_wall_time: "95 to 243 s in total on a V100, of which 77 to 113 s is inference"
+  storage_gb: 25
+
+compatible_resource_profiles:
+  - resource-profiles/pace-ice/coc-gpu-v100.yaml
+
+validation:
+  variable: Z500
+  acc_24h: 0.995
+  acc_48h: 0.981
+  acc_first_below_0_6_at_hours: 174
+  reference_csv: registry/models/climate/fourcastnet/ice-v100-rollout/outputs/z500_skill_6205007.csv
+  tolerances: "ACC 0.01 and RMSE 10 at every lead time"
+  comparison: >
+    Matches Figure 7(a) of the paper through about 2 days. Beyond about 4
+    days the curve falls below the paper's average. One initialization is
+    compared with an average over many, and the bundle holds only one
+    window, so this could not be tested.
+
+slurm_example: |
+  #!/bin/bash
+  #SBATCH --job-name=fcn-inference
+  #SBATCH --partition=ice-gpu
+  #SBATCH --account=<acct>   # or pass --account=<acct> to sbatch
+  #SBATCH --gres=gpu:1
+  #SBATCH --cpus-per-task=8
+  #SBATCH --mem=64G
+  #SBATCH --time=00:45:00
+
+  # Submit from the repo root: sbatch slurm/run_inference.sbatch
+
+notes: >
+  This is a sanity reproduction of the pipeline. Training, the precipitation
+  model and the HuggingFace 26-channel release are out of scope. T850 is not
+  scored because inference.py only scores Z500. On PACE-ICE the miniforge
+  module is loaded three times to override the default anaconda module.

@@ -1,0 +1,9 @@
+# verified 2026-10-12T06:03:05Z
+ccai_demo.tar: OK
+ccai_demo/model_weights/FCN_weights_v0/backbone.ckpt: OK
+ccai_demo/additional/stats_v0/global_means.npy: OK
+ccai_demo/additional/stats_v0/global_stds.npy: OK
+ccai_demo/additional/stats_v0/land_sea_mask.npy: OK
+ccai_demo/additional/stats_v0/latitude.npy: OK
+ccai_demo/additional/stats_v0/longitude.npy: OK
+ccai_demo/additional/stats_v0/time_means.npy: OK

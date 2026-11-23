@@ -1,0 +1,120 @@
+/usr/local/pace-apps/lmod/lmod/init/bash: line 112: mamba: command not found
+2026-10-12 02:09:25,113 - root - INFO - --------------- Versions ---------------
+2026-10-12 02:09:25,132 - root - INFO - git branch: b'* master'
+2026-10-12 02:09:25,138 - root - INFO - git hash: b'93360c1720a9f97aabf970689f21c9fad8737788'
+2026-10-12 02:09:25,138 - root - INFO - Torch: 2.2.2+cu121
+2026-10-12 02:09:25,138 - root - INFO - ----------------------------------------
+2026-10-12 02:09:25,138 - root - INFO - ------------------ Configuration ------------------
+2026-10-12 02:09:25,138 - root - INFO - Configuration file: /home/hice1/sravela6/FourCastNet/config/AFNO.yaml
+2026-10-12 02:09:25,138 - root - INFO - Configuration name: afno_backbone
+2026-10-12 02:09:25,138 - root - INFO - log_to_wandb False
+2026-10-12 02:09:25,139 - root - INFO - lr 0.0005
+2026-10-12 02:09:25,139 - root - INFO - batch_size 64
+2026-10-12 02:09:25,139 - root - INFO - max_epochs 150
+2026-10-12 02:09:25,139 - root - INFO - scheduler CosineAnnealingLR
+2026-10-12 02:09:25,139 - root - INFO - in_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-12 02:09:25,139 - root - INFO - out_channels [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+2026-10-12 02:09:25,139 - root - INFO - orography False
+2026-10-12 02:09:25,139 - root - INFO - orography_path None
+2026-10-12 02:09:25,139 - root - INFO - exp_dir /pscratch/sd/s/shas1693/results/era5_wind
+2026-10-12 02:09:25,139 - root - INFO - train_data_path /pscratch/sd/s/shas1693/data/era5/train
+2026-10-12 02:09:25,139 - root - INFO - valid_data_path /pscratch/sd/s/shas1693/data/era5/test
+2026-10-12 02:09:25,139 - root - INFO - inf_data_path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/data/FCN_ERA5_data_v0/out_of_sample
+2026-10-12 02:09:25,139 - root - INFO - time_means_path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/time_means.npy
+2026-10-12 02:09:25,139 - root - INFO - global_means_path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/global_means.npy
+2026-10-12 02:09:25,139 - root - INFO - global_stds_path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/global_stds.npy
+2026-10-12 02:09:25,139 - root - INFO - prediction_length 40
+2026-10-12 02:09:25,139 - root - INFO - loss l2
+2026-10-12 02:09:25,139 - root - INFO - num_data_workers 4
+2026-10-12 02:09:25,139 - root - INFO - dt 1
+2026-10-12 02:09:25,140 - root - INFO - n_history 0
+2026-10-12 02:09:25,140 - root - INFO - prediction_type iterative
+2026-10-12 02:09:25,140 - root - INFO - n_initial_conditions 5
+2026-10-12 02:09:25,140 - root - INFO - ics_type default
+2026-10-12 02:09:25,140 - root - INFO - save_raw_forecasts True
+2026-10-12 02:09:25,140 - root - INFO - save_channel False
+2026-10-12 02:09:25,140 - root - INFO - masked_acc False
+2026-10-12 02:09:25,140 - root - INFO - maskpath None
+2026-10-12 02:09:25,140 - root - INFO - perturb False
+2026-10-12 02:09:25,140 - root - INFO - add_grid False
+2026-10-12 02:09:25,140 - root - INFO - N_grid_channels 0
+2026-10-12 02:09:25,140 - root - INFO - gridtype sinusoidal
+2026-10-12 02:09:25,141 - root - INFO - roll False
+2026-10-12 02:09:25,141 - root - INFO - num_blocks 8
+2026-10-12 02:09:25,141 - root - INFO - nettype afno
+2026-10-12 02:09:25,141 - root - INFO - patch_size 8
+2026-10-12 02:09:25,141 - root - INFO - width 56
+2026-10-12 02:09:25,141 - root - INFO - modes 32
+2026-10-12 02:09:25,141 - root - INFO - target default
+2026-10-12 02:09:25,141 - root - INFO - normalization zscore
+2026-10-12 02:09:25,141 - root - INFO - log_to_screen True
+2026-10-12 02:09:25,141 - root - INFO - save_checkpoint True
+2026-10-12 02:09:25,141 - root - INFO - enable_nhwc False
+2026-10-12 02:09:25,141 - root - INFO - optimizer_type FusedAdam
+2026-10-12 02:09:25,141 - root - INFO - crop_size_x None
+2026-10-12 02:09:25,141 - root - INFO - crop_size_y None
+2026-10-12 02:09:25,141 - root - INFO - two_step_training False
+2026-10-12 02:09:25,141 - root - INFO - plot_animations False
+2026-10-12 02:09:25,141 - root - INFO - add_noise False
+2026-10-12 02:09:25,141 - root - INFO - noise_std 0
+2026-10-12 02:09:25,141 - root - INFO - world_size 1
+2026-10-12 02:09:25,141 - root - INFO - interp 0
+2026-10-12 02:09:25,142 - root - INFO - use_daily_climatology False
+2026-10-12 02:09:25,142 - root - INFO - global_batch_size 64
+2026-10-12 02:09:25,142 - root - INFO - experiment_dir /home/hice1/sravela6/scratch/fcn-run-6205661
+2026-10-12 02:09:25,142 - root - INFO - best_checkpoint_path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/model_weights/FCN_weights_v0/backbone.ckpt
+2026-10-12 02:09:25,142 - root - INFO - resuming False
+2026-10-12 02:09:25,142 - root - INFO - local_rank 0
+2026-10-12 02:09:25,142 - root - INFO - ---------------------------------------------------
+2026-10-12 02:09:25,142 - root - INFO - Inference for 1 initial conditions
+2026-10-12 02:09:25,144 - root - INFO - Getting file stats from /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/data/FCN_ERA5_data_v0/out_of_sample/2018.h5
+2026-10-12 02:09:25,145 - root - INFO - Number of samples per year: 40
+2026-10-12 02:09:25,145 - root - INFO - Found data at path /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/data/FCN_ERA5_data_v0/out_of_sample. Number of examples: 40. Image Shape: 720 x 1440 x 20
+2026-10-12 02:09:25,145 - root - INFO - Delta t: 6 hours
+2026-10-12 02:09:25,145 - root - INFO - Including 0 hours of past history in training at a frequency of 6 hours
+2026-10-12 02:09:25,146 - root - INFO - Loading trained model checkpoint from /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/model_weights/FCN_weights_v0/backbone.ckpt
+2026-10-12 02:09:27,433 - root - INFO - Loading inference data
+2026-10-12 02:09:27,434 - root - INFO - Inference data from /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/data/FCN_ERA5_data_v0/out_of_sample/2018.h5
+2026-10-12 02:09:27,434 - root - INFO - Initial condition 1 of 1
+2026-10-12 02:09:36,347 - root - INFO - Begin autoregressive inference
+2026-10-12 02:09:37,274 - root - INFO - Predicted timestep 0 of 40. z500 RMS Error: 0.0, ACC: 1.0
+2026-10-12 02:09:38,838 - root - INFO - Predicted timestep 1 of 40. z500 RMS Error: 35.07278060913086, ACC: 0.9990821480751038
+2026-10-12 02:09:39,070 - root - INFO - Predicted timestep 2 of 40. z500 RMS Error: 50.16797637939453, ACC: 0.9981545805931091
+2026-10-12 02:09:39,303 - root - INFO - Predicted timestep 3 of 40. z500 RMS Error: 59.707698822021484, ACC: 0.9973466992378235
+2026-10-12 02:09:39,536 - root - INFO - Predicted timestep 4 of 40. z500 RMS Error: 79.609130859375, ACC: 0.9952088594436646
+2026-10-12 02:09:39,770 - root - INFO - Predicted timestep 5 of 40. z500 RMS Error: 91.83179473876953, ACC: 0.9936705231666565
+2026-10-12 02:09:40,002 - root - INFO - Predicted timestep 6 of 40. z500 RMS Error: 112.0257797241211, ACC: 0.9905232191085815
+2026-10-12 02:09:40,236 - root - INFO - Predicted timestep 7 of 40. z500 RMS Error: 133.1645965576172, ACC: 0.9864751696586609
+2026-10-12 02:09:40,469 - root - INFO - Predicted timestep 8 of 40. z500 RMS Error: 156.0860137939453, ACC: 0.9813246726989746
+2026-10-12 02:09:40,702 - root - INFO - Predicted timestep 9 of 40. z500 RMS Error: 179.49661254882812, ACC: 0.9756232500076294
+2026-10-12 02:09:40,935 - root - INFO - Predicted timestep 10 of 40. z500 RMS Error: 208.90597534179688, ACC: 0.9672880172729492
+2026-10-12 02:09:41,168 - root - INFO - Predicted timestep 11 of 40. z500 RMS Error: 238.5509796142578, ACC: 0.9569387435913086
+2026-10-12 02:09:41,403 - root - INFO - Predicted timestep 12 of 40. z500 RMS Error: 271.8235168457031, ACC: 0.9437021017074585
+2026-10-12 02:09:41,637 - root - INFO - Predicted timestep 13 of 40. z500 RMS Error: 303.7057189941406, ACC: 0.9295535683631897
+2026-10-12 02:09:41,871 - root - INFO - Predicted timestep 14 of 40. z500 RMS Error: 336.32647705078125, ACC: 0.9131346344947815
+2026-10-12 02:09:42,103 - root - INFO - Predicted timestep 15 of 40. z500 RMS Error: 366.853271484375, ACC: 0.8955690860748291
+2026-10-12 02:09:42,337 - root - INFO - Predicted timestep 16 of 40. z500 RMS Error: 395.6988220214844, ACC: 0.8784605264663696
+2026-10-12 02:09:42,569 - root - INFO - Predicted timestep 17 of 40. z500 RMS Error: 413.2676696777344, ACC: 0.8678604960441589
+2026-10-12 02:09:42,803 - root - INFO - Predicted timestep 18 of 40. z500 RMS Error: 432.6139221191406, ACC: 0.8552411794662476
+2026-10-12 02:09:43,036 - root - INFO - Predicted timestep 19 of 40. z500 RMS Error: 454.0390930175781, ACC: 0.8408475518226624
+2026-10-12 02:09:43,270 - root - INFO - Predicted timestep 20 of 40. z500 RMS Error: 478.3486633300781, ACC: 0.8252014517784119
+2026-10-12 02:09:43,504 - root - INFO - Predicted timestep 21 of 40. z500 RMS Error: 507.30548095703125, ACC: 0.8071816563606262
+2026-10-12 02:09:43,736 - root - INFO - Predicted timestep 22 of 40. z500 RMS Error: 539.2630004882812, ACC: 0.7850872278213501
+2026-10-12 02:09:43,970 - root - INFO - Predicted timestep 23 of 40. z500 RMS Error: 572.573486328125, ACC: 0.7617837190628052
+2026-10-12 02:09:44,203 - root - INFO - Predicted timestep 24 of 40. z500 RMS Error: 604.4701538085938, ACC: 0.7388178110122681
+2026-10-12 02:09:44,438 - root - INFO - Predicted timestep 25 of 40. z500 RMS Error: 637.0282592773438, ACC: 0.7179192900657654
+2026-10-12 02:09:44,671 - root - INFO - Predicted timestep 26 of 40. z500 RMS Error: 675.2530517578125, ACC: 0.6911261081695557
+2026-10-12 02:09:44,903 - root - INFO - Predicted timestep 27 of 40. z500 RMS Error: 722.8638305664062, ACC: 0.6546846032142639
+2026-10-12 02:09:45,138 - root - INFO - Predicted timestep 28 of 40. z500 RMS Error: 774.925537109375, ACC: 0.6132038831710815
+2026-10-12 02:09:45,371 - root - INFO - Predicted timestep 29 of 40. z500 RMS Error: 823.5842895507812, ACC: 0.5738081932067871
+2026-10-12 02:09:45,606 - root - INFO - Predicted timestep 30 of 40. z500 RMS Error: 869.1756591796875, ACC: 0.5301893949508667
+2026-10-12 02:09:45,841 - root - INFO - Predicted timestep 31 of 40. z500 RMS Error: 909.1766357421875, ACC: 0.4853913187980652
+2026-10-12 02:09:46,072 - root - INFO - Predicted timestep 32 of 40. z500 RMS Error: 946.0101318359375, ACC: 0.442657470703125
+2026-10-12 02:09:46,306 - root - INFO - Predicted timestep 33 of 40. z500 RMS Error: 985.1090087890625, ACC: 0.39900416135787964
+2026-10-12 02:09:46,540 - root - INFO - Predicted timestep 34 of 40. z500 RMS Error: 1016.5118408203125, ACC: 0.3582674264907837
+2026-10-12 02:09:46,773 - root - INFO - Predicted timestep 35 of 40. z500 RMS Error: 1035.68603515625, ACC: 0.32251840829849243
+2026-10-12 02:09:47,007 - root - INFO - Predicted timestep 36 of 40. z500 RMS Error: 1044.1700439453125, ACC: 0.3049062490463257
+2026-10-12 02:09:47,241 - root - INFO - Predicted timestep 37 of 40. z500 RMS Error: 1048.295166015625, ACC: 0.29820558428764343
+2026-10-12 02:09:47,475 - root - INFO - Predicted timestep 38 of 40. z500 RMS Error: 1055.7542724609375, ACC: 0.2984645962715149
+2026-10-12 02:09:47,708 - root - INFO - Predicted timestep 39 of 40. z500 RMS Error: 1069.8470458984375, ACC: 0.2873871624469757
+2026-10-12 02:09:49,959 - root - INFO - Saving files at /home/hice1/sravela6/scratch/fcn-run-6205661/autoregressive_predictions_z500_vis.h5

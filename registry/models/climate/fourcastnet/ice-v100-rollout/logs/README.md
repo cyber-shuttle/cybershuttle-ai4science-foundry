@@ -1,0 +1,1 @@
+This folder holds the evidence from my real runs: the Slurm stdout and stderr for each job, the checksum manifest from the download, the smoke test and CUDA check output, the config diff, GPU memory samples, and the inference logs.

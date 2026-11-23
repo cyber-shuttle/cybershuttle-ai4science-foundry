@@ -1,0 +1,75 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-12-2026 02:09:04
+Job ID:    6205661
+User ID:   sravela6
+Account:   coc
+Job name:  fcn-inference
+Partition: ice-gpu
+QOS:       coc-ice
+---------------------------------------
+=== Job 6205661 on atl1-1-02-011-31-0.pace.gatech.edu at 2026-10-12T06:09:12Z ===
+repo commit (this repo):        1cf03e8ee3118ca40a76bfb2f979b6b625118176
+repo commit (FourCastNet):      93360c1720a9f97aabf970689f21c9fad8737788
+torch 2.2.2+cu121 numpy 1.26.4 cuda True
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-16GB, 16384 MiB, 580.178.04
+Evaluation file shape: steps=40, channels=21, lat=721, lon=1440
+Patched /home/hice1/sravela6/FourCastNet/config/AFNO.yaml:
+  inf_data_path = /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/data/FCN_ERA5_data_v0/out_of_sample
+  time_means_path = /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/time_means.npy
+  global_means_path = /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/global_means.npy
+  global_stds_path = /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/additional/stats_v0/global_stds.npy
+  prediction_length = 40
+  log_to_wandb = False
+Checkpoint to pass to inference.py --weights: /home/hice1/sravela6/scratch/fcn-artifacts/ccai_demo/model_weights/FCN_weights_v0/backbone.ckpt
+=== Running inference ===
+=== Inference wall time: 37 s ===
+=== Peak GPU memory: 11184 MiB ===
+=== Output files ===
+total 6471536
+drwxr-xr-x.  2 sravela6 gtperson       4096 Oct 12 02:09 .
+drwx------. 12 sravela6 gtperson       4096 Oct 12 02:09 ..
+-rw-r--r--.  1 sravela6 gtperson 6635543296 Oct 12 02:09 autoregressive_predictions_z500_vis.h5
+-rw-r--r--.  1 sravela6 gtperson      11215 Oct 12 02:09 inference_out.log
+=== Validation ===
+Output file: /home/hice1/sravela6/scratch/fcn-run-6205661/autoregressive_predictions_z500_vis.h5
+Datasets present: ['acc', 'acc_coarse', 'acc_coarse_unweighted', 'acc_unweighted', 'ground_truth', 'predicted', 'rmse', 'rmse_coarse']
+OK: 'rmse' shape=(1, 40, 20) dtype=float32, finite
+OK: 'acc' shape=(1, 40, 20) dtype=float32, finite
+SMOKE TEST PASSED
+
+Detected layout -> (channels, lead steps) = (20, 40)
+OK: ACC (all channels) in [-1, 1] (min=0.0922, max=1.0000)
+OK: RMSE non-negative (min=0.0000)
+Z500 ACC at index 0 = 1.0000 -> index 0 treated as the initial condition (lead 0 h)
+OK: ACC at lead 0 h is 1.0000 (>= 0.99)
+OK: Z500 ACC at 24 h = 0.9952 >= 0.6 (conventional 'useful forecast' threshold)
+OK: ACC decays with lead time (0.9952 at 24 h -> 0.2874 at 234 h)
+OK: RMSE grows with lead time (79.61 at 24 h -> 1069.85 at 234 h)
+
+Z500 skill summary (lead hours: ACC / RMSE):
+    24 h: ACC=0.9952  RMSE=79.61
+    48 h: ACC=0.9813  RMSE=156.09
+    72 h: ACC=0.9437  RMSE=271.82
+   120 h: ACC=0.8252  RMSE=478.35
+   168 h: ACC=0.6132  RMSE=774.93
+   234 h (last): ACC=0.2874  RMSE=1069.85
+  Z500 ACC first drops below 0.6 at lead 174 h (7.25 days); last value before: 0.6132
+Saved CSV: /storage/ice1/0/5/sravela6/fcn-repro/outputs/z500_skill_6205661.csv
+
+Saved plot: /storage/ice1/0/5/sravela6/fcn-repro/outputs/skill_vs_leadtime.png
+
+VALIDATION PASSED
+=== Done (validation exit code 0) at 2026-10-12T06:09:56Z ===
+---------------------------------------
+Begin Slurm Epilog: Oct-12-2026 02:09:56
+Job ID:        6205661
+User ID:       sravela6
+Account:       coc
+Job name:      fcn-inference
+Resources:     cpu=8,gres/gpu:v100=1,mem=64G,node=1
+Rsrc Used:     cput=00:06:56,vmem=0,walltime=00:00:52,mem=21957680K,energy_used=0
+Partition:     ice-gpu
+QOS:           coc-ice
+Nodes:         atl1-1-02-011-31-0
+---------------------------------------

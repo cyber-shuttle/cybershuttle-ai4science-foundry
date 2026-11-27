@@ -1,0 +1,19 @@
+# Large dataset and locally downloaded weights
+raw/*
+!raw/.gitkeep
+# Local inputs can contain a small redistributable sampled dataset; review MP terms before adding.
+inputs/*
+!inputs/.gitkeep
+# Real run artifacts should be deliberately added with `git add -f` after review.
+results/*
+!results/.gitkeep
+logs/*
+!logs/.gitkeep
+# Python / environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+*.egg-info/
+.ipynb_checkpoints/

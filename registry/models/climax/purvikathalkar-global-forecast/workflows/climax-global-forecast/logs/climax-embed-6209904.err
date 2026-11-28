@@ -1,0 +1,9 @@
+Run 'mamba init' to be able to run mamba activate/deactivate
+and start a new shell session. Or use conda to activate/deactivate.
+
+Traceback (most recent call last):
+  File "scripts/embed.py", line 316, in <module>
+    main()
+  File "scripts/embed.py", line 238, in main
+    raise ValueError("Repeated evaluation of the same input produced different embeddings")
+ValueError: Repeated evaluation of the same input produced different embeddings
